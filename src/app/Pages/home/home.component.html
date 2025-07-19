@@ -1,0 +1,17 @@
+<div class="flex">
+      <div class="w-2/12">
+            <app-sidebar></app-sidebar>
+      </div>
+      <div class="w-8/12">
+         <app-navbar [user]="user"></app-navbar>
+         <div class="text-center">
+   <p>{{user?.name}}</p>
+   <p>{{user?.email}}</p>
+   <p>{{user?.mobileNumber}}</p>
+   <p>{{user?.userName}}</p>
+
+</div>
+      </div>
+</div>
+
+

@@ -1,0 +1,25 @@
+<div class="">
+  <div class="relative h-screen w-screen font-main">
+    <div
+      class="absolute flex w-10/12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-xl rounded-md"
+    >
+      <div class="w-6/12 relative bg-white">
+        <div class="absolute w-8/12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" >
+          <button (click)="changeLanguage()" >change</button>
+
+          <img src="assets/Images/logo.png" alt="" />
+
+        </div>
+      </div>
+      <div class="bg-[#00A9FF] w-6/12 overflow-auto rounded-3xl">
+        <app-login id="login" (signUpOut)="CheckShow($event)"></app-login>
+
+        <app-register
+          id="register"
+          class="hidden"
+          (loginOut)="CheckShow($event)"
+        ></app-register>
+      </div>
+    </div>
+  </div>
+</div>

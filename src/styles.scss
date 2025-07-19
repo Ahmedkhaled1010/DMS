@@ -1,1 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: lato;
+  src: url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+}
+@font-face {
+  font-family: Tajawal;
+  src: url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
+}
+body {
+  font-family: lato;
+  direction: ltr;
+  text-align: left;
+}
+body[dir="rtl"] {
+  font-family: Tajawal;
+  direction: rtl;
+  text-align: right;
+}
+body
+{
+  background-color: #CECECE;
+}
+.font-main {
+  font-family: lato;
+}

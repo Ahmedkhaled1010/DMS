@@ -1,0 +1,20 @@
+{
+  "Register": "تسجيل حساب جديد",
+  "Name": "الاســم",
+  "Username": "اســم الــمـسـتخدم",
+  "Mobile Number": "رقم الهاتف",
+  "National Id": "الرقم القومي",
+  "Email": "البريد الالكتروني",
+  "Confirm Email": "تأكيد البريد الالكتروني",
+  "Password": "كلمة المرور",
+  "Confirm Password": "تأكيد كلمة المرور",
+  "Log in": "تسجيل الدخول ",
+  "Already have an account?": "هل لديك حساب بالفعل ؟",
+  "Welcome to DriveBox": "اهلا بكم في DriveBox",
+  "Forgot Password?":"هل نسيت كلمة المرور؟",
+  "No Account?":"ليس لديك حساب؟",
+  "Sign up":"تسجيل",
+  "OR":"أو"
+
+
+}
