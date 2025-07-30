@@ -1,0 +1,632 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  *ngIf="isOpen"
+  [@fadeInOut]
+>
+  <!-- Backdrop -->
+  <div
+    class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+    (click)="closeModal()"
+    [@fadeInOut]
+  ></div>
+
+  <!-- Modal -->
+  <div class="relative w-full max-w-lg" [@slideInOut]>
+    <div class="bg-white rounded-2xl shadow-2xl border-0 overflow-hidden">
+      <!-- Header -->
+      <div class="relative p-6 pb-4 border-b border-gray-100">
+        <button
+          (click)="closeModal()"
+          class="absolute left-4 top-4 h-8 w-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+          type="button"
+        >
+          <i class="fas fa-times text-gray-500"></i>
+        </button>
+
+        <div class="flex items-center gap-3 mr-12">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-full"
+            [class.bg-yellow-100]="itemType === 'folder'"
+            [class.bg-blue-100]="itemType === 'document'"
+          >
+            <i
+              class="fas"
+              [class.fa-folder]="itemType === 'folder'"
+              [class.fa-file-alt]="itemType === 'document'"
+              [class.text-yellow-600]="itemType === 'folder'"
+              [class.text-blue-600]="itemType === 'document'"
+            ></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              @if(itemType==='folder'){
+              @if (!isUpdated()) {
+                {{ "Create New Folder" | translate }}
+              } @else {
+              {{ "Update Folder" | translate }}
+              }
+              }
+              @else {
+                {{'Create New Document'|translate}}
+              }
+            </h2>
+
+            <p class="text-sm text-gray-600 mt-1">
+               @if(itemType==='folder'){
+              @if (!isUpdated()) {
+                {{ "Enter the name of the new folder" | translate }}
+              } @else {
+              {{ "Enter the updated name of the  folder" | translate }}
+              }
+              }
+              @else {
+                {{'Enter the name of the new document'|translate}}
+              }
+             
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      @if (!isUpdated()&&itemType === 'folder') 
+      {
+
+        <div class="p-6">
+        <form
+          [formGroup]="createForm"
+          (ngSubmit)="onSubmit()"
+          class="space-y-6"
+        >
+          <!-- Name Field -->
+          <div class="space-y-2">
+            <label for="name" class="block text-base font-medium text-gray-700">
+             
+              {{ "Folder name" | translate }}
+             
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              [placeholder]="'Enter the name of the new folder'|translate  "
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('name')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+            <div
+              *ngIf="hasError('name')"
+              class="text-sm text-red-500 flex items-center gap-1 justify-end"
+              [@slideDown]
+            >
+              <span>{{ getErrorMessage("name") }}</span>
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+          </div>
+
+          <!-- Parent Folder (for folders only) -->
+          <div *ngIf="itemType === 'folder'" class="space-y-2">
+            <label
+              for="parentId"
+              class="block text-base font-medium text-gray-700"
+            >
+          {{'Description'|translate}}
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="description"
+              [placeholder]="'Enter the description of the new folder'|translate"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('description')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+          </div>
+
+          <!-- Document specific fields -->
+      
+
+            
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              (click)="closeModal()"
+              class="flex-1 py-3 px-4 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              [disabled]="isLoading"
+            >
+              {{'Cancel'|translate}}
+            </button>
+            <button
+              type="submit"
+              class="flex-1 py-3 px-4 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              [disabled]="isLoading || createForm.invalid"
+            >
+              <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+              <span>
+                {{'Create Folder'|translate}}
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+      }
+       @if (isUpdated()) 
+      {
+
+        <div class="p-6">
+        <form
+          [formGroup]="updateForm"
+          (ngSubmit)="onUpdate()"
+          class="space-y-6"
+        >
+          <!-- Name Field -->
+          <div class="space-y-2">
+            <label for="name" class="block text-base font-medium text-gray-700">
+             
+              {{ "Folder name" | translate }}
+             
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              [placeholder]="'Enter the updated name of the  folder'|translate  "
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('name')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+            <div
+              *ngIf="hasError('name')"
+              class="text-sm text-red-500 flex items-center gap-1 justify-end"
+              [@slideDown]
+            >
+              <span>{{ getErrorMessage("name") }}</span>
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+          </div>
+
+          <!-- Parent Folder (for folders only) -->
+          <div *ngIf="itemType === 'folder'" class="space-y-2">
+            <label
+              for="parentId"
+              class="block text-base font-medium text-gray-700"
+            >
+          {{'Description'|translate}}
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="description"
+              [placeholder]="'Enter the updated description of the  folder'|translate"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('description')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+          </div>
+
+          <!-- Document specific fields -->
+      
+
+            
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              (click)="closeModal()"
+              class="flex-1 py-3 px-4 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              [disabled]="isLoading"
+            >
+              {{'Cancel'|translate}}
+            </button>
+            <button
+              type="submit"
+              class="flex-1 py-3 px-4 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              [disabled]="isLoading || updateForm.invalid"
+            >
+              <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+              <span>
+                @if (!isUpdated) {
+
+                  {{'Create Folder'|translate}}
+                }
+
+                @else {
+                  {{'Update Folder'|translate}}
+                }
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+      }
+      @if (itemType==='document')
+       {
+
+        <div class="m-3 card">
+        <p-fileUpload name="files" 
+       
+[customUpload]="true"
+          [auto]="false"
+        [multiple]="true"
+          (onSelect)="onSelect($event)"
+           (uploadHandler)="onUpload($event)" 
+            
+             
+            mode="advanced">
+    <ng-template #empty>
+        <div>Drag and drop files to here to upload.</div>
+    </ng-template>
+</p-fileUpload>
+        </div>
+       }
+    </div>
+  </div>
+</div>
+<!--
+
+
+  <div class="p-6">
+        <form
+          [formGroup]="createForm"
+          (ngSubmit)="onSubmit()"
+          class="space-y-6"
+        >
+          <div class="space-y-2">
+            <label for="name" class="block text-base font-medium text-gray-700">
+              @if(itemType === 'folder') {
+              {{ "Folder name" | translate }}
+              } @else {
+              {{ "Document name" | translate }}
+              }
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              [placeholder]="
+                itemType === 'folder'
+                  ? 'أدخل اسم المجلد...'
+                  : 'أدخل اسم المستند...'
+              "
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('name')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+            <div
+              *ngIf="hasError('name')"
+              class="text-sm text-red-500 flex items-center gap-1 justify-end"
+              [@slideDown]
+            >
+              <span>{{ getErrorMessage("name") }}</span>
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+          </div>
+
+          <div *ngIf="itemType === 'folder'" class="space-y-2">
+            <label
+              for="parentId"
+              class="block text-base font-medium text-gray-700"
+            >
+          {{'Description'|translate}}
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="description"
+              [placeholder]="
+                itemType === 'folder'
+                  ? 'أدخل اسم المجلد...'
+                  : 'أدخل اسم المستند...'
+              "
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('description')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+          </div>
+
+          <div *ngIf="itemType === 'document'" class="space-y-6">
+            <div class="space-y-2">
+              <label
+                for="folderId"
+                class="block text-base font-medium text-gray-700"
+              >
+                المجلد (اختياري)
+              </label>
+              <select
+                id="folderId"
+                formControlName="folderId"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              >
+                <option value="">المجلد الرئيسي</option>
+                <option
+                  *ngFor="let folder of availableFolders"
+                  [value]="folder.id"
+                >
+                  {{ folder.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <label
+                for="fileType"
+                class="block text-base font-medium text-gray-700"
+              >
+                نوع الملف
+              </label>
+              <select
+                id="fileType"
+                formControlName="fileType"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              >
+                <option value="txt">ملف نصي (.txt)</option>
+                <option value="doc">مستند وورد (.doc)</option>
+                <option value="pdf">ملف PDF (.pdf)</option>
+                <option value="image">صورة</option>
+                <option value="other">أخرى</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <label
+                for="content"
+                class="block text-base font-medium text-gray-700"
+              >
+                المحتوى (اختياري)
+              </label>
+              <textarea
+                id="content"
+                formControlName="content"
+                placeholder="أدخل محتوى المستند..."
+                rows="4"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base resize-none transition-colors text-right"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              (click)="closeModal()"
+              class="flex-1 py-3 px-4 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              [disabled]="isLoading"
+            >
+              إلغاء
+            </button>
+            <button
+              type="submit"
+              class="flex-1 py-3 px-4 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              [disabled]="isLoading || createForm.invalid"
+            >
+              <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+              <span>
+                {{
+                  isLoading
+                    ? "جاري الإنشاء..."
+                    : itemType === "folder"
+                    ? "إنشاء مجلد"
+                    : "إنشاء مستند"
+                }}
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+-->
+<!--
+      <div
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  *ngIf="isOpen"
+  [@fadeInOut]
+>
+  <div
+    class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+    (click)="closeModal()"
+    [@fadeInOut]
+  ></div>
+
+  <div class="relative w-full max-w-lg" [@slideInOut]>
+    <div class="bg-white rounded-2xl shadow-2xl border-0 overflow-hidden">
+      <div class="relative p-6 pb-4 border-b border-gray-100">
+        <button
+          (click)="closeModal()"
+          class="absolute left-4 top-4 h-8 w-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+          type="button"
+        >
+          <i class="fas fa-times text-gray-500"></i>
+        </button>
+
+        <div class="flex items-center gap-3 mr-12">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-full"
+            [class.bg-yellow-100]="itemType === 'folder'"
+            [class.bg-blue-100]="itemType === 'document'"
+          >
+            <i
+              class="fas"
+              [class.fa-folder]="itemType === 'folder'"
+              [class.fa-file-alt]="itemType === 'document'"
+              [class.text-yellow-600]="itemType === 'folder'"
+              [class.text-blue-600]="itemType === 'document'"
+            ></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              @if(itemType === 'folder') {
+              {{ "Create New Folder" | translate }}
+              } @else {
+              {{ "Create New Document" | translate }}
+              }
+            </h2>
+
+            <p class="text-sm text-gray-600 mt-1">
+              @if(itemType === 'folder') {
+              {{ "Enter the name of the new folder" | translate }}
+              } @else {
+              {{ "Enter the name of the new document" | translate }}
+              }
+            </p>
+          </div>
+        </div>
+      </div>
+
+      @if (!isUpdated()&&itemType === 'folder') 
+      {
+
+        <div class="p-6">
+        <form
+          [formGroup]="createForm"
+          (ngSubmit)="onSubmit()"
+          class="space-y-6"
+        >
+          <div class="space-y-2">
+            <label for="name" class="block text-base font-medium text-gray-700">
+             
+              {{ "Folder name" | translate }}
+             
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              [placeholder]="'Enter the name of the new folder'|translate  "
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('name')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+            <div
+              *ngIf="hasError('name')"
+              class="text-sm text-red-500 flex items-center gap-1 justify-end"
+              [@slideDown]
+            >
+              <span>{{ getErrorMessage("name") }}</span>
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+          </div>
+
+          <div *ngIf="itemType === 'folder'" class="space-y-2">
+            <label
+              for="parentId"
+              class="block text-base font-medium text-gray-700"
+            >
+          {{'Description'|translate}}
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="description"
+              [placeholder]="'Enter the description of the new folder'|translate"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('description')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+          </div>
+
+      
+
+            
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              (click)="closeModal()"
+              class="flex-1 py-3 px-4 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              [disabled]="isLoading"
+            >
+              {{'Cancel'|translate}}
+            </button>
+            <button
+              type="submit"
+              class="flex-1 py-3 px-4 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              [disabled]="isLoading || createForm.invalid"
+            >
+              <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+              <span>
+                {{'Create Folder'|translate}}
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+      }
+       @if (isUpdated) 
+      {
+
+        <div class="p-6">
+        <form
+          [formGroup]="createForm"
+          (ngSubmit)="onSubmit()"
+          class="space-y-6"
+        >
+          <div class="space-y-2">
+            <label for="name" class="block text-base font-medium text-gray-700">
+             
+              {{ "Folder name" | translate }}
+             
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              [placeholder]="'Enter the updated name of the  folder'|translate  "
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('name')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+            <div
+              *ngIf="hasError('name')"
+              class="text-sm text-red-500 flex items-center gap-1 justify-end"
+              [@slideDown]
+            >
+              <span>{{ getErrorMessage("name") }}</span>
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+          </div>
+
+          <div *ngIf="itemType === 'folder'" class="space-y-2">
+            <label
+              for="parentId"
+              class="block text-base font-medium text-gray-700"
+            >
+          {{'Description'|translate}}
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="description"
+              [placeholder]="'Enter the description of the new folder'|translate"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-base transition-colors text-right"
+              [class.border-red-500]="hasError('description')"
+              [class.focus:ring-red-500]="hasError('name')"
+            />
+          </div>
+
+         
+      
+
+            
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              (click)="closeModal()"
+              class="flex-1 py-3 px-4 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              [disabled]="isLoading"
+            >
+              {{'Cancel'|translate}}
+            </button>
+            <button
+              type="submit"
+              class="flex-1 py-3 px-4 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              [disabled]="isLoading || createForm.invalid"
+            >
+              <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+              <span>
+                {{'Create Folder'|translate}}
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+-->

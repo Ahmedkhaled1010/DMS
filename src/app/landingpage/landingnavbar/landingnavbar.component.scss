@@ -1,0 +1,24 @@
+/* Add any specific styles for the navbar here if needed, beyond Tailwind defaults */
+/* For example, if you want to override PrimeNG button styles */
+.p-button-primary {
+  background-color: #2563eb !important; /* Blue-600 */
+  border-color: #2563eb !important;
+  color: white !important;
+  padding: 0.75rem 1rem; /* px-4 py-2 */
+  border-radius: 0.375rem; /* rounded-md */
+}
+
+.p-button-primary:hover {
+  background-color: #1d4ed8 !important; /* Blue-700 */
+  border-color: #1d4ed8 !important;
+}
+
+.p-button-text.p-button-secondary {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: #4b5563 !important; /* Gray-700 */
+}
+
+.p-button-text.p-button-secondary:hover {
+  background-color: #f3f4f6 !important; /* Gray-100 */
+}

@@ -1,0 +1,22 @@
+<div class="pt-10 w-full text-white px-3">
+    <div>
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="my-2 text-xl font-normal">
+            <i class="fa-solid fa-briefcase"></i>
+            {{ "Work Space" | translate }}
+          </h2>
+        </div>
+        <div>
+            <i (click)="createNew()" class="fa-solid fa-plus fa-xl cursor-pointer"></i>
+        </div>
+      </div>
+      <ol class="w-10/12 mx-auto" type="1">
+        @for ( item of allWorkspace; track $index) {
+        <ul>
+          <app-workspace-label   [workspace]="item"></app-workspace-label>
+        </ul>
+        }
+      </ol>
+    </div>
+  </div>

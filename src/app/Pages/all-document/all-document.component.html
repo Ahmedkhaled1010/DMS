@@ -1,0 +1,699 @@
+<!--
+    <div class="p-6 bg-gray-100 min-h-screen">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Document management</h2>
+    <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 flex items-center gap-2">
+      <i class="fas fa-plus"></i>
+      Add New Document
+    </button>
+  </div>
+
+  <div class="bg-white rounded-lg shadow">
+    <div class="flex justify-between items-center p-4 border-b">
+      <div class="flex items-center gap-2">
+        <input type="checkbox" />
+        <span class="text-sm text-gray-700">Select All</span>
+      </div>
+      <div class="relative">
+        <input
+          type="text"
+          placeholder="Search"
+          class="border border-gray-300 rounded-lg px-4 py-2 w-64"
+        />
+        <i class="fas fa-search absolute right-3 top-2.5 text-gray-400"></i>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm text-left">
+        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+          <tr>
+            <th class="p-4"></th>
+            <th class="p-4">Document Name</th>
+            <th class="p-4">Recipient</th>
+            <th class="p-4">Date Created</th>
+            <th class="p-4">Status</th>
+            <th class="p-4">Modified</th>
+            <th class="p-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr *ngFor="let doc of documents" class="hover:bg-gray-50">
+            <td class="p-4"><input type="checkbox" /></td>
+            <td class="p-4 font-medium text-gray-700">
+              {{ doc.name }}
+              <span class="ml-2 text-xs px-2 py-0.5 rounded-full font-semibold" [ngClass]="doc.tagColor">
+                {{ doc.tag }}
+              </span>
+            </td>
+            <td class="p-4">{{ doc.recipient }}</td>
+            <td class="p-4">{{ doc.date }}</td>
+            <td class="p-4">
+              <span class="inline-block w-3 h-3 mr-2 rounded-full" [ngClass]="doc.statusColor"></span>
+              {{ doc.status }}
+            </td>
+            <td class="p-4">{{ doc.modified }}</td>
+            <td class="p-4 flex gap-3">
+              <button class="text-gray-500 hover:text-blue-600">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="text-gray-500 hover:text-green-600">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="text-gray-500 hover:text-red-600">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+-->
+<div class="w-11/12 mx-auto my-3 space-y-4 md:space-y-6 p-4 md:p-0" dir="rtl">
+  <!-- Header -->
+  <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-6">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full bg-blue-100">
+          <i class="pi pi-file text-blue-600 text-lg md:text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold text-gray-900">{{'Manage documents'|translate}}</h1>
+          <p class="text-xs md:text-sm text-gray-600"> {{'View and manage all files in the system'|translate}} </p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-2 md:gap-3 w-full sm:w-auto">
+        <p-button
+          icon="pi pi-refresh"
+          [label]="'Update'|translate"
+          (onClick)="refreshData()"
+          [outlined]="true"
+          severity="secondary"
+          size="small"
+          styleClass="flex-1 sm:flex-none text-sm"
+        />
+        <p-button
+          icon="pi pi-plus"
+          [label]="'New Document'|translate "
+          (onClick)="addNewDocument()"
+          severity="primary"
+          size="small"
+          styleClass="flex-1 sm:flex-none text-sm"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Filter Toggle -->
+  <div class="md:hidden">
+    <p-button
+      [icon]="showMobileFilters ? 'pi pi-chevron-up' : 'pi pi-filter'"
+      [label]="showMobileFilters ? 'إخفاء الفلاتر' : 'إظهار الفلاتر'"
+      (onClick)="toggleMobileFilters()"
+      [outlined]="true"
+      severity="secondary"
+      styleClass="w-full"
+      size="small"
+    />
+  </div>
+
+  <!-- Filters Panel -->
+  <div 
+    class="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-6 transition-all duration-300"
+    [class.hidden]="!showMobileFilters"
+    [class.md:block]="true"
+  >
+    <div class="flex items-center gap-2 mb-4">
+      <i class="pi pi-filter text-gray-600"></i>
+      <h3 class="text-base md:text-lg font-semibold text-gray-900"> {{'Filters and search'|translate}} </h3>
+      <p-button
+        *ngIf="hasActiveFilters"
+        icon="pi pi-times"
+        [label]="'Clear filters'|translate "
+        (onClick)="clearFilters()"
+        [text]="true"
+        severity="secondary"
+        size="large"
+      />
+    </div>
+
+    <!-- Search  - Always visible on mobile -->
+    <div class="mb-4 md:mb-0">
+      <label class="block text-sm font-medium text-gray-700 mb-2"> {{'Search'|translate}} </label>
+    <input
+  pInputText
+  [(ngModel)]="searchTerm"
+  name="searchTerm"
+  [placeholder]="'Search by file name'|translate"
+  class="w-full"
+  (input)="onSearchChange()"
+/>
+
+    </div>
+
+    <!-- Collapsible Filters Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+      <!-- File Type Filter -->
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700"> {{'File type'|translate}} </label>
+        <p-dropdown
+          [(ngModel)]="selectedFileType"
+          [options]="fileTypeOptions"
+          [placeholder]=" 'All types'|translate"
+          [showClear]="true"
+          styleClass="w-full"
+          (onChange)="onFilterChange()"
+          appendTo="body"
+        />
+      </div>
+
+      <!-- Tag Filter -->
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700"> {{'Classification'|translate}} </label>
+        <p-dropdown
+          [(ngModel)]="selectedTag"
+          [options]="tagOptions"
+          [placeholder]="'Classification'|translate"
+          [showClear]="true"
+          styleClass="w-full"
+          (onChange)="onFilterChange()"
+          appendTo="body"
+        />
+      </div>
+
+      <!-- Privacy Filter -->
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700"> {{'Privacy'}} </label>
+        <p-dropdown
+          [(ngModel)]="selectedPrivacy"
+          [options]="privacyOptions"
+          [placeholder]="'All levels of privacy'|translate"
+          [showClear]="true"
+          styleClass="w-full"
+          (onChange)="onFilterChange()"
+          appendTo="body"
+        />
+      </div>
+
+      <!-- Workspace Filter -->
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700"> {{'Work Space'|translate}}</label>
+        <p-dropdown
+          [(ngModel)]="selectedWorkspace"
+          [options]="workspaceOptions"
+          optionLabel="name"
+          optionValue="id"
+          [placeholder]=" 'All workspaces'|translate "
+          [showClear]="true"
+          styleClass="w-full"
+          (onChange)="onFilterChange()"
+          appendTo="body"
+        />
+      </div>
+
+      <!-- Status Filter
+       
+        <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700">الحالة</label>
+        <p-dropdown
+          [(ngModel)]="selectedStatus"
+          [options]="statusOptions"
+          placeholder="جميع الحالات"
+          [showClear]="true"
+          styleClass="w-full"
+          (onChange)="onFilterChange()"
+          appendTo="body"
+        />
+      </div>
+
+      -->
+      
+      <!-- Size Range -->
+      <div class="space-y-2 sm:col-span-2 lg:col-span-1">
+        <label class="block text-sm font-medium text-gray-700"> {{'Size range'|translate}} </label>
+        <div class="flex gap-2">
+          <p-inputNumber
+            [(ngModel)]="minSize"
+            [placeholder]="'From'|translate"
+            [min]="0"
+            [max]="1000"
+            styleClass="w-full"
+            (onInput)="onFilterChange()"
+          />
+          <p-inputNumber
+            [(ngModel)]="maxSize"
+            [placeholder]="'To'|translate"
+            [min]="0"
+            [max]="1000"
+            styleClass="w-full"
+            (onInput)="onFilterChange()"
+          />
+        </div>
+      </div>
+
+      <!-- Date Range 
+       
+         <div class="space-y-2 sm:col-span-2 lg:col-span-1">
+        <label class="block text-sm font-medium text-gray-700">نطاق التاريخ</label>
+        <p-calendar
+          [(ngModel)]="dateRange"
+          selectionMode="range"
+          [readonlyInput]="true"
+          placeholder="اختر النطاق الزمني"
+          styleClass="w-full"
+          (onSelect)="onFilterChange()"
+          (onClearClick)="onFilterChange()"
+          appendTo="body"
+        />
+      </div>
+      -->
+     
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg md:rounded-xl p-4 md:p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-blue-100 text-xs md:text-sm"> {{'Total Documents'|translate}} </p>
+          <p class="text-lg md:text-2xl font-bold">{{ totalRecords }}</p>
+        </div>
+        <i class="pi pi-file text-xl md:text-3xl text-blue-200"></i>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg md:rounded-xl p-4 md:p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-green-100 text-xs md:text-sm"> {{'Active Documents'|translate}} </p>
+          <p class="text-lg md:text-2xl font-bold">{{ activeFilesCount }}</p>
+        </div>
+        <i class="pi pi-check-circle text-xl md:text-3xl text-green-200"></i>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg md:rounded-xl p-4 md:p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-red-100 text-xs md:text-sm"> {{'Deleted Documents'|translate}} </p>
+          <p class="text-lg md:text-2xl font-bold">{{ deletedFilesCount }}</p>
+        </div>
+        <i class="pi pi-trash text-xl md:text-3xl text-red-200"></i>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg md:rounded-xl p-4 md:p-6 text-white col-span-2 lg:col-span-1">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-purple-100 text-xs md:text-sm"> {{'Total Size'|translate}} </p>
+          <p class="text-lg md:text-2xl font-bold">{{ formatFileSize(totalSize) }}</p>
+        </div>
+        <i class="pi pi-database text-xl md:text-3xl text-purple-200"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Cards View -->
+  <div class="md:hidden space-y-4" *ngIf="!loading && documents.length > 0">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-900">الملفات ({{ totalRecords }})</h3>
+      <p-button
+        [icon]="showTableView ? 'pi pi-list' : 'pi pi-table'"
+        [label]="showTableView ? 'عرض البطاقات' : 'عرض الجدول'"
+        (onClick)="toggleView()"
+        [outlined]="true"
+        severity="secondary"
+        size="small"
+      />
+    </div>
+
+    <!-- Mobile Cards -->
+    <div *ngIf="!showTableView" class="space-y-3">
+      <div 
+        *ngFor="let document of documents; trackBy: trackByDocumentId"
+        class="bg-white rounded-lg shadow-md border border-gray-200 p-4"
+        [class.bg-red-50]="document.isDeleted"
+        [class.border-red-200]="document.isDeleted"
+      >
+        <!-- Card Header -->
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <i [class]="getFileIcon(document.fileType)" class="text-lg text-gray-600 flex-shrink-0"></i>
+            <div class="min-w-0 flex-1">
+              <h4 class="font-medium text-gray-900 truncate text-sm" [title]="document.fileName">
+                {{ document.fileName }}
+              </h4>
+              <p class="text-xs text-gray-500 truncate">{{ document.filePath }}</p>
+            </div>
+          </div>
+          <p-button
+            icon="pi pi-ellipsis-v"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            size="small"
+           
+          />
+        </div>
+
+        <!-- Card Content -->
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <span class="text-gray-500">النوع:</span>
+            <p-tag
+              [value]="document.fileType.toUpperCase()"
+              [severity]="getFileTypeSeverity(document.fileType)"
+              styleClass="text-xs ml-1"
+            />
+          </div>
+          <div>
+            <span class="text-gray-500">الحجم:</span>
+            <span class="text-gray-700 mr-1">{{ formatFileSize(document.size) }}</span>
+          </div>
+          <div>
+            <span class="text-gray-500">التصنيف:</span>
+            <p-tag
+              [value]="getTagLabel(document.tag)"
+              [severity]="getTagSeverity(document.tag)"
+              styleClass="text-xs mr-1"
+            />
+          </div>
+          <div>
+            <span class="text-gray-500">الخصوصية:</span>
+            <p-tag
+              [value]="getPrivacyLabel(document.privacy)"
+              [severity]="getPrivacySeverity(document.privacy)"
+              [icon]="getPrivacyIcon(document.privacy)"
+              styleClass="text-xs mr-1"
+            />
+          </div>
+          <div class="col-span-2">
+            <span class="text-gray-500">تاريخ الإنشاء:</span>
+            <span class="text-gray-700 mr-1">{{ document.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+          <div class="flex items-center gap-2">
+            <p-tag
+              [value]="document.isDeleted ? 'محذوف' : 'نشط'"
+              [severity]="document.isDeleted ? 'danger' : 'success'"
+              [icon]="document.isDeleted ? 'pi pi-trash' : 'pi pi-check'"
+              styleClass="text-xs"
+            />
+            <p-badge
+              [value]="'v' + document.version"
+              severity="info"
+              styleClass="text-xs"
+            />
+          </div>
+          <div class="flex items-center gap-1">
+            <p-button
+              icon="pi pi-eye"
+              [text]="true"
+              [rounded]="true"
+              severity="info"
+              size="small"
+              (onClick)="viewDocument($event,document)"
+            />
+            <p-button
+              icon="pi pi-download"
+              [text]="true"
+              [rounded]="true"
+              severity="secondary"
+              size="small"
+              (onClick)="downloadDocument($event,document)"
+            />
+            <p-button
+              *ngIf="!document.isDeleted"
+              icon="pi pi-trash"
+              [text]="true"
+              [rounded]="true"
+              severity="danger"
+              size="small"
+              (onClick)="deleteDocument($event,document)"
+            />
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop Table View -->
+  <div 
+    class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
+    [class.hidden]="!showTableView"
+    [class.md:block]="true"
+  >
+    <p-table
+      [value]="documents"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="'VIEW_FROM_TO_TOTAL' | translate:{ first: '{first}', last: '{last}', totalRecords: '{totalRecords}' }"
+      [rowsPerPageOptions]="[5,10, 25, 50, 100]"
+      [sortField]="sortField"
+      [sortOrder]="sortOrder"
+      (onLazyLoad)="onLazyLoad($event)"
+      styleClass="p-datatable-lg"
+      [tableStyle]="{'min-width': '80rem'}"
+      [scrollable]="true"
+      [scrollHeight]="getTableHeight()"
+      [responsiveLayout]="'scroll'"
+    >
+      <!-- Table Header -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem" class="hidden lg:table-cell">
+            <p-tableHeaderCheckbox />
+          </th>
+          <th pSortableColumn="fileName" style="min-width: 200px">
+          {{'File name'|translate}}
+            <p-sortIcon field="fileName" />
+          </th>
+          <th pSortableColumn="fileType" style="width: 100px" class="hidden sm:table-cell">
+            {{'Type'|translate}}
+            <p-sortIcon field="fileType" />
+          </th>
+          <th pSortableColumn="size" style="width: 120px" class="hidden md:table-cell">
+            {{'Size'|translate}}
+            <p-sortIcon field="size" />
+          </th>
+          <th pSortableColumn="tag" style="width: 130px" class="hidden lg:table-cell">
+            {{'Classification'|translate}}
+            <p-sortIcon field="tag" />
+          </th>
+          <th pSortableColumn="privacy" style="width: 120px" class="hidden xl:table-cell">
+            {{'Privacy'|translate}}
+            <p-sortIcon field="privacy" />
+          </th>
+          <th pSortableColumn="version" style="width: 80px" class="hidden xl:table-cell">
+              {{'Version'|translate}}
+            <p-sortIcon field="version" />
+          </th>
+          <th pSortableColumn="workspaceName" style="width: 150px" class="hidden 2xl:table-cell">
+            {{'Work Space'|translate}}
+            <p-sortIcon field="workspaceName" />
+          </th>
+          <th pSortableColumn="folderName" style="width: 100px" class="hidden md:table-cell">
+            {{'Folder'|translate}}
+            <p-sortIcon field="folderName" />
+          </th>
+          <th pSortableColumn="createdAt" style="width: 150px" class="hidden lg:table-cell">
+            {{'Creation date'|translate}}
+            <p-sortIcon field="createdAt" />
+          </th>
+          
+          <th style="width: 120px"> {{'Actions'|translate}}</th>
+        </tr>
+      </ng-template>
+
+      <!-- Table Body -->
+      <ng-template pTemplate="body" let-document let-rowIndex="rowIndex">
+        <tr [routerLink]="['/home/Documentdetails',document.id]" [class.bg-red-50]="document.isDeleted">
+          <td class="hidden lg:table-cell">
+            <p-tableCheckbox [value]="document" />
+          </td>
+          <td>
+            <div class="flex items-center gap-2 md:gap-3">
+              <i [class]="getFileIcon(document.fileType)" class="text-base md:text-lg flex-shrink-0"></i>
+              <div class="min-w-0">
+                <p class="font-medium text-gray-900 truncate text-sm md:text-base max-w-[150px] md:max-w-[200px]" [title]="document.fileName">
+                  {{ document.fileName }}
+                </p>
+                <p class="text-xs text-gray-500 truncate max-w-[150px] md:max-w-[200px] md:hidden">
+                  {{ formatFileSize(document.size) }} • {{ getTagLabel(document.tag) }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td class="hidden sm:table-cell">
+            <p-tag
+              [value]="document.fileType.toUpperCase()"
+              [severity]="getFileTypeSeverity(document.fileType)"
+              styleClass="text-xs"
+            />
+          </td>
+          <td class="hidden md:table-cell">
+            <span class="text-sm text-gray-700">{{ formatFileSize(document.size) }}</span>
+          </td>
+          <td class="hidden lg:table-cell">
+            <p-tag
+              [value]="document.tag"
+              [severity]="getTagSeverity(document.tag)"
+              styleClass="text-xs"
+            />
+          </td>
+          <td class="hidden xl:table-cell">
+            <p-tag
+              [value]="document.privacy"
+              [severity]="getPrivacySeverity(document.privacy)"
+              [icon]="getPrivacyIcon(document.privacy)"
+              styleClass="text-xs"
+            />
+          </td>
+          <td class="hidden xl:table-cell">
+            <p-badge
+              [value]="'v' + document.version"
+              severity="info"
+              styleClass="text-xs"
+            />
+          </td>
+          <td class="hidden 2xl:table-cell">
+            <span class="font-mono text-sm text-gray-700">{{ document.workspaceName }}</span>
+          </td>
+         
+          <td class="hidden md:table-cell">
+                       <span class="font-mono text-sm text-gray-700">{{ document.folderName }}</span>
+
+          </td>
+           <td class="hidden lg:table-cell">
+            <span class="text-sm text-gray-700">
+              {{ document.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+          </td>
+          <td>
+            <div class="flex items-center gap-1">
+              <!-- Always visible actions -->
+              <p-button
+                icon="pi pi-eye"
+                [text]="true"
+                [rounded]="true"
+                severity="info"
+                size="small"
+                (onClick)="viewDocument($event,document)"
+                pTooltip="عرض"
+                tooltipPosition="top"
+                styleClass="md:hidden"
+              />
+              
+              <!-- Desktop actions -->
+              <div class="hidden md:flex items-center gap-1">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="info"
+                  size="small"
+                  (onClick)="viewDocument($event,document)"
+                  pTooltip="عرض"
+                  tooltipPosition="top"
+                />
+                <p-button
+                  icon="pi pi-download"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  size="small"
+                  (onClick)="downloadDocument($event,document)"
+                  pTooltip="تحميل"
+                  tooltipPosition="top"
+                />
+                <p-button
+                  *ngIf="!document.isDeleted"
+                  icon="pi pi-trash"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="danger"
+                  size="small"
+                  (onClick)="deleteDocument($event,document)"
+                  pTooltip="حذف"
+                  tooltipPosition="top"
+                />
+              
+              </div>
+              
+              <!-- More actions menu -->
+             
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Empty State -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="getColspan()" class="text-center py-8 md:py-12">
+            <div class="flex flex-col items-center gap-4">
+              <i class="pi pi-inbox text-4xl md:text-6xl text-gray-300"></i>
+              <div>
+                <h3 class="text-base md:text-lg font-semibold text-gray-900 mb-2">لا توجد ملفات</h3>
+                <p class="text-sm md:text-base text-gray-600">لم يتم العثور على أي ملفات تطابق معايير البحث</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Loading Template -->
+      <ng-template pTemplate="loadingbody">
+        <tr>
+          <td [attr.colspan]="getColspan()">
+            <div class="flex items-center justify-center py-6 md:py-8">
+              <p-progressSpinner styleClass="w-6 h-6 md:w-8 md:h-8" />
+              <span class="mr-3 text-sm md:text-base text-gray-600">جاري التحميل...</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Mobile Pagination -->
+  <div class="md:hidden" *ngIf="totalRecords > pageSize">
+    <p-paginator
+      [rows]="pageSize"
+      [totalRecords]="totalRecords"
+      [first]="(currentPage - 1) * pageSize"
+      (onPageChange)="onMobilePageChange($event)"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="صفحة {currentPage} من {totalPages}"
+      [showFirstLastIcon]="false"
+      [showPageLinks]="false"
+    />
+  </div>
+</div>
+
+<!-- Toast Messages -->
+<p-toast position="top-right" />
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog />
+
+<!-- Mobile Menu -->
+<p-menu #mobileMenu [model]="mobileMenuItems" [popup]="true" appendTo="body" />
+
+<div>
+
+  <app-fileupload (visibleChange)="uploadedDocument($event)" [visible]="visable"></app-fileupload>
+</div>

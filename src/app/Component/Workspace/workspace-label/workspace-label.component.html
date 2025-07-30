@@ -1,0 +1,15 @@
+<div class="flex justify-between items-center ">
+    <h2 class="text-xl">
+        {{workspace()?.name}}
+    </h2>
+    <div class="flex justify-between gap-5 w-2/12 ">
+        <i (click)="updateWorkspace()" class="fa-solid fa-pen  cursor-pointer"></i>
+        <i (click)="deleteWorkspace()" class="fa-solid fa-trash  cursor-pointer"></i>
+    </div>
+</div>
+@if (show)
+ {
+    <app-createworkspace  [workspace]="workspace()"></app-createworkspace>
+
+ }
+

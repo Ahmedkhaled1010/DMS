@@ -1,0 +1,82 @@
+<div  [routerLink]="['/home/workspace',workspace()?.id]"
+  class="group my-3 hover:shadow-lg transition-all w-11/12 mx-auto duration-200 border-l-4 border-l-blue-500 bg-white rounded-lg border border-gray-200 hover:-translate-y-1"
+  [@slideIn]
+>
+  <div class="p-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3 flex-1">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 group-hover:bg-blue-200 transition-colors">
+          <i class="fas fa-building text-blue-600"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h3 class="font-semibold text-lg text-gray-900 truncate">{{ workspace()?.name }}</h3>
+          <p class="text-sm text-gray-600 line-clamp-2 mt-1">{{ workspace()?.description }}</p>
+          <div  class="flex items-center gap-1 mt-2 text-xs text-gray-500">
+            <i class="fas fa-calendar-alt"></i>
+            Created 
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          (click)="editWorkspace(); $event.stopPropagation()"
+          class="h-8 w-8 p-0 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors flex items-center justify-center"
+          title="Edit workspace"
+        >
+          <i class="fas fa-edit"></i>
+        </button>
+        <button
+          (click)="showDeleteDialog = true; $event.stopPropagation()"
+          class="h-8 w-8 p-0 rounded-md hover:bg-red-100 hover:text-red-600 transition-colors flex items-center justify-center"
+          title="Delete workspace"
+        >
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Dialog -->
+@if (showDeleteDialog)
+ {
+
+  <div  
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  [@fadeInOut]
+>
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="showDeleteDialog = false"></div>
+  <div class="relative bg-white rounded-xl shadow-2xl p-6 w-full max-w-md" [@slideInOut]>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">{{'Delete Workspace'|translate}}</h3>
+    <p class="text-gray-600 mb-6">
+     {{'Are you sure you want to delete'|translate}} "{{ workspace()?.name }}"? {{'This action cannot be undone.'|translate}}
+    </p>
+    <div class="flex gap-3">
+      <button
+        (click)="showDeleteDialog = false"
+        class="flex-1 py-2 px-4 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+        [disabled]="isDeleting"
+      >
+    {{'Cancel'|translate}}
+      </button>
+      <button
+        (click)="confirmDelete()"
+        class="flex-1 py-2 px-4 text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        [disabled]="isDeleting"
+      >
+      @if (isDeleting) 
+      {
+                <i  class="fas fa-spinner fa-spin"></i>
+
+      }
+       <!--
+         {{ isDeleting ? 'Deleting...' : "{{'Delete'|translate}}" }}
+       --> 
+       {{'Delete'|translate}}
+      
+      </button>
+    </div>
+  </div>
+</div>
+ }

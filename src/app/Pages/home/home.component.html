@@ -1,17 +1,19 @@
-<div class="flex">
-      <div class="w-2/12">
-            <app-sidebar></app-sidebar>
-      </div>
-      <div class="w-8/12">
-         <app-navbar [user]="user"></app-navbar>
-         <div class="text-center">
-   <p>{{user?.name}}</p>
-   <p>{{user?.email}}</p>
-   <p>{{user?.mobileNumber}}</p>
-   <p>{{user?.userName}}</p>
+<div class="flex h-screen w-full">
+  <!-- Sidebar -->
+  <div class="side bg-gray-100 h-full">
+    <app-sidebar></app-sidebar>
+  </div>
 
+  <!-- Menu Section -->
+  <div class="w-2/12 bg-main h-full">
+    <app-menu></app-menu>
+  </div>
+
+  <!-- Main content -->
+  <div class="w-10/12 h-full flex flex-col overflow-auto">
+    <app-navbar [user]="user"></app-navbar>
+    <div class="flex-1 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </div>
-      </div>
-</div>
-
-

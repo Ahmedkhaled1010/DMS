@@ -1,0 +1,147 @@
+/* Custom styles for the file upload modal */
+.file-upload-dialog .p-dialog-header {
+  background-color: #1d4ed8; /* Darker blue for header */
+  color: white;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-left-radius: 8px; /* Match dialog border-radius */
+  border-top-right-radius: 8px;
+}
+
+.file-upload-dialog .p-dialog-content {
+  padding: 1.5rem;
+}
+
+.file-upload-dialog .p-dialog-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-bottom-left-radius: 8px; /* Match dialog border-radius */
+  border-bottom-right-radius: 8px;
+}
+
+/* General PrimeNG button styling for consistency */
+.p-button {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.p-button-primary {
+  background-color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.p-button-primary:hover {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+.p-button-secondary {
+  background-color: #f0f4f8 !important; /* Light gray */
+  border-color: #e2e8f0 !important;
+  color: #4a5568 !important; /* Darker gray text */
+}
+
+.p-button-secondary:hover {
+  background-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.p-button-text {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: #4a5568 !important;
+}
+
+.p-button-text:hover {
+  background-color: #f0f4f8 !important;
+}
+
+/* Style for PrimeNG FileUpload component */
+.p-fileupload .p-fileupload-buttonbar {
+  background-color: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.custom-fileupload .p-fileupload-buttonbar {
+  display: none; /* Hide default button bar as we have custom content */
+}
+
+.custom-fileupload .p-fileupload-content {
+  border: none; /* Remove default border as we have it in the template */
+  padding: 0; /* Remove default padding */
+  background: none; /* Remove default background */
+}
+
+/* Style for PrimeNG Dropdown component */
+.p-dropdown {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.custom-dropdown .p-dropdown {
+  border: 1px solid #e2e8f0; /* Light gray border */
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-dropdown .p-dropdown:not(.p-disabled):hover {
+  border-color: #93c5fd; /* Lighter blue on hover */
+}
+
+.custom-dropdown .p-dropdown.p-focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); /* Blue ring on focus */
+  border-color: #3b82f6;
+}
+
+.custom-dropdown .p-dropdown-label {
+  padding: 0.625rem 0.75rem; /* Adjust padding for text */
+  font-size: 0.875rem; /* text-sm */
+  color: #4a5568; /* Darker gray text */
+}
+
+.custom-dropdown .p-dropdown-trigger {
+  width: 2.5rem; /* Adjust trigger width */
+}
+
+.custom-dropdown .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments for the dialog itself */
+@media (max-width: 1024px) {
+  .file-upload-dialog .p-dialog {
+    width: 70vw !important; /* Wider on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .file-upload-dialog .p-dialog {
+    width: 90vw !important; /* Even wider on small screens */
+    margin: 1rem; /* Add some margin */
+  }
+  .file-upload-dialog .p-dialog-header {
+    padding: 0.75rem 1rem; /* Smaller padding for header */
+  }
+  .file-upload-dialog .p-dialog-content {
+    padding: 1rem; /* Smaller padding for content */
+  }
+  .file-upload-dialog .p-dialog-footer {
+    flex-direction: column; /* Stack buttons on small screens */
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+  .file-upload-dialog .p-dialog-footer .p-button {
+    width: 100%; /* Full width buttons */
+  }
+}

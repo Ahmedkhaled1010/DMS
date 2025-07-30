@@ -1,0 +1,252 @@
+.deleted-documents-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem; /* Increased padding */
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem; /* Increased margin */
+  gap: 1rem;
+}
+
+.page-title {
+  font-size: 2.5rem; /* Larger title */
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: #6b7280;
+  margin: 0.75rem 0 0 0; /* Adjusted margin */
+  font-size: 1.125rem; /* Larger subtitle */
+}
+
+.main-content-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Softer, larger shadow */
+  border-radius: 20px; /* More rounded corners */
+  background-color: white;
+  padding: 2rem; /* Generous padding inside the main card */
+}
+
+/* States: Loading, Error, Empty */
+.loading-state,
+.error-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem; /* More vertical padding */
+  text-align: center;
+  color: #6b7280;
+}
+
+.loading-state p,
+.error-state p,
+.empty-state p {
+  margin-top: 1.5rem;
+  font-size: 1.25rem; /* Larger text */
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Wider cards */
+  gap: 1.75rem; /* Increased gap */
+}
+
+/* Individual Document Item Card */
+.document-item-card {
+  border: 1px solid #e0e0e0; /* Lighter border */
+  border-radius: 16px; /* Rounded corners */
+  /* Updated background with a subtle gradient */
+  background: linear-gradient(145deg, #f9f9f9, #ffffff);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.document-item-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Enhanced hover shadow */
+  transform: translateY(-5px); /* More pronounced lift */
+  border-color: #a3bbf6; /* Subtle blue border on hover */
+}
+
+.document-item-content {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem; /* Increased gap */
+  padding: 1.25rem; /* Padding inside the card content */
+}
+
+.document-icon-wrapper {
+  flex-shrink: 0;
+  width: 56px; /* Larger icon wrapper */
+  height: 56px;
+  border-radius: 50%; /* Circular background */
+  background-color: #e0f2fe; /* Light blue background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.document-icon-wrapper .pi {
+  font-size: 2.25rem; /* Larger icon */
+  color: #3b82f6; /* Blue color for document icon */
+}
+
+.document-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-title {
+  font-size: 1.375rem; /* Larger title */
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.3rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.document-filename {
+  font-size: 0.95rem; /* Slightly larger filename */
+  color: #6b7280;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.document-meta-badges {
+  display: flex;
+  gap: 0.6rem; /* Adjusted gap */
+  margin-top: 0.8rem; /* Adjusted margin */
+  flex-wrap: wrap;
+}
+
+.tag-badge,
+.privacy-badge {
+  padding: 0.35rem 0.9rem; /* More padding */
+  border-radius: 25px; /* More rounded */
+  font-size: 0.7rem; /* Slightly smaller text for badges */
+  font-weight: 500;
+  color: white;
+  background-color: #9ca3af; /* Default gray for general badges */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow for badges */
+}
+
+.tag-badge {
+  background-color: #3b82f6; /* Blue for tags */
+}
+
+.privacy-badge {
+  background-color: #10b981; /* Green for privacy */
+}
+
+.document-actions {
+  flex-shrink: 0;
+  margin-left: 1.5rem; /* Space from content */
+  display: flex; /* Enable flexbox for buttons */
+  flex-direction: column; /* Stack buttons vertically */
+  gap: 0.5rem; /* Space between buttons */
+}
+
+/* PrimeNG Button Overrides for consistency */
+.p-button-sm {
+  padding: 0.7rem 1.2rem !important; /* More padding for buttons */
+  font-size: 0.9rem !important; /* Slightly larger font */
+}
+
+.p-button-rounded {
+  border-radius: 30px !important; /* More rounded */
+}
+
+.p-button-success {
+  background-color: #22c55e !important; /* Brighter green */
+  border-color: #22c55e !important;
+}
+
+.p-button-success:hover {
+  background-color: #16a34a !important; /* Darker green on hover */
+  border-color: #16a34a !important;
+}
+
+.p-button-danger {
+  background-color: #ef4444 !important; /* Red for danger */
+  border-color: #ef4444 !important;
+}
+
+.p-button-danger:hover {
+  background-color: #dc2626 !important; /* Darker red on hover */
+  border-color: #dc2626 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .deleted-documents-container {
+    padding: 1.5rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .main-content-card {
+    padding: 1.5rem;
+  }
+
+  .documents-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .document-item-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .document-item-content {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 0.75rem;
+    padding: 0; /* Remove inner padding as card has it */
+  }
+
+  .document-icon-wrapper {
+    margin-bottom: 0.5rem;
+  }
+
+  .document-details {
+    width: 100%;
+  }
+
+  .document-actions {
+    width: 100%;
+    margin-top: 1rem;
+    margin-left: 0;
+    flex-direction: row; /* Buttons side-by-side on mobile */
+    justify-content: space-around; /* Distribute space */
+  }
+
+  .document-actions .p-button {
+    flex: 1; /* Make buttons take equal width */
+  }
+}

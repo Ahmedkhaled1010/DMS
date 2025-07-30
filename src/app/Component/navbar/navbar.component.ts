@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
-import { User } from '../../Interfaces/user';
+import { User } from '../../Interfaces/User/user';
+import { MyTranslateService } from '../../Services/Translate/my-translate.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,5 +11,13 @@ import { User } from '../../Interfaces/user';
 })
 export class NavbarComponent {
   user=input<User>();
+  constructor(private _MyTranslateService:MyTranslateService)
+  {
+
+  }
+  changeLanguage()
+  {
+    this._MyTranslateService.changeLanguage();
+  }
 
 }

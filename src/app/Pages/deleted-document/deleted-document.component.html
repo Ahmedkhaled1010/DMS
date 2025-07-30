@@ -1,0 +1,71 @@
+<div class="deleted-documents-container" dir="rtl">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog> <!-- Add ConfirmDialog component here -->
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title"> {{'Recycle Bin'|translate}} </h1>
+      <p class="page-subtitle"> {{'Deleted documents that can be recovered'|translate}} </p>
+    </div>
+  </div>
+
+  <p-card styleClass="main-content-card">
+    <ng-template pTemplate="content">
+      <div *ngIf="loading" class="loading-state">
+        <p-progressSpinner styleClass="w-6rem h-6rem" strokeWidth="5" fill="var(--surface-ground)" animationDuration=".8s"></p-progressSpinner>
+        <p class="text-xl text-gray-600 mt-5"> {{'Loading deleted documents...'|translate}} </p>
+      </div>
+
+      <div *ngIf="!loading && error" class="error-state">
+        <i class="pi pi-exclamation-triangle text-red-500 text-6xl mb-4"></i>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">حدث خطأ</h3>
+        <p class="text-red-600 text-lg font-medium">{{ error }}</p>
+        <p-button label="إعادة المحاولة" icon="pi pi-refresh" (onClick)="fetchDeletedDocuments()" styleClass="mt-5 p-button-secondary p-button-outlined"></p-button>
+      </div>
+
+      <div *ngIf="!loading && !error && deletedDocuments.length === 0" class="empty-state">
+        <i class="pi pi-trash text-gray-300 text-8xl mb-6"></i>
+        <h3 class="text-3xl font-bold text-gray-800 mb-3"> {{'Recycle Bin is empty'|translate}}  </h3>
+        <p class="text-gray-600 text-xl"> {{'There are no deleted documents currently.'|translate}} </p>
+      </div>
+
+      <div *ngIf="!loading && !error && deletedDocuments.length > 0" class="documents-grid">
+        <p-card *ngFor="let doc of deletedDocuments" styleClass="document-item-card">
+          <ng-template pTemplate="content">
+            <div class="document-item-content">
+              <div class="document-icon-wrapper">
+                <i class="pi pi-file text-blue-500"></i>
+              </div>
+              <div class="document-details">
+                <h3 class="document-title">{{ doc.fileName }}</h3>
+                <p class="document-filename">{{ doc.fileType }}</p>
+                <div class="document-meta-badges">
+                  <span class="tag-badge">{{ doc.tag }}</span>
+                  <span class="privacy-badge">{{ doc.privacy }}</span>
+                </div>
+              </div>
+              <div class="document-actions">
+                <p-button
+                  [label]="'restoreDocument' | translate"
+                  icon="pi pi-undo"
+                  severity="success"
+                  [loading]="restoringDocumentId === doc.id"
+                  (onClick)="restoreDocument(doc.id)"
+                  styleClass="p-button-sm p-button-rounded p-button-success"
+                ></p-button>
+                <p-button
+                  [label]="'deletePermanently' | translate"
+                  icon="pi pi-times"
+                  severity="danger"
+                  [loading]="deletingDocumentId === doc.id"
+                  (onClick)="confirmPermanentDelete($event, doc.id, doc.fileName)"
+                  styleClass="p-button-sm p-button-rounded p-button-danger mt-2"
+                ></p-button>
+              </div>
+            </div>
+          </ng-template>
+        </p-card>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

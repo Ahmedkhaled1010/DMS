@@ -1,0 +1,94 @@
+/* General styles for the landing page */
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Hero Section Buttons */
+.p-button-lg {
+  padding: 1rem 2.5rem !important; /* px-10 py-4 */
+  font-size: 1.25rem !important; /* text-xl */
+  font-weight: 700 !important; /* font-bold */
+  border-radius: 9999px !important; /* rounded-full */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; /* shadow-xl */
+  transition: all 0.3s ease-in-out !important;
+}
+
+.p-button-lg:hover {
+  transform: scale(1.05);
+}
+
+.p-button-white-text-blue {
+  background-color: white !important;
+  color: #2563eb !important; /* blue-600 */
+  border-color: white !important;
+}
+
+.p-button-white-text-blue:hover {
+  background-color: #f3f4f6 !important; /* gray-100 */
+  color: #2563eb !important;
+}
+
+.p-button-white-outline {
+  background-color: transparent !important;
+  color: white !important;
+  border: 1px solid white !important;
+}
+
+.p-button-white-outline:hover {
+  background-color: white !important;
+  color: #2563eb !important; /* blue-600 */
+}
+
+/* Call to Action Button */
+.p-button-white-text-blue-700 {
+  background-color: white !important;
+  color: #1d4ed8 !important; /* blue-700 */
+  border-color: white !important;
+  padding: 1rem 2.5rem !important; /* px-10 py-4 */
+  font-size: 1.25rem !important; /* text-xl */
+  font-weight: 700 !important; /* font-bold */
+  border-radius: 9999px !important; /* rounded-full */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; /* shadow-xl */
+  transition: all 0.3s ease-in-out !important;
+}
+
+.p-button-white-text-blue-700:hover {
+  background-color: #f3f4f6 !important; /* gray-100 */
+  color: #1d4ed8 !important; /* blue-700 */
+  transform: scale(1.05);
+}
+
+/* Feature Card Styling */
+.bg-blue-100 {
+  background-color: #dbeafe; /* Tailwind blue-100 */
+}
+
+.text-blue-600 {
+  color: #2563eb; /* Tailwind blue-600 */
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
+
+.bg-white {
+  background-color: white;
+}

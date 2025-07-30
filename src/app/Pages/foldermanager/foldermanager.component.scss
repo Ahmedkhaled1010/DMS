@@ -1,0 +1,373 @@
+/* Base styles for light mode */
+:root {
+  --background: hsl(0 0% 100%); /* White */
+  --foreground: hsl(222.2 47.4% 11.2%); /* Dark text */
+  --muted-background: hsl(210 40% 96.1%); /* Light gray */
+  --muted-foreground: hsl(215.4 16.3% 46.9%); /* Muted gray text */
+  --card-background: hsl(0 0% 100%); /* White */
+  --border-color: hsl(214.3 31.8% 91.4%); /* Light border */
+  --primary: hsl(221.2 83.2% 53.3%); /* Blue */
+  --primary-foreground: hsl(210 40% 98%); /* White text on primary */
+  --accent: hsl(210 40% 96.1%); /* Light gray for accents */
+  --accent-foreground: hsl(222.2 47.4% 11.2%); /* Dark text on accent */
+  --destructive: hsl(0 84.2% 60.2%); /* Red for danger */
+  --destructive-foreground: hsl(210 40% 98%); /* White text on danger */
+  --info: hsl(217.2 91.2% 59.8%); /* PrimeNG info blue */
+  --success: hsl(142.1 76.2% 36.3%); /* PrimeNG success green */
+  --warning: hsl(48 96% 50%); /* PrimeNG warning yellow */
+  --error: hsl(0 84.2% 60.2%); /* PrimeNG error red */
+}
+
+/* Dark mode styles */
+.dark {
+  --background: hsl(222.2 84% 4.9%); /* Dark blue-gray */
+  --foreground: hsl(210 40% 98%); /* Light text */
+  --muted-background: hsl(217.2 32.6% 17.5%); /* Darker muted */
+  --muted-foreground: hsl(215 20.2% 65.1%); /* Muted light text */
+  --card-background: hsl(217.2 32.6% 17.5%); /* Darker muted */
+  --border-color: hsl(217.2 32.6% 17.5%); /* Dark border */
+  --primary: hsl(217.2 91.2% 59.8%); /* Brighter blue */
+  --primary-foreground: hsl(222.2 47.4% 11.2%); /* Dark text on primary */
+  --accent: hsl(217.2 32.6% 17.5%); /* Darker muted for accents */
+  --accent-foreground: hsl(210 40% 98%); /* Light text on accent */
+  --destructive: hsl(0 62.8% 30.6%); /* Darker red for danger */
+  --destructive-foreground: hsl(210 40% 98%); /* White text on danger */
+  --info: hsl(217.2 91.2% 59.8%);
+  --success: hsl(142.1 76.2% 36.3%);
+  --warning: hsl(48 96% 50%);
+  --error: hsl(0 84.2% 60.2%);
+}
+
+/* Apply variables to Tailwind's utility classes */
+.bg-background {
+  background-color: var(--background);
+}
+.text-foreground {
+  color: var(--foreground);
+}
+.bg-muted {
+  background-color: var(--muted-background);
+}
+.text-muted-foreground {
+  color: var(--muted-foreground);
+}
+.bg-card {
+  background-color: var(--card-background);
+}
+.border-border {
+  border-color: var(--border-color);
+}
+.text-primary {
+  color: var(--primary);
+}
+.bg-primary {
+  background-color: var(--primary);
+}
+.text-primary-foreground {
+  color: var(--primary-foreground);
+}
+.bg-accent {
+  background-color: var(--accent);
+}
+.text-accent-foreground {
+  color: var(--accent-foreground);
+}
+.bg-destructive {
+  background-color: var(--destructive);
+}
+.text-destructive-foreground {
+  color: var(--destructive-foreground);
+}
+.text-info {
+  color: var(--info);
+}
+.text-success {
+  color: var(--success);
+}
+.text-warning {
+  color: var(--warning);
+}
+.text-error {
+  color: var(--error);
+}
+
+/* General RTL support */
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+input,
+textarea,
+p-dropdown,
+p-button,
+p-table,
+p-dialog,
+p-card {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Page Layout */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  gap: 1rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--muted-foreground);
+  margin: 0.75rem 0 0 0;
+  font-size: 1.125rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.main-content-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  background-color: var(--card-background);
+  padding: 2rem;
+}
+
+/* States: Loading, Error, Empty */
+.loading-state,
+.error-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.loading-state p,
+.error-state p,
+.empty-state p {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+}
+
+/* Table Styling */
+.folders-table-container {
+  overflow-x: auto; /* Enable horizontal scrolling for small screens */
+}
+
+.p-datatable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-background);
+  color: var(--foreground);
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: var(--muted-background);
+  color: var(--muted-foreground);
+  font-weight: 600;
+  padding: 1rem;
+  text-align: right; /* RTL */
+  border-bottom: 1px solid var(--border-color);
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--foreground);
+}
+
+.p-datatable .p-datatable-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: var(--accent); /* Light hover effect */
+}
+
+.p-datatable .p-paginator {
+  background-color: var(--muted-background);
+  border-top: 1px solid var(--border-color);
+  padding: 1rem;
+  display: flex;
+  justify-content: center; /* Center pagination controls */
+  flex-wrap: wrap;
+  color: var(--muted-foreground);
+}
+
+/* Dialog Styling */
+.folder-dialog .p-dialog-header {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.folder-dialog .p-dialog-content {
+  padding: 1.5rem;
+  background-color: var(--card-background);
+  color: var(--foreground);
+}
+
+.folder-dialog .p-dialog-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--muted-background);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* PrimeNG Input and Dropdown Overrides */
+.p-inputtext,
+.p-dropdown {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
+.p-inputtext:focus,
+.p-dropdown.p-focus {
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.25);
+  border-color: var(--primary);
+}
+
+.p-dropdown .p-dropdown-label {
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.p-dropdown .p-dropdown-trigger {
+  width: 2.5rem;
+  background-color: var(--muted-background);
+  color: var(--muted-foreground);
+}
+
+.p-error {
+  color: var(--error);
+  font-size: 0.75rem;
+}
+
+/* PrimeNG Button Overrides */
+.p-button-primary {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--primary) !important;
+}
+.p-button-primary:hover {
+  background-color: color-mix(in srgb, var(--primary) 80%, black) !important;
+  border-color: color-mix(in srgb, var(--primary) 80%, black) !important;
+}
+
+.p-button-secondary {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+  border-color: var(--accent) !important;
+}
+.p-button-secondary:hover {
+  background-color: color-mix(in srgb, var(--accent) 80%, black) !important;
+  border-color: color-mix(in srgb, var(--accent) 80%, black) !important;
+}
+
+.p-button-info {
+  background-color: var(--info) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--info) !important;
+}
+.p-button-info:hover {
+  background-color: color-mix(in srgb, var(--info) 80%, black) !important;
+  border-color: color-mix(in srgb, var(--info) 80%, black) !important;
+}
+
+.p-button-danger {
+  background-color: var(--destructive) !important;
+  color: var(--destructive-foreground) !important;
+  border-color: var(--destructive) !important;
+}
+.p-button-danger:hover {
+  background-color: color-mix(in srgb, var(--destructive) 80%, black) !important;
+  border-color: color-mix(in srgb, var(--destructive) 80%, black) !important;
+}
+
+.p-button-success {
+  background-color: var(--success) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--success) !important;
+}
+.p-button-success:hover {
+  background-color: color-mix(in srgb, var(--success) 80%, black) !important;
+  border-color: color-mix(in srgb, var(--success) 80%, black) !important;
+}
+
+.p-button-text {
+  background-color: transparent !important;
+  color: var(--primary) !important;
+  border-color: transparent !important;
+}
+.p-button-text:hover {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+}
+.p-button-text.p-button-danger {
+  color: var(--destructive) !important;
+}
+.p-button-text.p-button-danger:hover {
+  background-color: color-mix(in srgb, var(--destructive) 10%, transparent) !important;
+  color: var(--destructive) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 1.5rem;
+  }
+  .header-actions {
+    justify-content: stretch;
+  }
+  .header-actions .p-button {
+    width: 100%;
+  }
+  .main-content-card {
+    padding: 1.5rem;
+  }
+  .folder-dialog .p-dialog {
+    width: 90vw !important;
+    margin: 1rem;
+  }
+  .folder-dialog .p-dialog-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+  .folder-dialog .p-dialog-footer .p-button {
+    width: 100%;
+  }
+}

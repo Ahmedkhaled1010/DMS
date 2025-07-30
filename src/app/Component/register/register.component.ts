@@ -5,11 +5,12 @@ import { AuthService } from '../../Services/Auth/auth.service';
 import { AbstractControl, Validators, ValidationErrors } from '@angular/forms';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { Register } from '../../Interfaces/register';
+import { Register } from '../../Interfaces/User/register';
 import {} from '@angular/compiler';
-import { Response } from '../../Interfaces/response';
-import { Token } from '../../Interfaces/token';
+import { Response } from '../../Interfaces/User/response';
+import { Token } from '../../Interfaces/User/token';
 import { TranslateModule } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -26,7 +27,8 @@ export class RegisterComponent {
   constructor(
     private _AuthService: AuthService,
     private _ToastrService: ToastrService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private _Router: Router
   ) {}
   ngOnInit(): void {
     this.passwordVisible();
@@ -134,11 +136,14 @@ export class RegisterComponent {
       next: (res) => {
         console.log(res);
         this._ToastrService.success('Register', 'Register successfully');
-        localStorage.setItem('Token', this.registerResponse?.data.token);
+        localStorage.setItem('Token', res.data.token);
+        console.log(res.data.token);
+        
         this._AuthService.saveUserData();
+       this._Router.navigate(['/home']);
       },
       error: (err) => {
-        this._ToastrService.error('Register', 'unsuccessfully');
+        this._ToastrService.error('Register', err.error.statusMsg);
 
         console.log(err);
       },

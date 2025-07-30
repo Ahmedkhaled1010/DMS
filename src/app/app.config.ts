@@ -9,7 +9,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-
+import { NgxSpinnerModule } from 'ngx-spinner';
+NgxSpinnerModule
 function translation(http:HttpClient)
 {
   return new TranslateHttpLoader(http,'assets/i18n/','.json');
@@ -31,5 +32,5 @@ export const appConfig: ApplicationConfig = {
         deps:[HttpClient]
       }
     }
-  ) )]
+  ) ),NgxSpinnerModule]
 };

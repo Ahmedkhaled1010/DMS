@@ -1,44 +1,44 @@
 
-  <div class="bg-white w-10/12 p-3 my-8 mx-auto rounded-2xl text-xl">
-    <h2 class="text-center text-base font-medium text-gray-700">{{'Welcome to DriveBox'|translate}}</h2>
+  <div class="bg-white text-main  w-10/12 p-3 my-8 mx-auto rounded-2xl text-xl">
+    <h2 class="text-center text-base font-medium text-main">{{'Welcome to DriveBox'|translate}}</h2>
     <h1 class="text-center text-3xl font-bold mb-4">{{'Register'|translate}}</h1>
 
    <form [formGroup]="registerForm" (ngSubmit)="register()" class="space-y-3">
   <div class="grid grid-cols-2 gap-2 ">
     <div class="my-1">
-      <label class="block text-gray-600 mb-0.5">{{'Name'|translate}}</label>
+      <label class="block text-main mb-0.5">{{'Name'|translate}}</label>
       <input formControlName="name" type="text" [placeholder]="'Name'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
     </div>
     <div class="my-1">
-      <label class="block text-gray-600 mb-0.5">{{'Username'|translate}}</label>
+      <label class="block text-main mb-0.5">{{'Username'|translate}}</label>
       <input formControlName="userName" type="text" [placeholder]="'Username'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
     </div>
   </div>
 <div class="grid grid-cols-2 gap-2">
   <div class="my-1">
-    <label class="block text-gray-600 mb-0.5">{{'Mobile Number'|translate}}</label>
+    <label class="block text-main mb-0.5">{{'Mobile Number'|translate}}</label>
     <input formControlName="mobileNumber" type="text" [placeholder]="'Mobile Number'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
   </div>
   <div class="my-1">
-    <label class="block text-gray-600 mb-0.5">{{'National Id'|translate}}</label>
+    <label class="block text-main mb-0.5">{{'National Id'|translate}}</label>
     <input formControlName="nationalID" type="text" [placeholder]="'National Id'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
   </div>
   </div>
 
   <div class="grid grid-cols-2 gap-2">
     <div class="my-1">
-      <label class="block text-gray-600 mb-0.5">{{'Email'|translate}}</label>
+      <label class="block text-main mb-0.5">{{'Email'|translate}}</label>
       <input formControlName="email" type="email" [placeholder]="'Email'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
     </div>
     <div class="my-1">
-      <label class="block text-gray-600 mb-0.5">{{'Confirm Email'|translate}}</label>
+      <label class="block text-main mb-0.5">{{'Confirm Email'|translate}}</label>
       <input formControlName="confirmEmail" type="email" [placeholder]="'Confirm Email'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
     </div>
   </div>
 
   <div class="grid grid-cols-2 gap-2">
     <div class="my-1">
-      <label class="block text-gray-600 mb-0.5">{{'Password'|translate}}</label>
+      <label class="block text-main mb-0.5">{{'Password'|translate}}</label>
       <div class="relative">
           <input type="password" id="registerpassword" formControlName="password"[placeholder]="'Password'|translate"
                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-main"/>
@@ -49,7 +49,7 @@
     </div>
 
     <div class="my-1">
-      <label class="block text-gray-600 mb-0.5">{{'Confirm Password'|translate}}</label>
+      <label class="block text-main mb-0.5">{{'Confirm Password'|translate}}</label>
       <div class="relative">
           <input type="password" id="confirmPassword" formControlName="confirmPassword" [placeholder]="'Confirm Password'|translate"
                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-main"/>
@@ -64,7 +64,7 @@
     {{'Register'|translate}}
   </button>
 
-  <p class="text-center text-xs mt-2">
+  <p class="text-center text-black text-xs mt-2">
 {{'Already have an account?'|translate}}
     <a (click)="login()" class="text-main cursor-pointer font-semibold hover:underline">{{'Log in'|translate}}</a>
   </p>

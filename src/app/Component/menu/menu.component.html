@@ -1,0 +1,94 @@
+
+    <div class="flex fixed">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-sidebar-bg text-white overflow-y-auto transition-all duration-300">
+            <div class="p-6">
+                <!-- Documents Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold mb-4 text-white">Drive Box</h2>
+                    <div class="space-y-2">
+                        <div routerLink="Documents" class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group" data-section="documents">
+                            <i class="far fa-file text-lg group-hover:scale-110 transition-transform"></i>
+                            <span  class="group-hover:translate-x-1 transition-transform"> {{'Documents'|translate}} </span>
+                        </div>
+                        <div routerLink="Folders" class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group" data-section="documents">
+                            <i class="far fa-folder text-lg group-hover:scale-110 transition-transform"></i>
+                            <span routerLink="Folders" class="group-hover:translate-x-1 transition-transform"> {{'Folders'|translate}} </span>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group" data-section="documents">
+                            <i class="fa-regular fa-cloud text-lg group-hover:scale-110 transition-transform"></i>
+                            <span routerLink="/home" class="group-hover:translate-x-1 transition-transform"> {{'Work Space'|translate}}  </span>
+                        </div>
+                        <div routerLink="DeletedDocuments"  class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group" data-section="trash">
+                            <i class="far fa-trash-alt text-lg group-hover:scale-110 transition-transform"></i>
+                            <span routerLink="DeletedDocuments" class="group-hover:translate-x-1 transition-transform">Trash</span>
+                        </div>
+                        <div routerLink="ArchivedDocuments"  class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group" data-section="trash">
+                            <i class="fa-regular fa-file-zipper text-lg group-hover:scale-110 transition-transform"></i>
+                            <span routerLink="ArchivedDocuments" class="group-hover:translate-x-1 transition-transform">Archived</span>
+                        </div>
+                        <div routerLink="SharedDocuments"  class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group" data-section="trash">
+                            <i class="fa-regular fa-file-zipper text-lg group-hover:scale-110 transition-transform"></i>
+                            <span routerLink="ArchivedDocuments" class="group-hover:translate-x-1 transition-transform">Shared</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold mb-4 text-white">Filters</h2>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group filter-item" data-filter="draft">
+                            <div class="w-3 h-3 bg-gray-400 rounded-full group-hover:scale-125 transition-transform"></div>
+                            <span class="group-hover:translate-x-1 transition-transform">Draft</span>
+                            <span class="ml-auto text-xs text-gray-300">45</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group filter-item" data-filter="sent">
+                            <div class="w-3 h-3 bg-yellow-400 rounded-full group-hover:scale-125 transition-transform"></div>
+                            <span class="group-hover:translate-x-1 transition-transform">Sent</span>
+                            <span class="ml-auto text-xs text-gray-300">123</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer transition-all duration-200 group filter-item" data-filter="signed">
+                            <div class="w-3 h-3 bg-green-400 rounded-full group-hover:scale-125 transition-transform"></div>
+                            <span class="group-hover:translate-x-1 transition-transform">Signed</span>
+                            <span class="ml-auto text-xs text-gray-300">89</span>
+                        </div>
+                    </div>
+                </div>
+
+              
+                <!-- Tags Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold mb-4 text-white">Tags</h2>
+                    <div class="space-y-3">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tag-item bg-orange-400 text-white px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-orange-500 hover:scale-105 transition-all duration-200 shadow-sm" data-tag="jobs">
+                                Jobs
+                            </span>
+                            <span class="tag-item bg-purple-400 text-white px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-purple-500 hover:scale-105 transition-all duration-200 shadow-sm" data-tag="quotes">
+                                Quotes
+                            </span>
+                        </div>
+                        <div>
+                            <span class="tag-item bg-green-400 text-white px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-green-500 hover:scale-105 transition-all duration-200 shadow-sm" data-tag="requests">
+                                Requests
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add New Tag Button -->
+                <div class="mb-6">
+                    <button id="add-tag-btn" class="w-full p-2 border-2 border-dashed border-white border-opacity-30 rounded-lg text-white text-opacity-70 hover:text-opacity-100 hover:border-opacity-50 transition-all duration-200 flex items-center justify-center gap-2">
+                        <i class="fas fa-plus text-sm"></i>
+                        <span>Add New Tag</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+       
+    </div>
+
+  
+   
