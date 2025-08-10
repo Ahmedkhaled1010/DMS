@@ -24,6 +24,8 @@ export class HomeComponent {
         next:(res)=>{
           console.log(res);
           this.user=res.data;
+          console.log(this.user);
+          
           this._AuthService.User.next(this.user);
           
         },
@@ -35,7 +37,11 @@ export class HomeComponent {
       }
     )
     
-    
+    this._AuthService.User.subscribe(
+      (res)=>{
+        this.user=res
+      }
+    )
   }
 
 }

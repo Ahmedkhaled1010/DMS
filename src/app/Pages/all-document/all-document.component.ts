@@ -26,6 +26,8 @@ import { DocumentModel, Privacy, DocumentTag, DocumentFilter } from '../../Inter
 import { DocumentService } from '../../Services/Document/document.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { FileuploadComponent } from "../../Component/fileupload/fileupload.component";
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-all-document',
@@ -117,7 +119,8 @@ export class AllDocumentComponent {
   constructor(
     private documentService: DocumentService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private _Router:Router
   ) {
     // Setup search debouncing
     this.searchSubject.pipe(
@@ -378,14 +381,54 @@ this.documentService.getAllDocumentUser(filter).subscribe(
       this.visable = event;
     this.loadDocuments();
   }
-  viewDocument(event:MouseEvent, document: DocumentModel): void {
+  reviewDocument(event:MouseEvent, document: DocumentModel) {
     event.stopPropagation();
+     this.documentService.reviewDocument(document.id).subscribe({
+      next: (res) => {
+        console.log(res);
+        // window.open(res.data, '_blank');
+        
+      this.viewBase64File(res.data, document.fileType);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
+  viewDocument(event:MouseEvent, document: DocumentModel): string {
+    event.stopPropagation();
+            this._Router.navigate(['/home/reviewdocument',document.id])
+
+    let data:string=''
+    /*this.documentService.reviewDocument(document.id).subscribe({
+      next: (res) => {
+        console.log(res);
+        // window.open(res.data, '_blank');
+        data= res.data;
+      //  this.viewBase64File(res.data, document.fileType);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });*/
+  
+    this.messageService.add({
+      severity: 'info',
+      summary: 'عرض الملف',
+      detail: `عرض الملف: ${document.fileName}`
+    });
+    return data;
+  }
+  /*
+  
+     reviewDocument( document: DocumentModel): string {
+    let data:string=''
     this.documentService.reviewDocument(document.id).subscribe({
       next: (res) => {
         console.log(res);
         // window.open(res.data, '_blank');
-
-        this.viewBase64File(res.data, document.fileType);
+        data= res.data;
+      //  this.viewBase64File(res.data, document.fileType);
       },
       error: (err) => {
         console.log(err);
@@ -397,7 +440,9 @@ this.documentService.getAllDocumentUser(filter).subscribe(
       summary: 'عرض الملف',
       detail: `عرض الملف: ${document.fileName}`
     });
+    return data;
   }
+  */
    viewBase64File(base64String: string, mimeType: string) {
     try {
       const cleanBase64 = base64String.includes(',')
@@ -452,7 +497,7 @@ this.documentService.getAllDocumentUser(filter).subscribe(
       next: (res) => {
         const blob = res.body!;
         const contentDisposition = res.headers.get('Content-Disposition');
-        let filename = 'downloaded-file';
+        let filename = documents.fileName;
 
         if (contentDisposition) {
           const matches = /filename="(.+)"/.exec(contentDisposition);

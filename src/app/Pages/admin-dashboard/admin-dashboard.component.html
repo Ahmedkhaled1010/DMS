@@ -1,0 +1,960 @@
+
+<app-navbar></app-navbar>
+<div >
+
+  <div class="admin-dashboard">
+  <!-- Theme Toggle -->
+ 
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="container">
+      <h1 class="dashboard-title">Admin Dashboard</h1>
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="openNotificationModal()">
+          📢 Send Notification
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Update the navigation section -->
+<nav class="dashboard-nav">
+  <div class="container">
+    <div class="nav-items">
+      <button 
+        class="nav-item" 
+        [class.active]="activeView === 'dashboard'"
+        (click)="setActiveView('dashboard')">
+        📊 Dashboard
+      </button>
+      <button 
+        class="nav-item" 
+        [class.active]="activeView === 'users'"
+        (click)="setActiveView('users')">
+        👥 Users ({{users.length || 0}})
+      </button>
+      <button 
+        class="nav-item" 
+        [class.active]="activeView === 'workspaces'"
+        (click)="setActiveView('workspaces')">
+        🏢 Workspaces ({{workspaces.length || 0}})
+      </button>
+      <button 
+        class="nav-item" 
+        [class.active]="activeView === 'folders'"
+        (click)="setActiveView('folders')">
+        📁 Folders ({{folders.length|| 0}})
+      </button>
+      <button 
+        class="nav-item" 
+        [class.active]="activeView === 'documents'"
+        (click)="setActiveView('documents')">
+        📄 Documents ({{documents.length || 0}})
+      </button>
+      <button 
+        class="nav-item" 
+        [class.active]="activeView === 'payments'"
+        (click)="setActiveView('payments')">
+        💳 Payments
+      </button>
+    </div>
+  </div>
+</nav>
+
+  <!-- Alert -->
+  <div *ngIf="alertMessage" [class]="'alert alert-' + alertType + ' container'">
+    {{alertMessage}}
+  </div>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <div class="container">
+      
+      <!-- Dashboard Overview -->
+      <div *ngIf="activeView === 'dashboard'" class="dashboard-content">
+        <div *ngIf="loading" class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Loading dashboard data...</p>
+        </div>
+
+        <div *ngIf="!loading && stats" class="stats-overview">
+          <!-- Main Stats Cards -->
+          <div class="stats-grid">
+            <div class="stat-card clickable" (click)="setActiveView('users')">
+              <div class="stat-icon">👥</div>
+              <div class="stat-content">
+                <div class="stat-number">{{users.length}}</div>
+                <div class="stat-label">Total Users</div>
+                <div class="stat-sublabel">{{stats.activeUsers}} active</div>
+              </div>
+            </div>
+
+            <div class="stat-card clickable" (click)="setActiveView('workspaces')">
+              <div class="stat-icon">🏢</div>
+              <div class="stat-content">
+                <div class="stat-number">{{workspaces.length}}</div>
+                <div class="stat-label">Total Workspaces</div>
+                <div class="stat-sublabel">Across all users</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">📁</div>
+              <div class="stat-content">
+                <div class="stat-number">{{folders.length}}</div>
+                <div class="stat-label">Total Folders</div>
+                <div class="stat-sublabel">Organized content</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">📄</div>
+              <div class="stat-content">
+                <div class="stat-number">{{documents.length}}</div>
+                <div class="stat-label">Total Documents</div>
+                <div class="stat-sublabel">Files stored</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue Stats -->
+          <div class="revenue-stats">
+            <div class="stat-card revenue-card">
+              <div class="stat-icon">💰</div>
+              <div class="stat-content">
+                <div class="stat-number">{{formatCurrency(stats.totalRevenue)}}</div>
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-sublabel">All time earnings</div>
+              </div>
+            </div>
+
+            <div class="stat-card revenue-card">
+              <div class="stat-icon">📈</div>
+              <div class="stat-content">
+                <div class="stat-number">{{formatCurrency(stats.monthlyRevenue)}}</div>
+                <div class="stat-label">Monthly Revenue</div>
+                <div class="stat-sublabel">Current month</div>
+              </div>
+            </div>
+
+            <div class="stat-card revenue-card">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-content">
+                <div class="stat-number">{{stats.premiumUsers}}</div>
+                <div class="stat-label">Premium Users</div>
+                <div class="stat-sublabel">Paid subscriptions</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add after the existing dashboard content and before users content -->
+
+<!-- Dashboard Overview - Add Charts Section -->
+<div *ngIf="activeView === 'dashboard'" class="dashboard-content">
+  <!-- ... existing stats cards ... -->
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <h3 class="section-title">Analytics & Insights</h3>
+    
+    <div class="charts-grid">
+      <!-- Document Types Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h4>Document Types Distribution</h4>
+          <p>Breakdown of file types in the system</p>
+        </div>
+        <div class="chart-content">
+          <div class="pie-chart">
+            <div class="chart-legend">
+              <div *ngFor="let item of documentTypeChart" class="legend-item">
+                <div class="legend-color" [style.background-color]="item.color"></div>
+                <span class="legend-label">{{item.name}}</span>
+                <span class="legend-value">{{item.value}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Growth Chart -->
+      <div class="chart-card chart-card-wide">
+        <div class="chart-header">
+          <h4>Growth Trends</h4>
+          <p>User registration and document creation over time</p>
+        </div>
+        <div class="chart-content">
+          <div class="line-chart">
+            <div class="chart-grid">
+              <div *ngFor="let data of userGrowthChart; let i = index" class="chart-bar-group">
+                <div class="chart-bars">
+                  <div class="chart-bar users-bar" 
+                       [style.height.%]="(data.users / 120) * 100"
+                       [title]="data.users + ' users'"></div>
+                  <div class="chart-bar documents-bar" 
+                       [style.height.%]="(data.documents / 700) * 100"
+                       [title]="data.documents + ' documents'"></div>
+                </div>
+                <div class="chart-label">{{data.date}}</div>
+              </div>
+            </div>
+            <div class="chart-legend-horizontal">
+              <div class="legend-item">
+                <div class="legend-color users-color"></div>
+                <span>Users</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color documents-color"></div>
+                <span>Documents</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h4>System Health</h4>
+          <p>Current system status</p>
+        </div>
+        <div class="chart-content">
+          <div class="health-metrics">
+            <div class="metric-item">
+              <div class="metric-value success">98.5%</div>
+              <div class="metric-label">Uptime</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value warning">75%</div>
+              <div class="metric-label">Storage Used</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value success">1.2s</div>
+              <div class="metric-label">Avg Response</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- Users Management -->
+      <div *ngIf="activeView === 'users'" class="users-content">
+        <div class="content-header">
+          <h2>Users Management</h2>
+           
+        </div>
+
+        <div class="users-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                 <th>mobileNumber</th>
+                  <th>Subscription</th>
+                <th>Role</th>
+                
+               
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users" >
+                <td>
+                  <div class="user-info">
+                    <img [src]="user.profileImage" [alt]="user.name" class="user-avatar">
+                    <div>
+                      <div class="user-name">{{user.name}}</div>
+                      <div class="user-username">{{user.userName}}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="contact-info">
+                    <div>{{user.email}}</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="status-badges">
+                    <div >{{user.mobileNumber}}</div>
+                  </div>
+                </td>
+                <td>
+                  <div>{{user.budget}}</div>
+                    <div class="text-muted">{{user.userSize}}</div>
+                </td>
+
+                <td>
+                  <div>{{user.role?.roleName}}</div>
+                </td>
+              
+               <td>
+                  <div class="action-buttons">
+                    <button 
+                      *ngIf="user.role?.roleName!='ADMIN'" 
+                      class="btn btn-sm btn-primary"
+                      (click)="makeUserAdmin(user.nationalID!)"
+                      title="Make Admin">
+                      👑
+                    </button>
+                    <button 
+                      *ngIf="user.role?.roleName=='ADMIN'" 
+                      class="btn btn-sm btn-secondary"
+                      (click)="removeAdminStatus(user.nationalID!)"
+                      title="Remove Admin">
+                      👤
+                    </button>
+                   
+                    <button 
+                      class="btn btn-sm btn-danger"
+                      (click)="removeUser(user.nationalID!)"
+                      title="Remove User">
+                      🗑️
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Workspaces Management -->
+      <div *ngIf="activeView === 'workspaces'" class="workspaces-content">
+        <div class="content-header">
+          <h2>Workspaces Management</h2>
+        </div>
+
+        <div class="workspaces-grid">
+          <div *ngFor="let workspace of workspaces" class="workspace-card">
+            <div class="workspace-header">
+              <h3>{{workspace.name}}</h3>
+              
+            </div>
+            <p class="workspace-description">{{workspace.description}}</p>
+            <div class="workspace-stats">
+              <div class="stat-item">
+                <span class="stat-value">{{workspace.documents?.length}}</span>
+                <span class="stat-label">Documents</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value">{{workspace.folders?.length}}</span>
+                <span class="stat-label">Folders</span>
+              </div>
+              
+            </div>
+           
+          </div>
+        </div>
+      </div>
+
+      <!-- Payments Management -->
+      <div *ngIf="activeView === 'payments'" class="payments-content">
+        <div class="content-header">
+          <h2>Payments Management</h2>
+        </div>
+
+        <div class="payments-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Transaction</th>
+                <th>User</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Payment Method</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let payment of payments">
+                <td>
+                  <div class="transaction-info">
+                    <div class="transaction-id">{{payment.transactionId}}</div>
+                    <small class="text-muted">ID: {{payment.id}}</small>
+                  </div>
+                </td>
+                <td>
+                  <div class="user-info">
+                    <div>{{payment.userName}}</div>
+                    <small class="text-muted">{{payment.userEmail}}</small>
+                  </div>
+                </td>
+                <td>
+                  <span class="plan-name">{{payment.plan}}</span>
+                </td>
+                <td>
+                  <div class="amount">
+                    <strong>{{formatCurrency(payment.amount)}}</strong>
+                    <small class="currency">{{payment.currency}}</small>
+                  </div>
+                </td>
+                <td>
+                  <span [class]="'badge ' + getStatusBadgeClass(payment.status)">
+                    {{payment.status | titlecase}}
+                  </span>
+                </td>
+                <td>{{payment.paymentMethod}}</td>
+                <td>{{formatDate(payment.paymentDate)}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+<div *ngIf="activeView === 'documents'" class="documents-content">
+  <div class="content-header">
+    <h2>Documents Management</h2>
+   
+  </div>
+
+  <div class="documents-table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Document</th>
+          <th>Owner</th>
+          <th>Location</th>
+          <th>Size</th>
+          <th>Status</th>
+          
+          <th>Dates</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let document of documents" 
+            [class.deleted-item]="document.isDeleted"
+           >
+          <td>
+            <div class="document-info">
+              <span class="file-icon">{{getFileTypeIcon(document.fileType)}}</span>
+              <div>
+                <div class="document-name">{{document.fileName}}</div>
+                <div class="document-type">{{document.fileType.toUpperCase()}} File</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="owner-info">
+              <div>{{document.createdBy}}</div>
+            </div>
+          </td>
+          <td>
+            <div class="location-info">
+              <div class="workspace-name">{{document.workspaceName}}</div>
+              <div class="folder-name">📁 {{document.folderName}}</div>
+            </div>
+          </td>
+          <td>
+            <div class="size-info">
+              <strong>{{formatFileSize(document.size)}}</strong>
+            </div>
+          </td>
+          <td>
+            <div class="status-badges">
+              <span *ngIf="document.privacy=='PUBLIC'" class="badge badge-success">Public</span>
+              <span *ngIf="document.privacy!='PUBLIC'" class="badge badge-secondary">Private</span>
+              <span *ngIf="document.isDeleted" class="badge badge-error">Deleted</span>
+            </div>
+          </td>
+         
+          <td>
+            <div class="date-info">
+              <small>Created: {{formatDate(document.createdAt!)}}</small>
+            </div>
+          </td>
+        
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Folders Management -->
+<div *ngIf="activeView === 'folders'" class="folders-content">
+  <div class="content-header">
+    <h2>Folders Management</h2>
+    
+  </div>
+
+  <div class="folders-grid">
+    <div *ngFor="let folder of folders" 
+         class="folder-card"
+        >
+      <div class="folder-header">
+        <div class="folder-icon" >
+          📁
+        </div>
+        <div class="folder-info">
+          <h3 class="folder-name">{{folder.name}}</h3>
+          <p class="folder-workspace">{{folder.workspaceName}}</p>
+        </div>
+        <div class="folder-badges">
+         
+        </div>
+      </div>
+      
+      <div class="folder-stats">
+        <div class="stat-item">
+          <span class="stat-value">{{folder.documents?.length}}</span>
+          <span class="stat-label">Documents</span>
+        </div>
+        
+      </div>
+
+      <div class="folder-footer">
+        <div class="folder-owner">
+          <small>Owner: {{folder.createdBy}}</small>
+          <small>Created: {{formatDate(folder.createdAt)}}</small>
+        </div>
+        <div class="folder-actions">
+          <button class="btn btn-sm btn-primary" (click)="viewFolderDetails(folder)" title="View Details">👁️</button>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+  </main>
+</div>
+
+<!-- Documents Management -->
+
+
+<!-- Enhanced Send Notification Modal with Templates and Scheduling -->
+<!-- Simplified Send Notification Modal -->
+<div class="modal enhanced-modal notification-modal-enhanced" *ngIf="showNotificationModal">
+  <div class="modal-backdrop" (click)="closeNotificationModal()"></div>
+  <div class="modal-content notification-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header enhanced-header">
+      <div class="modal-title-section">
+        <div class="notification-icon-enhanced">📢</div>
+        <div class="title-content">
+          <h3 class="modal-title">Send Notification</h3>
+          <p class="modal-subtitle">Send a message to users</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="modal-close" (click)="closeNotificationModal()">×</button>
+      </div>
+    </div>
+    
+    <div class="modal-body enhanced-body">
+      <!-- Alert Messages -->
+      <div *ngIf="alertMessage" [class]="'alert alert-' + alertType + ' enhanced-alert'">
+        <div class="alert-icon">
+          <span *ngIf="alertType === 'success'">✅</span>
+          <span *ngIf="alertType === 'error'">❌</span>
+          <span *ngIf="alertType === 'warning'">⚠️</span>
+          <span *ngIf="alertType === 'info'">ℹ️</span>
+        </div>
+        <div class="alert-content">{{alertMessage}}</div>
+        <button class="alert-close" (click)="clearAlert()">×</button>
+      </div>
+
+      <form [formGroup]="notificationForm" (ngSubmit)="sendNotification()" class="notification-form-enhanced">
+       
+
+        <!-- Title -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="title" class="form-label">
+              <span class="label-icon">📝</span>
+              Title *
+            </label>
+            <input type="text" id="title" formControlName="title" class="form-input text-white w-full enhanced-input" 
+                   placeholder="Enter notification title" maxlength="100">
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="message" class="form-label">
+              <span class="label-icon">💬</span>
+              Message *
+            </label>
+            <textarea id="message" formControlName="content" class="form-input text-white w-full message-textarea enhanced-textarea" 
+                     placeholder="Enter your message here..." maxlength="500"></textarea>
+          </div>
+        </div>
+
+      
+
+       
+      </form>
+    </div>
+    
+    <div class="modal-footer enhanced-footer">
+      
+      <div class="footer-actions">
+        <button type="button" class="btn btn-secondary" (click)="closeNotificationModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary enhanced-send-btn" (click)="sendNotification()" 
+                [disabled]="!notificationForm.valid || loading">
+          <span *ngIf="loading" class="loading-spinner-small"></span>
+          <span *ngIf="loading">Sending...</span>
+          <span *ngIf="!loading">📤 Send Notification</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule Modal -->
+<div class="modal schedule-modal" *ngIf="showScheduleModal">
+  <div class="modal-backdrop" (click)="closeScheduleModal()"></div>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">⏰ Schedule Notification</h3>
+      <button class="modal-close" (click)="closeScheduleModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="schedule-options">
+        <div class="quick-schedule">
+          <h4>Quick Schedule</h4>
+          <div class="quick-buttons">
+           <button class="quick-btn" (click)="setScheduledDate(1)">In 1 hour</button>
+<button class="quick-btn" (click)="setScheduledDate(24)">Tomorrow</button>
+<button class="quick-btn" (click)="setScheduledDate(24 * 7)">Next week</button>
+
+          </div>
+        </div>
+        <div class="custom-schedule">
+          <h4>Custom Date & Time</h4>
+          <input type="datetime-local" [(ngModel)]="scheduledDate" class="form-input">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeScheduleModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="confirmSchedule()" [disabled]="!scheduledDate">Confirm Schedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Document Details Modal with Preview and Versions
+ 
+  <div class="modal enhanced-modal document-modal-enhanced" *ngIf="showDocumentModal">
+  <div class="modal-backdrop" (click)="closeDocumentModal()"></div>
+  <div class="modal-content document-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header enhanced-header">
+      <div class="modal-title-section">
+        <span class="file-icon-large enhanced-icon">{{getFileTypeIcon(selectedDocument?.type || '')}}</span>
+        <div class="title-content">
+          <h3 class="modal-title">{{selectedDocument?.name}}</h3>
+          <p class="modal-subtitle">{{selectedDocument?.type?.toUpperCase()}} Document • {{formatFileSize(selectedDocument?.size || 0)}}</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-sm btn-primary" (click)="previewDocument(selectedDocument!)" title="Preview">
+          👁️ Preview
+        </button>
+        <button class="btn btn-sm btn-secondary" (click)="shareDocument(selectedDocument!.id)" title="Share">
+          🔗 Share
+        </button>
+        <button class="modal-close" (click)="closeDocumentModal()">×</button>
+      </div>
+    </div>
+    
+    <div class="modal-body enhanced-body" *ngIf="selectedDocument">
+      <div class="document-tabs">
+        <button class="tab-btn active" data-tab="details">📋 Details</button>
+        <button class="tab-btn" data-tab="versions">📚 Versions</button>
+        <button class="tab-btn" data-tab="comments">💬 Comments</button>
+        <button class="tab-btn" data-tab="activity">📊 Activity</button>
+      </div>
+
+      <div class="tab-content" data-tab="details">
+        <div class="document-details-enhanced">
+         
+          <div class="status-bar">
+            <div class="status-indicators">
+              <span *ngIf="selectedDocument.isPublic" class="status-badge public">🌐 Public</span>
+              <span *ngIf="!selectedDocument.isPublic" class="status-badge private">🔒 Private</span>
+              <span *ngIf="selectedDocument.isDeleted" class="status-badge deleted">🗑️ Deleted</span>
+              <span *ngIf="selectedDocument.isArchived" class="status-badge archived">📦 Archived</span>
+            </div>
+            <div class="document-actions-inline">
+              <button class="action-btn" title="Favorite">⭐</button>
+              <button class="action-btn" title="Download">⬇️</button>
+              <button class="action-btn" title="More">⋯</button>
+            </div>
+          </div>
+
+          <div class="details-grid enhanced-grid">
+           
+            <div class="detail-section enhanced-section">
+              <h4 class="section-title">📋 Basic Information</h4>
+              <div class="detail-items">
+                <div class="detail-item enhanced-item">
+                  <span class="detail-label">File Name</span>
+                  <span class="detail-value">{{selectedDocument.name}}</span>
+                </div>
+                <div class="detail-item enhanced-item">
+                  <span class="detail-label">File Type</span>
+                  <span class="detail-value file-type-badge">{{selectedDocument.type.toUpperCase()}}</span>
+                </div>
+                <div class="detail-item enhanced-item">
+                  <span class="detail-label">File Size</span>
+                  <span class="detail-value">{{formatFileSize(selectedDocument.size)}}</span>
+                </div>
+                <div class="detail-item enhanced-item">
+                  <span class="detail-label">Created</span>
+                  <span class="detail-value">{{formatDate(selectedDocument.createdDate)}}</span>
+                </div>
+                <div class="detail-item enhanced-item">
+                  <span class="detail-label">Modified</span>
+                  <span class="detail-value">{{formatDate(selectedDocument.lastModified)}}</span>
+                </div>
+              </div>
+            </div>
+
+         
+            <div class="detail-section enhanced-section">
+              <h4 class="section-title">📍 Location & Access</h4>
+              <div class="detail-items">
+                <div class="detail-item enhanced-item">
+                  <span class="detail-label">Workspace</span>
+                  <span class="detail-value workspace-link">{{selectedDocument.workspaceName}}</span>
+                </div>
+                <div class="detail-item enhanced-item">
+                  <span class="detail-label">Folder</span>
+                  <span class="detail-value folder-link">📁 {{selectedDocument.folderName}}</span>
+                </div>
+                <div class="detail-item enhanced-item">
+                  <span class="detail-label">Owner</span>
+                  <span class="detail-value owner-info">
+                    <img src="/placeholder.svg?height=24&width=24" alt="Owner" class="owner-avatar">
+                    {{selectedDocument.ownerName}}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+           
+            <div class="detail-section enhanced-section full-width">
+              <h4 class="section-title">📊 Activity & Engagement</h4>
+              <div class="activity-stats-enhanced">
+                <div class="activity-stat enhanced-stat">
+                  <div class="stat-icon views">👁️</div>
+                  <div class="stat-content">
+                    <div class="stat-number">{{selectedDocument.views}}</div>
+                    <div class="stat-label">Views</div>
+                    <div class="stat-trend">+12% this week</div>
+                  </div>
+                </div>
+                <div class="activity-stat enhanced-stat">
+                  <div class="stat-icon downloads">⬇️</div>
+                  <div class="stat-content">
+                    <div class="stat-number">{{selectedDocument.downloads}}</div>
+                    <div class="stat-label">Downloads</div>
+                    <div class="stat-trend">+5% this week</div>
+                  </div>
+                </div>
+                <div class="activity-stat enhanced-stat">
+                  <div class="stat-icon shares">🔗</div>
+                  <div class="stat-content">
+                    <div class="stat-number">23</div>
+                    <div class="stat-label">Shares</div>
+                    <div class="stat-trend">+8% this week</div>
+                  </div>
+                </div>
+                <div class="activity-stat enhanced-stat">
+                  <div class="stat-icon comments">💬</div>
+                  <div class="stat-content">
+                    <div class="stat-number">{{documentComments.length}}</div>
+                    <div class="stat-label">Comments</div>
+                    <div class="stat-trend">New activity</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+      <div class="tab-content" data-tab="versions" style="display: none;">
+        <div class="versions-list">
+          <div class="version-item" *ngFor="let version of documentVersions">
+            <div class="version-info">
+              <div class="version-number">v{{version.version}}</div>
+              <div class="version-details">
+                <div class="version-author">{{version.author}}</div>
+                <div class="version-date">{{formatDate(version.date)}}</div>
+                <div class="version-changes">{{version.changes}}</div>
+              </div>
+            </div>
+            <div class="version-actions">
+              <button class="btn btn-sm btn-secondary">View</button>
+              <button class="btn btn-sm btn-outline">Restore</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+      <div class="tab-content" data-tab="comments" style="display: none;">
+        <div class="comments-section">
+          <div class="add-comment">
+            <textarea placeholder="Add a comment..." class="comment-input" #commentInput></textarea>
+            <button class="btn btn-primary" (click)="addDocumentComment(commentInput.value); commentInput.value = ''">
+              💬 Add Comment
+            </button>
+          </div>
+          <div class="comments-list">
+            <div class="comment-item" *ngFor="let comment of documentComments">
+              <img [src]="comment.avatar" [alt]="comment.author" class="comment-avatar">
+              <div class="comment-content">
+                <div class="comment-header">
+                  <span class="comment-author">{{comment.author}}</span>
+                  <span class="comment-date">{{formatDate(comment.date)}}</span>
+                </div>
+                <div class="comment-text">{{comment.comment}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer enhanced-footer">
+      <div class="footer-info">
+        <span class="document-path">
+          {{selectedDocument?.workspaceName}} / {{selectedDocument?.folderName}} / {{selectedDocument?.name}}
+        </span>
+      </div>
+      <div class="footer-actions">
+        <button class="btn btn-secondary" (click)="closeDocumentModal()">Close</button>
+        <button class="btn btn-outline" (click)="shareDocument(selectedDocument!.id)">🔗 Share</button>
+        <button class="btn btn-primary" (click)="downloadDocument(selectedDocument!)" *ngIf="selectedDocument && !selectedDocument.isDeleted">
+          ⬇️ Download
+        </button>
+        <button class="btn btn-danger" (click)="deleteDocument(selectedDocument!.id)" *ngIf="selectedDocument && !selectedDocument.isDeleted">
+          🗑️ Delete
+        </button>
+        <button class="btn btn-success" (click)="restoreDocument(selectedDocument!.id)" *ngIf="selectedDocument && selectedDocument.isDeleted">
+          ♻️ Restore
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+
+
+<!-- Document Preview Modal -->
+<div class="modal preview-modal" *ngIf="showDocumentPreview">
+  <div class="modal-backdrop" (click)="closeDocumentPreview()"></div>
+  <div class="modal-content preview-content">
+    <div class="modal-header">
+      <h3 class="modal-title">📄 Document Preview</h3>
+      <button class="modal-close" (click)="closeDocumentPreview()">×</button>
+    </div>
+    <div class="modal-body preview-body">
+      <iframe [src]="documentPreviewUrl" class="document-preview-frame"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Folder Details Modal -->
+
+
+<!-- Enhanced Confirmation Modal -->
+<div class="modal enhanced-modal confirmation-modal-enhanced" *ngIf="showConfirmModal">
+  <div class="modal-backdrop" (click)="cancelConfirmModal()"></div>
+  <div class="modal-content confirmation-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header enhanced-header">
+      <div class="modal-title-section">
+        <div class="confirmation-icon-enhanced">⚠️</div>
+        <div class="title-content">
+          <h3 class="modal-title">Confirm Action</h3>
+          <p class="modal-subtitle">This action requires your confirmation</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-body enhanced-body">
+      <div class="confirmation-content enhanced-confirmation">
+        <div class="confirmation-message">
+          <div class="message-icon">❓</div>
+          <div class="message-text">
+            <p>{{confirmMessage}}</p>
+          </div>
+        </div>
+        
+        <div class="confirmation-details">
+          <div class="detail-item">
+            <span class="detail-icon">⏰</span>
+            <span class="detail-text">This action will take effect immediately</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">🔄</span>
+            <span class="detail-text">Some actions may be reversible</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">📝</span>
+            <span class="detail-text">This action will be logged for audit purposes</span>
+          </div>
+        </div>
+
+        <div class="confirmation-warning enhanced-warning">
+          <div class="warning-icon">🛡️</div>
+          <div class="warning-content">
+            <div class="warning-title">Important Notice</div>
+            <div class="warning-text">
+              Please review your decision carefully. This action may have significant consequences and could affect multiple users or system components.
+            </div>
+          </div>
+        </div>
+
+        <div class="confirmation-checkbox">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="confirmationChecked">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">I understand the consequences of this action</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer enhanced-footer">
+      <div class="footer-warning">
+        <span class="warning-text">⚠️ This action cannot be easily undone</span>
+      </div>
+      <div class="footer-actions">
+        <button type="button" class="btn btn-secondary enhanced-cancel" (click)="cancelConfirmModal()">
+          ❌ Cancel
+        </button>
+        <button type="button" class="btn btn-danger enhanced-confirm" (click)="confirmModalAction()" 
+                [disabled]="!confirmationChecked">
+          ✅ Confirm Action
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Actions Bar -->
+<div class="bulk-actions-bar" *ngIf="showBulkActions">
+  <div class="bulk-info">
+    <span class="selected-count">{{selectedDocuments.size + selectedFolders.size}} items selected</span>
+  </div>
+  <div class="bulk-actions">
+    <button class="btn btn-sm btn-secondary" (click)="bulkDownload()">⬇️ Download</button>
+    <button class="btn btn-sm btn-primary" (click)="bulkMove()">📁 Move</button>
+    <button class="btn btn-sm btn-warning" (click)="bulkArchive()">📦 Archive</button>
+    <button class="btn btn-sm btn-danger" (click)="bulkDeleteDocuments()">🗑️ Delete</button>
+    <button class="btn btn-sm btn-outline" (click)="clearSelection()">✖️ Clear</button>
+  </div>
+</div>
+
+</div>

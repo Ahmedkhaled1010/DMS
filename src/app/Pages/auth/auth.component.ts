@@ -16,8 +16,10 @@ export class AuthComponent {
  
 
   check=signal<boolean>(false);
-  constructor(private _MyTranslateService:MyTranslateService)
-  {
+
+  constructor(
+    private _MyTranslateService:MyTranslateService,
+  ) {
 
   }
 
@@ -46,4 +48,6 @@ changeLanguage()
 {
   this._MyTranslateService.changeLanguage();
 }
+
+
 }

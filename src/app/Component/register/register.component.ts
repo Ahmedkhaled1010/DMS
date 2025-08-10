@@ -136,7 +136,9 @@ export class RegisterComponent {
       next: (res) => {
         console.log(res);
         this._ToastrService.success('Register', 'Register successfully');
-        localStorage.setItem('Token', res.data.token);
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.setItem('Token', res.data.token);
+        }
         console.log(res.data.token);
         
         this._AuthService.saveUserData();

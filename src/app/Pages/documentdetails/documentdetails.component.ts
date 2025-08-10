@@ -73,7 +73,9 @@ export class DocumentdetailsComponent {
   showShareModal = false;
   updating = false;
   sharing = false;
-
+  shareMode: 'email' | 'link' = 'email';
+  linkCopied = false;
+  shareLink:string=""
   // Forms
   editForm: FormGroup;
   shareForm: FormGroup;
@@ -137,6 +139,19 @@ export class DocumentdetailsComponent {
       this.loadActivities();
       this.loadFolders();
     }
+      this._DocumentService.generateLink(this.documentId).subscribe(
+      {
+        next:(res)=>{
+          console.log(res);
+          this.shareLink=res
+        },
+        error:(err)=>{
+          console.log(err);
+          
+        }
+        
+      }
+    )    
   }
 
   ngOnDestroy(): void {
@@ -294,12 +309,16 @@ editModelChange(event: any) {
       canEdit: false,
       canShare: false,
     });
+    this.shareMode = 'email';
+    this.linkCopied = false;
     this.showShareModal = true;
   }
 
   closeShareDialog(): void {
     this.showShareModal = false;
     this.shareForm.reset();
+    this.shareMode = 'email';
+    this.linkCopied = false;
   }
 
   shareDocument(){
@@ -548,6 +567,86 @@ editModelChange(event: any) {
         summary: 'تم النسخ',
         detail: 'تم نسخ رابط المستند',
       });
+    }
+  }
+
+  getDocumentLink(): string {
+
+  
+    if (this.document) {
+      // Create a shareable link using the shared route
+      const baseUrl = window.location.origin;
+     // return `${baseUrl}/shared/${this.document.id}`;
+    }
+    return this.shareLink;
+  }
+
+  copyDocumentLink(inputElement: HTMLInputElement): void {
+    if (this.document) {
+      const link = this.getDocumentLink();
+      navigator.clipboard.writeText(link).then(() => {
+        this.linkCopied = true;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'تم النسخ',
+          detail: 'تم نسخ رابط المستند بنجاح',
+        });
+
+        // Reset the copied state after 3 seconds
+        setTimeout(() => {
+          this.linkCopied = false;
+        }, 3000);
+      }).catch(() => {
+        // Fallback for older browsers
+        inputElement.select();
+        document.execCommand('copy');
+        this.linkCopied = true;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'تم النسخ',
+          detail: 'تم نسخ رابط المستند بنجاح',
+        });
+
+        setTimeout(() => {
+          this.linkCopied = false;
+        }, 3000);
+      });
+    }
+  }
+
+  shareViaWhatsApp(): void {
+    if (this.document) {
+      const link = this.getDocumentLink();
+      const text = encodeURIComponent(`شاهد هذا المستند: ${this.document.title || this.document.fileName}`);
+      const url = `https://wa.me/?text=${text}%20${encodeURIComponent(link)}`;
+      window.open(url, '_blank');
+    }
+  }
+
+  shareViaEmail(): void {
+    if (this.document) {
+      const link = this.getDocumentLink();
+      const subject = encodeURIComponent(`مشاركة مستند: ${this.document.title || this.document.fileName}`);
+      const body = encodeURIComponent(`مرحباً،\n\nأردت مشاركة هذا المستند معك:\n\nاسم المستند: ${this.document.title || this.document.fileName}\nالرابط: ${link}\n\nشكراً لك`);
+      const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
+      window.location.href = mailtoUrl;
+    }
+  }
+
+  shareViaTwitter(): void {
+    if (this.document) {
+      const link = this.getDocumentLink();
+      const text = encodeURIComponent(`شاهد هذا المستند: ${this.document.title || this.document.fileName}`);
+      const url = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(link)}`;
+      window.open(url, '_blank');
+    }
+  }
+
+  shareViaFacebook(): void {
+    if (this.document) {
+      const link = this.getDocumentLink();
+      const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`;
+      window.open(url, '_blank');
     }
   }
 

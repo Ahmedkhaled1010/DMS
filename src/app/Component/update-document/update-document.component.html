@@ -1,187 +1,231 @@
-<p-dialog
-  [header]="'Update Document' | translate"
-  [(visible)]="showEditModal"
-  [modal]="true"
-  [closable]="true"
-  [draggable]="false"
-  [resizable]="false"
-  (onHide)="closeEditDialog()"
-  styleClass="edit-document-dialog"
+<p-dialog  
+  [header]="'Update Document' | translate"  
+  [(visible)]="showEditModal"  
+  [modal]="true"  
+  [closable]="true"  
+  [draggable]="false"  
+  [resizable]="false"  
+  (onHide)="closeEditDialog()"  
+  styleClass="modern-edit-dialog"  
   [contentStyle]="{ padding: '0' }"
->
-  <div class="p-6">
-    <form
-      [formGroup]="editForm"
-      (ngSubmit)="updateDocument()"
-      class="space-y-6"
-    >
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- العنوان -->
+  [style]="{ width: '90vw', maxWidth: '800px' }">
+  
+  <!-- Dialog Header with Gradient -->
+  <ng-template pTemplate="header">
+    <div class="dialog-header-content">
+      <div class="header-icon">
+        <i class="pi pi-file-edit text-white text-xl"></i>
+      </div>
+      <div class="header-text">
+        <h2 class="header-title">{{ 'Update Document' | translate }}</h2>
+        <p class="header-subtitle">تحديث معلومات المستند</p>
+      </div>
+    </div>
+  </ng-template>
 
-        <!-- اسم الملف -->
-        <div>
-          <label
-            for="fileName"
-            class="block text-sm font-medium text-gray-700 mb-2"
-          >
+  <!-- Dialog Content -->
+  <div class="dialog-body">
+    <!-- Animated Background Elements -->
+    <div class="dialog-bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="updateDocument()" class="form-container">
+      
+      <!-- Form Header -->
+      <div class="form-header">
+        <div class="form-progress">
+          <div class="progress-step active">
+            <div class="step-circle">
+              <i class="pi pi-info-circle"></i>
+            </div>
+            <span class="step-label">معلومات أساسية</span>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step active">
+            <div class="step-circle">
+              <i class="pi pi-cog"></i>
+            </div>
+            <span class="step-label">إعدادات</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Fields Grid -->
+      <div class="form-grid">
+        
+        <!-- File Name Field -->
+        <div class="form-group">
+          <label for="fileName" class="form-label">
+            <i class="pi pi-file label-icon"></i>
             {{ "File name" | translate }}
+            <span class="required-asterisk">*</span>
           </label>
-          <input
-            pInputText
-            id="fileName"
-            formControlName="fileName"
-            [placeholder]="'Enter The Name of the New Document' | translate"
-            styleClass="w-full custom-input"
-          />
+          <div class="input-wrapper">
+            <input
+              pInputText
+              id="fileName"
+              formControlName="fileName"
+              [placeholder]="'Enter The Name of the New Document' | translate"
+              class="modern-input"
+            />
+            <div class="input-border"></div>
+          </div>
           <small
-            *ngIf="
-              editForm.get('fileName')?.invalid &&
-              editForm.get('fileName')?.touched
-            "
-            class="p-error block mt-1"
-            >اسم الملف مطلوب.</small
+            *ngIf="editForm.get('fileName')?.invalid && editForm.get('fileName')?.touched"
+            class="error-message"
           >
+            <i class="pi pi-exclamation-triangle"></i>
+            اسم الملف مطلوب.
+          </small>
         </div>
 
-        <!-- تم إزالة حقل نوع الملف (fileType) -->
-        <!-- تم إزالة حقل مسار الملف (filePath) -->
-
-        <!-- التصنيف -->
-        <div>
-          <label for="tag" class="block text-sm font-medium text-gray-700 mb-2">
-            {{ "Classification" | translate }}</label
-          >
-          <input
-            pInputText
-            id="tag"
-            formControlName="tag"
-            [placeholder]="'Enter Classification' | translate"
-            styleClass="w-full custom-input"
-          />
-
+        <!-- Classification Field -->
+        <div class="form-group">
+          <label for="tag" class="form-label">
+            <i class="pi pi-tag label-icon"></i>
+            {{ "Classification" | translate }}
+            <span class="required-asterisk">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input
+              pInputText
+              id="tag"
+              formControlName="tag"
+              [placeholder]="'Enter Classification' | translate"
+              class="modern-input"
+            />
+            <div class="input-border"></div>
+          </div>
           <small
             *ngIf="editForm.get('tag')?.invalid && editForm.get('tag')?.touched"
-            class="p-error block mt-1"
-            >التصنيف مطلوب.</small
+            class="error-message"
           >
+            <i class="pi pi-exclamation-triangle"></i>
+            التصنيف مطلوب.
+          </small>
         </div>
 
-        <!-- الخصوصية -->
-        <div>
-          <label
-            for="privacy"
-            class="block text-sm font-medium text-gray-700 mb-2"
-          >
+        <!-- Privacy Field -->
+        <div class="form-group">
+          <label for="privacy" class="form-label">
+            <i class="pi pi-shield label-icon"></i>
             {{ "Privacy" | translate }}
+            <span class="required-asterisk">*</span>
           </label>
-          <p-dropdown
-            id="privacy"
-            formControlName="privacy"
-            [options]="privacyOptions"
-            [placeholder]="'Enter The Level of Privacy' | translate"
-            [showClear]="true"
-            styleClass="w-full custom-dropdown"
-            appendTo="body"
-          />
-          <small
-            *ngIf="
-              editForm.get('privacy')?.invalid &&
-              editForm.get('privacy')?.touched
-            "
-            class="p-error block mt-1"
-            >الخصوصية مطلوبة.</small
-          >
-        </div>
-
-        <!-- مساحة العمل (جديد) -->
-        <div>
-          <label
-            for="workspaceName"
-            class="block text-sm font-medium text-gray-700 mb-2"
-          >
-            {{ "Work Space" | translate }}
-          </label>
-          <p-dropdown
-            id="workspaceName"
-            formControlName="workspaceName"
-            [options]="workspaceOptions"
-            optionLabel="name"
-            optionValue="id"
-            [placeholder]="'Choose the workspace ' | translate"
-            [showClear]="true"
-            styleClass="w-full custom-dropdown"
-            appendTo="body"
-          />
-          <small
-            *ngIf="
-              editForm.get('workspaceName')?.invalid &&
-              editForm.get('workspaceName')?.touched
-            "
-            class="p-error block mt-1"
-            >مساحة العمل مطلوبة.</small
-          >
-        </div>
-
-        <!-- المجلد -->
-        <div>
-          <label
-            for="folderId"
-            class="block text-sm font-medium text-gray-700 mb-2"
-          >
-            {{ "Folder" | translate }}
-          </label>
-          <p-dropdown
-            id="folderId"
-            formControlName="folderId"
-            [options]="folderOptions"
-            optionLabel="name"
-            optionValue="id"
-            [placeholder]="'Choose the Folder' | translate"
-            [showClear]="true"
-            styleClass="w-full custom-dropdown"
-            appendTo="body"
-          />
-          <small
-            *ngIf="
-              editForm.get('folderId')?.invalid &&
-              editForm.get('folderId')?.touched
-            "
-            class="p-error block mt-1"
-            >المجلد مطلوب.</small
-          >
-        </div>
-
-        <!-- خيارات الحالة (جديد - مربعات اختيار) -->
-        <div>
-          <div
-            class="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-200"
-          >
-          
-           
-            <!-- أزرار الإجراءات -->
-            <div class="flex gap-3 pt-4 border-t border-gray-200">
-              <p-button
-                type="submit"
-                [label]="'Save Changes' | translate"
-                [loading]="updating"
-                severity="primary"
-                styleClass="flex-1 custom-button-primary"
-                [disabled]="editForm.invalid"
-              />
-              <p-button
-                type="button"
-                [label]="'Cancel' | translate"
-                (onClick)="closeEditDialog()"
-                [outlined]="true"
-                severity="secondary"
-                styleClass="flex-1 custom-button-secondary"
-              />
-            </div>
+          <div class="dropdown-wrapper">
+            <p-dropdown
+              id="privacy"
+              formControlName="privacy"
+              [options]="privacyOptions"
+              [placeholder]="'Enter The Level of Privacy' | translate"
+              [showClear]="true"
+              styleClass="modern-dropdown"
+              appendTo="body"
+            />
+            <div class="dropdown-border"></div>
           </div>
+          <small
+            *ngIf="editForm.get('privacy')?.invalid && editForm.get('privacy')?.touched"
+            class="error-message"
+          >
+            <i class="pi pi-exclamation-triangle"></i>
+            الخصوصية مطلوبة.
+          </small>
+        </div>
+
+        <!-- Workspace Field -->
+        <div class="form-group">
+          <label for="workspaceName" class="form-label">
+            <i class="pi pi-home label-icon"></i>
+            {{ "Work Space" | translate }}
+            <span class="required-asterisk">*</span>
+          </label>
+          <div class="dropdown-wrapper">
+            <p-dropdown
+              id="workspaceName"
+              formControlName="workspaceName"
+              [options]="workspaceOptions"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'Choose the workspace ' | translate"
+              [showClear]="true"
+              styleClass="modern-dropdown"
+              appendTo="body"
+            />
+            <div class="dropdown-border"></div>
+          </div>
+          <small
+            *ngIf="editForm.get('workspaceName')?.invalid && editForm.get('workspaceName')?.touched"
+            class="error-message"
+          >
+            <i class="pi pi-exclamation-triangle"></i>
+            مساحة العمل مطلوبة.
+          </small>
+        </div>
+
+        <!-- Folder Field -->
+        <div class="form-group">
+          <label for="folderId" class="form-label">
+            <i class="pi pi-folder label-icon"></i>
+            {{ "Folder" | translate }}
+            <span class="required-asterisk">*</span>
+          </label>
+          <div class="dropdown-wrapper">
+            <p-dropdown
+              id="folderId"
+              formControlName="folderId"
+              [options]="folderOptions"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'Choose the Folder' | translate"
+              [showClear]="true"
+              styleClass="modern-dropdown"
+              appendTo="body"
+            />
+            <div class="dropdown-border"></div>
+          </div>
+          <small
+            *ngIf="editForm.get('folderId')?.invalid && editForm.get('folderId')?.touched"
+            class="error-message"
+          >
+            <i class="pi pi-exclamation-triangle"></i>
+            المجلد مطلوب.
+          </small>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <div class="actions-container">
+          <p-button
+            type="button"
+            [label]="'Cancel' | translate"
+            (onClick)="closeEditDialog()"
+            styleClass="cancel-btn"
+            icon="pi pi-times"
+          />
+          <p-button
+            type="submit"
+            [label]="'Save Changes' | translate"
+            [loading]="updating"
+            severity="primary"
+            styleClass="save-btn"
+            icon="pi pi-check"
+            [disabled]="editForm.invalid"
+          />
+        </div>
+        
+        <!-- Form Status Indicator -->
+        <div class="form-status" *ngIf="editForm.invalid && editForm.touched">
+          <i class="pi pi-info-circle"></i>
+          <span>يرجى ملء جميع الحقول المطلوبة</span>
         </div>
       </div>
     </form>
   </div>
 </p-dialog>
 
-<p-toast></p-toast>
+<p-toast position="top-right"></p-toast>

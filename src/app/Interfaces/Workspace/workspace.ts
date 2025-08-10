@@ -1,3 +1,6 @@
+import { Document } from "../Document/document"
+import { Folder } from "../Folder/folder"
+
 export interface Workspace {
     id:string,
     name:string,
@@ -5,6 +8,8 @@ export interface Workspace {
     userNationalID:string,
     isDeleted:string,
     createdAt:string
+    documents?:Document[],
+    folders?:Folder[]
 }
 
 

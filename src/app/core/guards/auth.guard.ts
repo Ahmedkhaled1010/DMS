@@ -8,12 +8,19 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   const router=inject(Router);
   const authService=inject(AuthService)
+  let role;
+  authService.role.subscribe((res)=>{
+    role=res;
+  })
   let token: string | null = null;
+  console.log(role);
+  
   if (isPlatformBrowser(platformId)) {
     token = localStorage.getItem('Token');
+    role=localStorage.getItem("Role")
   }
 
-  if (token) {
+  if (token &&role!="ADMIN") {
     authService.saveUserData();
     return true; 
   } else {

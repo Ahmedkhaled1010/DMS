@@ -1,3 +1,4 @@
+<!-- Fixed Workspace Component - No overlay issue -->
 <div class="w-full max-w-4xl mx-auto space-y-6 my-5">
   <div class="bg-white rounded-xl shadow-lg border border-gray-200">
     <!-- Header -->
@@ -18,7 +19,6 @@
         </button>
       </div>
     </div>
-
     <!-- Content -->
     <div class="p-6">
       <!-- Loading State -->
@@ -26,13 +26,11 @@
         <i class="fas fa-spinner fa-spin text-blue-600 text-2xl mr-3"></i>
         <span class="text-gray-600">{{ 'Loading workspaces...' | translate }}</span>
       </div>
-
       <!-- Error State -->
       <div *ngIf="error" class="text-center py-12">
         <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
         <p class="text-red-600">{{ error }}</p>
       </div>
-
       <!-- Empty State -->
       <div *ngIf="!loading && !error && allWorkspace.length === 0" class="text-center py-12">
         <i class="fas fa-building text-gray-300 text-6xl mb-4"></i>
@@ -46,7 +44,6 @@
           {{ 'Create Workspace' | translate }}
         </button>
       </div>
-
       <!-- Workspace List -->
       <div *ngIf="!loading && !error && allWorkspace.length > 0" class="space-y-4">
        <app-workspacemodel
@@ -60,8 +57,9 @@
   </div>
 </div>
 
-
+<!-- Fixed: Modal only shows when needed -->
 <app-createworkspace
+  *ngIf="showModal"
   [workspace]="selectedWorkspace"
-  (closeEvent)="closeModal()"
-></app-createworkspace>
+  (closeEvent)="closeModal()">
+</app-createworkspace>

@@ -1,18 +1,21 @@
-<div class="flex h-screen w-full">
-  <!-- Sidebar -->
-  <div class="side bg-gray-100 h-full">
-    <app-sidebar></app-sidebar>
-  </div>
-
-  <!-- Menu Section -->
-  <div class="w-2/12 bg-main h-full">
+<div class="flex h-screen w-full relative">
+  <!-- Responsive Menu Section -->
+  <div class="hidden md:block md:w-64 lg:w-64 h-full flex-shrink-0">
     <app-menu></app-menu>
   </div>
 
+  <!-- Mobile Menu (handled by menu component) -->
+  <app-menu class="md:hidden"></app-menu>
+
   <!-- Main content -->
-  <div class="w-10/12 h-full flex flex-col overflow-auto">
-    <app-navbar [user]="user"></app-navbar>
-    <div class="flex-1 overflow-y-auto">
+  <div class="flex-1 h-full flex flex-col overflow-hidden">
+    <!-- Navbar with responsive padding for mobile menu button -->
+    <div class="relative">
+      <app-navbar [user]="user" class="pl-16 md:pl-4"></app-navbar>
+    </div>
+
+    <!-- Content area -->
+    <div class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <router-outlet></router-outlet>
     </div>
   </div>

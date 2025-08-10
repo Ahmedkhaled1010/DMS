@@ -1,31 +1,194 @@
-<div
-  class="w-full h-12 bg-white flex rounded-2xl justify-end items-center px-4 border-b border-gray-300 shadow-2xl relative right-0 top-0 z-10"
+<nav
+  class="w-full h-12 flex rounded-2xl justify-end items-center px-4 border-b border-gray-300 shadow-2xl relative right-0 top-0 z-10 transition-all duration-300"
+  [style.background]="isDarkMode ? 'var(--nav-bar-bg)' : '#ffffff'"
+  [style.border-color]="isDarkMode ? '#374151' : '#d1d5db'"
 >
   <div class="flex items-center gap-5">
+    <i (click)="logOut()"
+       class="fa-solid fa-right-from-bracket fa-lg cursor-pointer transition-colors duration-300 hover:scale-110"
+       [style.color]="isDarkMode ? '#f8fafc' : '#1d4ed8'"></i>
+
+    <!-- Enhanced Dark Mode Toggle Button -->
+    <button
+      (click)="toggleTheme()"
+      class="relative p-2 rounded-xl transition-all duration-300 hover:scale-105 group"
+      [class]="isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'"
+      [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+    >
+      <!-- Sun Icon (Light Mode) -->
+      <i *ngIf="!isDarkMode"
+         class="fas fa-sun text-yellow-500 text-lg transition-transform duration-300 group-hover:rotate-12"></i>
+
+      <!-- Moon Icon (Dark Mode) -->
+      <i *ngIf="isDarkMode"
+         class="fas fa-moon text-blue-400 text-lg transition-transform duration-300 group-hover:-rotate-12"></i>
+    </button>
+
     <button
       (click)="changeLanguage()"
-      class="text-gray-600 hover:text-gray-800 text-lg"
+      class="p-2 rounded-xl transition-all duration-300 hover:scale-105"
+      [class]="isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'"
     >
-      <i class="text-main fa-solid fa-language"></i>
+      <i class="fa-solid fa-language text-lg"></i>
     </button>
-    <button class="text-gray-600 hover:text-gray-800 text-lg">
-      <i class="text-main fa-solid fa-envelope"></i>
+
+    <button
+      routerLink="/home/message"
+      class="p-2 rounded-xl transition-all duration-300 hover:scale-105 relative"
+      [class]="isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'"
+    >
+      <i class="fa-solid fa-envelope text-lg"></i>
+      <!-- Message notification badge (optional) -->
+      <!-- <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span> -->
     </button>
-    <button class="text-gray-600 hover:text-gray-800 text-lg">
-      <i class="text-main fa-solid fa-bell"></i>
+
+    <button
+      routerLink="/home/favorites"
+      class="p-2 rounded-xl transition-all duration-300 hover:scale-105 relative group"
+      [class]="isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'"
+      title="المستندات المفضلة"
+    >
+      <i class="fa-solid fa-heart text-lg transition-colors duration-300 group-hover:text-red-500"></i>
     </button>
-    <div class="flex items-center mx-10 gap-2">
+
+    <!-- Enhanced Notification Button -->
+    <div class="relative">
+      <button
+        (click)="toggleNotificationDropdown()"
+        class="p-2 rounded-xl transition-all duration-300 hover:scale-105 relative"
+        [class]="isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'"
+        [class.bg-blue-100]="showNotificationDropdown && !isDarkMode"
+        [class.bg-gray-700]="showNotificationDropdown && isDarkMode"
+      >
+        <i class="fa-solid fa-bell text-lg"></i>
+        <!-- Notification Badge -->
+        <span *ngIf="unreadCount > 0"
+              class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 animate-pulse">
+          {{ unreadCount > 99 ? '99+' : unreadCount }}
+        </span>
+      </button>
+
+      <!-- Notification Dropdown -->
+      <div *ngIf="showNotificationDropdown"
+           class="absolute right-0 top-full mt-2 w-96 max-w-[90vw] rounded-2xl shadow-2xl border z-50 max-h-[80vh] overflow-hidden"
+           [class]="isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'">
+
+        <!-- Header -->
+        <div class="p-4 border-b"
+             [class]="isDarkMode ? 'border-gray-600' : 'border-gray-200'">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold"
+                [class]="isDarkMode ? 'text-white' : 'text-gray-900'">
+              Notifications
+            </h3>
+            <div class="flex items-center gap-2">
+              <button *ngIf="unreadCount > 0"
+                      (click)="markAllAsRead()"
+                      class="text-sm px-3 py-1 rounded-lg transition-colors"
+                      [class]="isDarkMode ? 'text-blue-400 hover:bg-gray-700' : 'text-blue-600 hover:bg-blue-50'">
+                Mark all read
+              </button>
+              <button (click)="closeNotificationDropdown()"
+                      class="p-1 rounded-lg transition-colors"
+                      [class]="isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications List -->
+        <div class="max-h-96 z-50 overflow-y-auto custom-scrollbar">
+          <div *ngIf="notifications.length === 0"
+               class="p-8 text-center"
+               [class]="isDarkMode ? 'text-gray-400' : 'text-gray-500'">
+            <i class="fas fa-bell-slash text-3xl mb-3 opacity-50"></i>
+            <p>No notifications yet</p>
+          </div>
+
+          <div *ngFor="let notification of notifications; trackBy: trackNotification"
+               class="p-4 border-b transition-all duration-200 cursor-pointer relative"
+               [class]="isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-100 hover:bg-gray-50'"
+               [class.bg-blue-50]="!notification.read && !isDarkMode"
+               [class.bg-gray-700]="!notification.read && isDarkMode"
+               (click)="markNotificationAsRead(notification.id)"
+               >
+
+            <!-- Unread indicator -->
+            <div *ngIf="!notification.read"
+                 class="absolute left-2 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full"></div>
+
+            <div class="flex items-start gap-3" [class.ml-4]="!notification.read">
+              <!-- Icon -->
+              <div class="flex-shrink-0 mt-1">
+                <i  class="text-lg fas fa-check-circle text-green-500"></i>
+              </div>
+
+              <!-- Content -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h4 class="text-sm font-semibold truncate"
+                        [class]="isDarkMode ? 'text-white' : 'text-gray-900'">
+                      {{ notification.title }}
+                    </h4>
+                    <p class="text-sm mt-1 line-clamp-2"
+                       [class]="isDarkMode ? 'text-gray-300' : 'text-gray-600'">
+                      {{ notification.content }}
+                    </p>
+                    <div class="flex items-center justify-between mt-2">
+                      <span class="text-xs"
+                            [class]="isDarkMode ? 'text-gray-400' : 'text-gray-500'">
+                        {{ notification.timestamp | date}}
+                      </span>
+                      
+                    </div>
+                  </div>
+
+                  <!-- Delete button -->
+                  <button (click)="deleteNotification(notification.id, $event)"
+                          class="p-1 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                          [class]="isDarkMode ? 'text-gray-400 hover:text-red-400 hover:bg-gray-600' : 'text-gray-400 hover:text-red-500 hover:bg-gray-100'">
+                    <i class="fas fa-times text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div *ngIf="notifications.length > 0"
+             class="p-3 border-t text-center"
+             [class]="isDarkMode ? 'border-gray-600' : 'border-gray-200'">
+          <button routerLink="/home/notifications"
+                  (click)="closeNotificationDropdown()"
+                  class="text-sm font-medium transition-colors"
+                  [class]="isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'">
+            View all notifications
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center mx-10 gap-3">
       <div class="text-sm text-right">
-        <div class="font-semibold text-main">{{ user()?.name }}</div>
-        <div class="text-gray-500 text-xs">{{ user()?.email }}</div>
+        <div class="font-semibold transition-colors duration-300"
+             [style.color]="isDarkMode ? '#f8fafc' : '#1d4ed8'">
+          {{ user()?.name }}
+        </div>
+        <div class="text-xs transition-colors duration-300"
+             [class]="isDarkMode ? 'text-gray-400' : 'text-gray-500'">
+          {{ user()?.email }}
+        </div>
       </div>
       <div
-        class="w-8 h-8 rounded-full bg-gray-500 text-white flex items-center justify-center font-bold uppercase"
+        routerLink="/home/profile"
+        class="w-10 h-10 rounded-full cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center justify-center font-bold uppercase overflow-hidden border-2"
+        [class]="isDarkMode ? 'bg-gray-700 text-white border-gray-600 hover:border-blue-400' : 'bg-gray-200 text-gray-700 border-gray-300 hover:border-blue-500'"
       >
-        UK
+        <img *ngIf="profilePic" [src]="profilePic" class="w-full h-full rounded-full object-cover" alt="Profile">
+        <span *ngIf="!profilePic">{{ (user()?.name?.charAt(0) || 'U') | uppercase }}</span>
       </div>
     </div>
   </div>
-</div>
-
-
+</nav>

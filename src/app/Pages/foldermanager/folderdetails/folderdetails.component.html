@@ -1,1 +1,476 @@
-<p>folderdetails works!</p>
+<div class="folder-details-container" [attr.data-theme]="currentTheme" dir="rtl">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+  
+  <!-- Theme Toggle Button - Now handled by global theme-script.js -->
+  <!-- The button will be automatically created by the theme script -->
+
+  <!-- Animated Background -->
+  <div class="animated-background">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+    <div class="floating-shape shape-4"></div>
+  </div>
+
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="breadcrumb-nav">
+      <button class="back-btn" (click)="goBack()">
+        <i class="pi pi-arrow-right"></i>
+        <span> {{'Go Back To Folders'|translate}} </span>
+      </button>
+      <div class="breadcrumb-items">
+        <span class="breadcrumb-item"> {{'Folders'|translate}} </span>
+        <i class="pi pi-chevron-left breadcrumb-separator"></i>
+        <span class="breadcrumb-item current">{{ folderDetails?.name }}</span>
+      </div>
+    </div>
+
+    <div class="header-content">
+      <div class="folder-header">
+        <div class="folder-icon-large">
+          <i class="pi pi-folder"></i>
+          <div class="icon-glow"></div>
+        </div>
+        <div class="folder-info">
+          <h1 class="folder-title">{{ folderDetails?.name }}</h1>
+          <p class="folder-description">{{ folderDetails?.description || 'لا يوجد وصف متاح' }}</p>
+          <div class="folder-stats">
+            <div class="stat-item">
+              <i class="pi pi-file"></i>
+              <span>{{ documentsCount }} {{'Document'|translate}} </span>
+            </div>
+            <div class="stat-item">
+              <i class="pi pi-folder"></i>
+              <span>{{ subFoldersCount }}  {{'Sub Folders'|translate}} </span>
+            </div>
+            <div class="stat-item">
+              <i class="pi pi-clock"></i>
+              <span> {{'Last Updated'|translate}} :{{ folderDetails?.updatedAt | date:'short' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <p-button
+          [label]="'Update Folder'|translate "
+          icon="pi pi-pencil"
+          styleClass="modern-edit-button"
+          (click)="editFolder()"
+        ></p-button>
+        <p-button
+          [label]="'Delete Folder'|translate "
+          icon="pi pi-trash"
+          styleClass="modern-delete-button"
+          (click)="confirmDeleteFolder($event)"
+        ></p-button>
+        <p-button
+        [label]="'Add Sub Folder'|translate "
+        icon="pi pi-plus"
+          styleClass="modern-add-button"
+          (click)="addSubFolder()"
+        ></p-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Metadata Card -->
+    <div class="metadata-section">
+      <p-card styleClass="metadata-card">
+        <ng-template pTemplate="header">
+          <div class="card-header">
+            <div class="header-icon">
+              <i class="pi pi-info-circle"></i>
+            </div>
+            <h3> {{'Folder Information'|translate}} </h3>
+          </div>
+        </ng-template>
+
+        <div class="metadata-grid">
+          <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-tag"></i>
+              <span> {{'Name'|translate}} </span>
+            </div>
+            <div class="metadata-value">{{ folderDetails?.name }}</div>
+          </div>
+
+          <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-info-circle"></i>
+              <span> {{'Description'|translate}} </span>
+            </div>
+            <div class="metadata-value">{{ folderDetails?.description || 'غير محدد' }}</div>
+          </div>
+
+         @if (folderDetails?.parentName!="In Workspace")
+          {
+             <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-sitemap"></i>
+              <span> {{'Parent Folder'|translate}} </span>
+            </div>
+            <div class="metadata-value">
+              <span class="parent-badge">{{ folderDetails?.parentName }}</span>
+            </div>
+          </div>
+
+          }
+          @else {
+             <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-sitemap"></i>
+              <span> {{'Work Space'|translate}} </span>
+            </div>
+            <div class="metadata-value">
+              <span class="parent-badge">{{ folderDetails?.workspaceName }}</span>
+            </div>
+          </div>
+          }
+
+
+          <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-calendar-plus"></i>
+              <span> {{'Created Date'|translate}} </span>
+            </div>
+            <div class="metadata-value">{{ folderDetails?.createdAt | date:'full' }}</div>
+          </div>
+
+          <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-calendar"></i>
+              <span> {{'Updated Date'|translate}} </span>
+            </div>
+            <div class="metadata-value">{{ folderDetails?.updatedAt | date:'full' }}</div>
+          </div>
+
+          <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-user"></i>
+              <span> {{'Created By'|translate}} </span>
+            </div>
+            <div class="metadata-value">{{ folderDetails?.createdBy || 'غير محدد' }}</div>
+          </div>
+
+          <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-database"></i>
+              <span> {{'Size'|translate}} </span>
+            </div>
+            <div class="metadata-value">{{ calculateFolderSize() }}</div>
+          </div>
+
+          <div class="metadata-item">
+            <div class="metadata-label">
+              <i class="pi pi-shield"></i>
+              <span>الصلاحيات</span>
+            </div>
+            <div class="metadata-value">
+              <span class="permission-badge">{{ folderDetails?.permissions || 'قراءة وكتابة' }}</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Content Tabs -->
+    <div class="content-section">
+      <p-tabView styleClass="modern-tabs">
+        <!-- Sub Folders Tab -->
+        <p-tabPanel [header]="'Sub Folders'|translate " leftIcon="pi pi-folder">
+          <div class="tab-content">
+            <div class="tab-header">
+              <h4> {{'Sub Folders'|translate }}  ({{ subFoldersCount }})</h4>
+              <p-button
+                [label]=" 'Add Sub Folder'|translate "
+                icon="pi pi-plus"
+                styleClass="modern-small-button"
+                (click)="addSubFolder()"
+              ></p-button>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="loadingSubFolders" class="loading-state">
+              <p-progressSpinner strokeWidth="3"></p-progressSpinner>
+              <p> {{'Loading folders...'|translate}} </p>
+
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!loadingSubFolders && subFolders.length === 0" class="empty-state">
+              <div class="empty-icon">
+                <i class="pi pi-folder"></i>
+              </div>
+              <h5> {{'There are no subfolders.'|translate}} </h5>
+              <p> {{'Start by creating a subfolder to better organize your files.'|translate}} </p>
+              <p-button
+                [label]=" 'Add Sub Folder'|translate "
+                icon="pi pi-plus"
+                styleClass="modern-primary-button"
+                (click)="addSubFolder()"
+              ></p-button>
+            </div>
+
+            <!-- Sub Folders Grid -->
+            <div *ngIf="!loadingSubFolders && subFolders.length > 0" class="folders-grid">
+              <div 
+                class="folder-card" 
+                *ngFor="let folder of subFolders; let i = index"
+                [style.animation-delay]="i * 0.1 + 's'"
+                (click)="openFolder(folder.id)"
+              >
+                <div class="folder-card-header">
+                  <div class="folder-card-icon">
+                    <i class="pi pi-folder"></i>
+                  </div>
+                  <div class="folder-card-actions">
+                   <!--
+                     <button class="action-btn edit-btn" (click)="editSubFolder($event, folder)">
+                      <i class="pi pi-pencil"></i>
+                    </button> 
+                   -->
+                    <button class="action-btn delete-btn" (click)="deleteSubFolder($event, folder)">
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="folder-card-content">
+                  <h6 class="folder-card-title">{{ folder.name }}</h6>
+                  <p class="folder-card-description">{{ folder.description || 'لا يوجد وصف' }}</p>
+                  <div class="folder-card-meta">
+                    <span class="meta-item">
+                      <i class="pi pi-file"></i>
+                      {{ folder.documents.length }}  {{'Documents'|translate}}
+                    </span>
+                    <span class="meta-item">
+                      <i class="pi pi-calendar"></i>
+                      {{ folder.updatedAt | date:'short' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <!-- Documents Tab -->
+        <p-tabPanel header="المستندات" leftIcon="pi pi-file">
+          <div class="tab-content">
+            <div class="tab-header">
+              <h4> {{'Documents'|translate}} ({{ documentsCount }})</h4>
+              <div class="tab-actions">
+                <p-button
+                  [label]=" 'Upload Document'|translate "
+                  icon="pi pi-upload"
+                  styleClass="modern-small-button"
+                  (click)="uploadDocument()"
+                ></p-button>
+                <p-dropdown
+                  [options]="viewOptions"
+                  [(ngModel)]="selectedView"
+                  optionLabel="label"
+                  optionValue="value"
+                  styleClass="view-selector"
+                  (onChange)="changeView($event)"
+                ></p-dropdown>
+              </div>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="loadingDocuments" class="loading-state">
+              <p-progressSpinner strokeWidth="3"></p-progressSpinner>
+              <p>جاري تحميل المستندات...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!loadingDocuments && documents.length === 0" class="empty-state">
+              <div class="empty-icon">
+                <i class="pi pi-file"></i>
+              </div>
+              <h5>لا توجد مستندات</h5>
+              <p>ابدأ برفع مستنداتك لتنظيمها في هذا المجلد</p>
+              <p-button
+                label="رفع مستند"
+                icon="pi pi-upload"
+                styleClass="modern-primary-button"
+                (click)="uploadDocument()"
+              ></p-button>
+            </div>
+
+            <!-- Documents Grid View -->
+            <div *ngIf="!loadingDocuments && documents.length > 0 && selectedView === 'grid'" class="documents-grid">
+              <div 
+                class="document-card" 
+                *ngFor="let doc of documents; let i = index"
+                [style.animation-delay]="i * 0.1 + 's'"
+              >
+                <div class="document-card-header">
+                  <div class="document-icon" [ngClass]="getDocumentIconClass(doc.fileType)">
+                    <i [class]="getDocumentIcon(doc.fileType)"></i>
+                  </div>
+                  <div class="document-actions">
+                    <button class="action-btn download-btn" (click)="downloadDocument(doc)">
+                      <i class="pi pi-download"></i>
+                    </button>
+                    <button class="action-btn edit-btn" (click)="editDocument(doc)">
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                    <button class="action-btn delete-btn" (click)="deleteDocument($event, doc)">
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="document-card-content">
+                  <h6 class="document-title">{{ doc.fileName }}</h6>
+                  <p class="document-meta">
+                    <span class="file-size">{{ formatFileSize(doc.size) }}</span>
+                    <span class="file-date">{{ doc.updatedAt | date:'short' }}</span>
+                  </p>
+                  <div class="document-tags" *ngIf="doc.tag">
+                    <span class="tag" *ngFor="let tag of doc.tag">{{ tag }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Documents List View -->
+            <div *ngIf="!loadingDocuments && documents.length > 0 && selectedView === 'list'" class="documents-list">
+              <div class="list-header">
+                <div class="list-column">الاسم</div>
+                <div class="list-column">النوع</div>
+                <div class="list-column">الحجم</div>
+                <div class="list-column">التاريخ</div>
+                <div class="list-column">الإجراءات</div>
+              </div>
+              <div 
+                class="list-item" 
+                *ngFor="let doc of documents; let i = index"
+                [style.animation-delay]="i * 0.05 + 's'"
+              >
+                <div class="list-column">
+                  <div class="document-name">
+                    <div class="document-icon-small" [ngClass]="getDocumentIconClass(doc.fileType)">
+                      <i [class]="getDocumentIcon(doc.fileType)"></i>
+                    </div>
+                    <span>{{ doc.fileName }}</span>
+                  </div>
+                </div>
+                <div class="list-column">
+                  <span class="document-type">{{ doc.fileType.toUpperCase() }}</span>
+                </div>
+                <div class="list-column">{{ formatFileSize(doc.size) }}</div>
+                <div class="list-column">{{ doc.updatedAt | date:'short' }}</div>
+                <div class="list-column">
+                  <div class="list-actions">
+                    <button class="action-btn download-btn" (click)="downloadDocument(doc)">
+                      <i class="pi pi-download"></i>
+                    </button>
+                    <button class="action-btn edit-btn" (click)="editDocument(doc)">
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                    <button class="action-btn delete-btn" (click)="deleteDocument($event, doc)">
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div *ngIf="documents.length > 0" class="pagination-container">
+              <p-paginator
+                [rows]="documentsPerPage"
+                [totalRecords]="totalDocuments"
+                [first]="firstDocument"
+                (onPageChange)="onDocumentPageChange($event)"
+                [rowsPerPageOptions]="[10, 20, 50]"
+                styleClass="modern-paginator"
+              ></p-paginator>
+            </div>
+          </div>
+        </p-tabPanel>
+
+       
+      </p-tabView>
+    </div>
+  </div>
+
+  <!-- Edit Folder Dialog -->
+  <p-dialog
+    [(visible)]="showEditDialog"
+    header="تعديل المجلد"
+    [modal]="true"
+    [style]="{ width: '95vw', maxWidth: '600px' }"
+    [draggable]="false"
+    [resizable]="false"
+    styleClass="modern-dialog"
+    (onHide)="editForm.reset()"
+  >
+    <div class="dialog-content">
+      <form [formGroup]="editForm" class="modern-form">
+        <div class="form-group">
+          <label for="editName" class="form-label">
+            <i class="pi pi-tag"></i>
+            <span>اسم المجلد</span>
+            <span class="required-indicator">*</span>
+          </label>
+          <input 
+            id="editName" 
+            type="text" 
+            pInputText 
+            formControlName="name"
+            class="modern-input"
+            [ngClass]="{'error': editForm.get('name')?.invalid && editForm.get('name')?.touched}" 
+            placeholder="أدخل اسم المجلد"
+          />
+          <small *ngIf="editForm.get('name')?.invalid && editForm.get('name')?.touched" class="error-text">
+            <i class="pi pi-exclamation-circle"></i>
+            الاسم مطلوب.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="editDescription" class="form-label">
+            <i class="pi pi-info-circle"></i>
+            <span>الوصف</span>
+          </label>
+          <textarea 
+            id="editDescription" 
+            pInputTextarea 
+            formControlName="description" 
+            rows="4"
+            class="modern-textarea"
+            placeholder="أدخل وصف المجلد (اختياري)"
+          ></textarea>
+        </div>
+      </form>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <p-button 
+          label="إلغاء" 
+          icon="pi pi-times" 
+          (onClick)="showEditDialog = false" 
+          styleClass="modern-cancel-button"
+        ></p-button>
+        <p-button
+          label="حفظ التغييرات"
+          icon="pi pi-check"
+          (onClick)="saveChanges()"
+          [disabled]="editForm.invalid"
+          styleClass="modern-save-button"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>
+<div>
+
+  <app-fileupload [folderId]="folderId" (visibleChange)="uploadedDocument($event)" [visible]="visable"></app-fileupload>
+</div>

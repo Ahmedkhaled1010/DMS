@@ -3,11 +3,13 @@ export interface Folder {
   name: string;
   description?:string;
   parentId?: string;
-  createdAt: string;
+  createdAt: Date;
   updatedAt?: string;
   parentName?:string;
   workspaceName?:string;
   type?: 'folder';
+  documents?:Document[]
+  createdBy?:string
 }
 
 export interface Document {
@@ -51,3 +53,17 @@ export interface FolderData {
   name: string
   id: string
 }
+export type FolderContentItem = Document | Folder
+
+export interface FolderCriteria {
+  name?: string;
+  description?: string;
+  userNationalID?: string;
+  workspaceId?: string;
+  isDeleted?: boolean;
+  sortField?: string;      // default in Java was "fileName"
+  sortDirection?: string;  // default in Java was "asc"
+  pageNum?: number;        // default in Java was 1
+  pageSize?: number;       // default in Java was 10
+}
+

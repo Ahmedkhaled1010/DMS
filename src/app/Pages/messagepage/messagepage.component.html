@@ -1,0 +1,71 @@
+<div class="chat-container">
+  <!-- Chat List Section -->
+  <div class="chat-list" [class.hidden-on-mobile]="selectedChat">
+    <div class="chat-list-header">
+      <h2 class="text-2xl font-semibold text-white">Chats</h2>
+      <div class="search-bar">
+        <input type="text" placeholder="Search chats..." class="chat-search-input" />
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+    <div class="chat-items-wrapper">
+      <div *ngFor="let chat of chatMessages" 
+           class="chat-item" 
+           [class.active]="selectedChat && selectedChat.id === chat.id" 
+           (click)="selectChat(chat.id,receiver(chat.participants))">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Alice" class="chat-avatar" />
+        <div class="chat-info">
+          <div class="chat-name">{{ receiver(chat.participants) }}</div>
+          <div class="last-message">{{ lastMessage(chat.messages)||'' }}</div>
+        </div>
+        <div class="chat-time">{{ lastMessageDate(chat.messages) ||''| date:'dd/MM/yyyy' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Conversation Section -->
+  <div class="chat-conversation" [class.hidden-on-mobile]="!selectedChat">
+    <ng-container *ngIf="selectedChat">
+      <div class="conversation-header">
+        <button class="back-button" (click)="selectedChat == null">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Alice" alt="" class="conversation-avatar" />
+        <div class="conversation-info">
+          <div class="conversation-name">{{   receiver(selectedChat.participants)}}</div>
+          <div class="conversation-status">Online</div>
+        </div>
+        <div class="header-actions">
+          <i class="fas fa-phone-alt action-icon"></i>
+          <i class="fas fa-video action-icon"></i>
+          <i class="fas fa-ellipsis-v action-icon"></i>
+        </div>
+      </div>
+      <div class="messages-container">
+        <div *ngFor="let message of messages" 
+             class="message-bubble" 
+             [class.sent]="message.sender === user?.userName" 
+             [class.received]="message.sender !== user?.userName">
+          <div class="message-content">{{ message?.content }}</div>
+          <div class="message-time">{{ message.timestamp |date:'dd/MM/yyyy'  }}</div>
+        </div>
+      </div>
+      <div class="message-input-area">
+        <input type="text" 
+               placeholder="Type a message..." 
+               class="message-input" 
+               [(ngModel)]="newMessage" 
+               (keyup.enter)="sendMessage()" />
+        <button class="send-button" (click)="sendMessage()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!selectedChat">
+      <div class="no-chat-selected">
+        <i class="fas fa-comments text-6xl text-gray-400 mb-4"></i>
+        <p class="text-lg text-gray-500">Select a chat to start messaging</p>
+      </div>
+    </ng-container>
+  </div>
+</div>

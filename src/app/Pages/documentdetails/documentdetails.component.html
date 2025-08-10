@@ -1,312 +1,364 @@
-<div class="min-h-screen bg-gray-50 my-4 rounded-lg p-4 md:p-6" dir="rtl" *ngIf="document">
-  <!-- Header -->
-  <div class="mb-6">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <p-button
-          icon="pi pi-arrow-right"
-          [text]="true"
-          [rounded]="true"
-          severity="secondary"
-          (onClick)="goBack()"
-          pTooltip="العودة"
-        />
-        <div class="flex items-center gap-3">
-          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-            <i [class]="getFileIcon(document.fileType)" class="text-blue-600 text-xl"></i>
-          </div>
-          <div>
-            <h1 class="text-xl md:text-2xl font-bold text-gray-900 truncate max-w-[300px] md:max-w-none" [title]="document.title || document.fileName">
-              {{ document.title || document.fileName }}
-            </h1>
-            <p class="text-sm text-gray-600">{{ document.fileName }}</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="flex items-center gap-2 w-full sm:w-auto">
-        <p-button
-          icon="pi pi-eye"
-          [label]="'Preview'|translate"
-          (onClick)="previewDocument()"
-          [outlined]="true"
-          severity="info"
-          size="small"
-          styleClass="flex-1 sm:flex-none"
-        />
-        <p-button
-          icon="pi pi-download"
-          [label]="'Dowmload'|translate"
-          (onClick)="downloadDocument()"
-          [outlined]="true"
-          severity="secondary"
-          size="small"
-          styleClass="flex-1 sm:flex-none"
-        />
-        <p-button
-          icon="pi pi-share-alt"
-          [label]="'Share'|translate"
-          (onClick)="showShareDialog()"
-          severity="primary"
-          size="small"
-          styleClass="flex-1 sm:flex-none"
-        />
-      </div>
-    </div>
+<div class="public-documents-container" dir="rtl" *ngIf="document">
+  <!-- Animated Background Elements -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="floating-shape absolute top-10 right-10 w-32 h-32 rounded-full animate-float" style="background: linear-gradient(135deg, var(--primary-400), var(--secondary-400)); opacity: 0.1;"></div>
+    <div class="floating-shape absolute bottom-20 left-20 w-24 h-24 rounded-full animate-float-delayed" style="background: linear-gradient(135deg, var(--success-500), var(--primary-400)); opacity: 0.1;"></div>
+    <div class="floating-shape absolute top-1/2 left-1/3 w-16 h-16 rounded-full animate-pulse" style="background: linear-gradient(135deg, var(--secondary-400), var(--primary-400)); opacity: 0.1;"></div>
   </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Main Content -->
-    <div class="lg:col-span-2 space-y-6">
-      <!-- Document Info Card -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-gray-900"> {{'Document information'|translate}} </h2>
+  <div class="relative z-10 max-w-7xl mx-auto space-y-6 lg:space-y-8">
+    <!-- Header Section -->
+    <div class="public-documents-header animate-in slide-in-from-top duration-800">
+      <div class="header-content">
+        <!-- Document Info -->
+        <div class="flex items-start gap-4 flex-1 min-w-0">
           <p-button
-            icon="pi pi-pencil"
-            [label]="'Update'|translate"
-            (onClick)="showEditDialog()"
-            [outlined]="true"
+            icon="pi pi-arrow-right"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            (onClick)="goBack()"
+            pTooltip="العودة"
+            styleClass="shrink-0 modern-btn-hover"
+          />
+          <div class="flex items-start gap-4 min-w-0 flex-1">
+            <!-- File Icon with Glow Effect -->
+            <div class="relative shrink-0">
+              <div class="icon-wrapper">
+                <i [class]="getFileIcon(document.fileType)"></i>
+              </div>
+              <div class="file-icon-glow"></div>
+            </div>
+            <!-- Document Title and Info -->
+            <div class="min-w-0 flex-1">
+              <h1 class="page-title mb-2 truncate" [title]="document.title || document.fileName">
+                {{ document.title || document.fileName }}
+              </h1>
+              <p class="page-subtitle mb-3 truncate">{{ document.fileName }}</p>
+              <!-- Quick Stats -->
+              <div class="flex flex-wrap items-center gap-3 text-xs md:text-sm">
+                <div class="stat-badge stat-badge-blue">
+                  <i class="pi pi-file"></i>
+                  <span>{{ document.fileType.toUpperCase() }}</span>
+                </div>
+                <div class="stat-badge stat-badge-green">
+                  <i class="pi pi-database"></i>
+                  <span>{{ formatFileSize(document.size) }}</span>
+                </div>
+                <div class="stat-badge stat-badge-purple">
+                  <i class="pi pi-tag"></i>
+                  <span>v{{ document.version }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap lg:flex-nowrap items-center gap-3 w-full lg:w-auto">
+          <p-button
+            icon="pi pi-eye"
+            [label]="'Preview'|translate"
+            (onClick)="previewDocument()"
+            severity="info"
+            size="small"
+            styleClass="flex-1 lg:flex-none modern-btn-glass"
+          />
+          <p-button
+            icon="pi pi-download"
+            [label]="'Dowmload'|translate"
+            (onClick)="downloadDocument()"
             severity="secondary"
             size="small"
-          />
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> {{'Title'|translate}}</label>
-              <p class="text-gray-900 bg-gray-50 p-3 rounded-lg">{{ document.title || 'غير محدد' }}</p>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> {{'File name'|translate}} </label>
-              <p class="text-gray-900 bg-gray-50 p-3 rounded-lg">{{ document.fileName }}</p>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> {{'File type'|translate}} </label>
-              <p-tag
-                [value]="document.fileType.toUpperCase()"
-                [severity]="getFileTypeSeverity(document.fileType)"
-                styleClass="text-sm"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> {{'Size'|translate}}</label>
-              <p class="text-gray-900">{{ formatFileSize(document.size) }}</p>
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> {{'Classification'|translate}} </label>
-              <p-tag
-                [value]="document.tag!"
-                [severity]="getTagSeverity(document.tag)"
-                styleClass="text-sm"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> {{'Privacy'|translate}} </label>
-              <p-tag
-                [value]="document.privacy!"
-                [severity]="getPrivacySeverity(document.privacy)"
-                [icon]="getPrivacyIcon(document.privacy)"
-                styleClass="text-sm"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> {{'Version'|translate}} </label>
-              <p-badge
-                [value]="'v' + document.version"
-                severity="info"
-                styleClass="text-sm"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">{{'Work Space'|translate}} </label>
-              <p class="text-gray-900 font-mono">{{ document.workspaceName }}</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"> {{'Folder'|translate}} </label>
-              <p class="text-gray-900 font-mono">{{ document.folderName }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Location Info -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4"> {{'Location'|translate}} </h2>
-        <div class="flex items-center gap-2 text-sm text-gray-600">
-          <i class="pi pi-home"></i>
-          <span>{{ document.workspaceName }}</span>
-          <i class="pi pi-angle-left"></i>
-          <i class="pi pi-folder"></i>
-          <span>{{ document.folderName }}</span>
-          <i class="pi pi-angle-left"></i>
-          <i [class]="getFileIcon(document.fileType)"></i>
-          <span class="font-medium text-gray-900">{{ document.fileName }}</span>
-        </div>
-      </div>
-
-      <!-- Shared Users
-       <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6" *ngIf="sharedUsers.length > 0">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900">المشاركة مع</h2>
-          <p-button
-            icon="pi pi-plus"
-            label="إضافة مستخدم"
-            (onClick)="showShareDialog()"
-            [outlined]="true"
-            severity="primary"
-            size="small"
-          />
-        </div>
-
-        <div class="space-y-3">
-          <div 
-            *ngFor="let user of sharedUsers; trackBy: trackByUserId"
-            class="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-          >
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <i class="pi pi-user text-blue-600"></i>
-              </div>
-              <div>
-                <p class="font-medium text-gray-900">{{ user.name }}</p>
-                <p class="text-sm text-gray-600">{{ user.email }}</p>
-              </div>
-            </div>
-            
-            <div class="flex items-center gap-2">
-              <div class="flex gap-1">
-                <p-tag
-                  *ngFor="let permission of user.permissions"
-                  [value]="getPermissionLabel(permission)"
-                  severity="info"
-                  styleClass="text-xs"
-                />
-              </div>
-              <p-button
-                icon="pi pi-times"
-                [text]="true"
-                [rounded]="true"
-                severity="danger"
-                size="small"
-                (onClick)="revokeAccess(user)"
-                pTooltip="إلغاء المشاركة"
-              />
-            </div>
-          </div>
-        </div>
-      </div> -->
-      
-
-      <!-- Activity Log -->
-     
-    </div>
-
-    <!-- Sidebar -->
-    <div class="space-y-6">
-      <!-- Quick Actions -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4"> {{'Quick Actions'|translate}} </h3>
-        <div class="space-y-3">
-          <p-button
-            icon="pi pi-pencil"
-            [label]=" 'Update Document'|translate"
-            (onClick)="showEditDialog()"
-            [outlined]="true"
-            severity="secondary"
-            styleClass="w-full justify-start"
+            styleClass="flex-1 lg:flex-none modern-btn-glass"
           />
           <p-button
             icon="pi pi-share-alt"
-            [label]=" 'Share Document'|translate"
+            [label]="'Share'|translate"
             (onClick)="showShareDialog()"
-            [outlined]="true"
             severity="primary"
-            styleClass="w-full justify-start"
-          />
-          <p-button
-            icon="pi pi-copy"
-            [label]=" 'Copy Link'|translate"
-            (onClick)="copyLink()"
-            [outlined]="true"
-            severity="info"
-            styleClass="w-full justify-start"
-          />
-          <p-button
-            icon="pi pi-folder-open"
-            [label]=" 'Open Document'|translate"
-            (onClick)="previewDocument()"
-            [outlined]="true"
-            severity="secondary"
-            styleClass="w-full justify-start"
-          />
-          <p-button
-            *ngIf="!document.isDeleted"
-            icon="pi pi-trash"
-            [label]="'Delete Document'|translate "
-            (onClick)="deleteDocument()"
-            [outlined]="true"
-            severity="danger"
-            styleClass="w-full justify-start"
-          />
-          <p-button
-            *ngIf="document.isDeleted"
-            icon="pi pi-refresh"
-            [label]="'Restore Document'|translate"
-            (onClick)="restoreDocument()"
-            [outlined]="true"
-            severity="success"
-            styleClass="w-full justify-start"
+            size="small"
+            styleClass="flex-1 lg:flex-none modern-btn-primary"
           />
         </div>
       </div>
-
-      <!-- Document Stats -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4"> {{'statistics'|translate}} </h3>
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600"> {{'Creation date'|translate}}</span>
-            <span class="text-sm font-medium text-gray-900">{{ document.createdAt | date:'dd/MM/yyyy' }}</span>
+    </div>
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
+      <!-- Main Content Area -->
+      <div class="xl:col-span-2 space-y-6 lg:space-y-8">
+        <!-- Document Information Card -->
+        <div class="public-content-card p-6 lg:p-8 card-hover">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <div class="icon-wrapper">
+                <i class="pi pi-info-circle"></i>
+              </div>
+              <h2 class="card-title">
+                {{'Document information'|translate}}
+              </h2>
+            </div>
+            <p-button
+              icon="pi pi-pencil"
+              [label]="'Update'|translate"
+              (onClick)="showEditDialog()"
+              severity="secondary"
+              size="small"
+              styleClass="modern-btn-glass"
+            />
           </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600"> {{'Created by'|translate}} </span>
-            <span class="text-sm font-medium text-gray-900">{{ document.createdBy }}</span>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            <!-- Left Column -->
+            <div class="space-y-6">
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-tag" style="color: var(--primary-500);"></i>
+                  {{'Title'|translate}}
+                </label>
+                <div class="info-value info-value-blue">
+                  <p class="info-text">{{ document.title || 'غير محدد' }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-file" style="color: var(--success-500);"></i>
+                  {{'File name'|translate}}
+                </label>
+                <div class="info-value info-value-green">
+                  <p class="info-text break-all">{{ document.fileName }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-file-o" style="color: var(--secondary-500);"></i>
+                  {{'File type'|translate}}
+                </label>
+                <div class="info-value info-value-purple">
+                  <p-tag
+                    [value]="document.fileType.toUpperCase()"
+                    [severity]="getFileTypeSeverity(document.fileType)"
+                    styleClass="modern-tag"
+                  />
+                </div>
+              </div>
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-database" style="color: var(--warning-500);"></i>
+                  {{'Size'|translate}}
+                </label>
+                <div class="info-value info-value-orange">
+                  <p class="info-text">{{ formatFileSize(document.size) }}</p>
+                </div>
+              </div>
+            </div>
+            <!-- Right Column -->
+            <div class="space-y-6">
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-bookmark" style="color: var(--primary-600);"></i>
+                  {{'Classification'|translate}}
+                </label>
+                <div class="info-value info-value-indigo">
+                  <p-tag
+                    [value]="document.tag!"
+                    [severity]="getTagSeverity(document.tag)"
+                    styleClass="modern-tag"
+                  />
+                </div>
+              </div>
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-shield" style="color: var(--danger-500);"></i>
+                  {{'Privacy'|translate}}
+                </label>
+                <div class="info-value info-value-red">
+                  <p-tag
+                    [value]="document.privacy!"
+                    [severity]="getPrivacySeverity(document.privacy)"
+                    [icon]="getPrivacyIcon(document.privacy)"
+                    styleClass="modern-tag"
+                  />
+                </div>
+              </div>
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-code" style="color: var(--info-500);"></i>
+                  {{'Version'|translate}}
+                </label>
+                <div class="info-value info-value-teal">
+                  <p-badge
+                    [value]="'v' + document.version"
+                    severity="info"
+                    styleClass="modern-badge"
+                  />
+                </div>
+              </div>
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-home" style="color: var(--primary-400);"></i>
+                  {{'Work Space'|translate}}
+                </label>
+                <div class="info-value info-value-cyan">
+                  <p class="info-text font-mono text-sm">{{ document.workspaceName }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <label class="info-label">
+                  <i class="pi pi-folder" style="color: var(--warning-600);"></i>
+                  {{'Folder'|translate}}
+                </label>
+                <div class="info-value info-value-yellow">
+                  <p class="info-text font-mono text-sm">{{ document.folderName }}</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="flex items-center justify-between" *ngIf="document.updatedAt">
-            <span class="text-sm text-gray-600"> {{'Latest update'|translate}} </span>
-            <span class="text-sm font-medium text-gray-900">{{ document.updatedAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <!-- Location Breadcrumb Card -->
+        <div class="public-content-card p-6 lg:p-8 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="icon-wrapper">
+              <i class="pi pi-map-marker"></i>
+            </div>
+            <h2 class="card-title">
+              {{'Location'|translate}}
+            </h2>
           </div>
-          <div class="flex items-center justify-between" *ngIf="document.updatedBy">
-            <span class="text-sm text-gray-600"> {{'Updated by'|translate}} </span>
-            <span class="text-sm font-medium text-gray-900">{{ document.updatedBy }}</span>
+          <div class="breadcrumb-container">
+            <div class="flex flex-wrap items-center gap-2 text-sm md:text-base">
+              <div class="breadcrumb-item">
+                <i class="pi pi-home" style="color: var(--primary-500);"></i>
+                <span class="breadcrumb-text">{{ document.workspaceName }}</span>
+              </div>
+              <i class="pi pi-angle-left breadcrumb-separator"></i>
+              <div class="breadcrumb-item">
+                <i class="pi pi-folder" style="color: var(--warning-500);"></i>
+                <span class="breadcrumb-text">{{ document.folderName }}</span>
+              </div>
+              <i class="pi pi-angle-left breadcrumb-separator"></i>
+              <div class="breadcrumb-item">
+                <i [class]="getFileIcon(document.fileType)" style="color: var(--secondary-500);"></i>
+                <span class="breadcrumb-text break-all">{{ document.fileName }}</span>
+              </div>
+            </div>
           </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600"> {{'Number of Shares'|translate}}</span>
-            <span class="text-sm font-medium text-gray-900">{{ sharedUsers.length }}</span>
+        </div>
+      </div>
+      <!-- Sidebar -->
+      <div class="space-y-6 lg:space-y-8">
+        <!-- Quick Actions Card -->
+        <div class="public-content-card p-6 card-hover">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="icon-wrapper">
+              <i class="pi pi-bolt"></i>
+            </div>
+            <h3 class="card-title">
+              {{'Quick Actions'|translate}}
+            </h3>
+          </div>
+          <div class="space-y-3">
+            <p-button
+              icon="pi pi-pencil"
+              [label]="'Update Document'|translate"
+              (onClick)="showEditDialog()"
+              severity="secondary"
+              styleClass="w-full justify-start modern-action-btn"
+            />
+            <p-button
+              icon="pi pi-share-alt"
+              [label]="'Share Document'|translate"
+              (onClick)="showShareDialog()"
+              severity="primary"
+              styleClass="w-full justify-start modern-action-btn"
+            />
+            <p-button
+              icon="pi pi-copy"
+              [label]="'Copy Link'|translate"
+              (onClick)="copyLink()"
+              severity="info"
+              styleClass="w-full justify-start modern-action-btn"
+            />
+            <p-button
+              icon="pi pi-folder-open"
+              [label]="'Open Document'|translate"
+              (onClick)="previewDocument()"
+              severity="secondary"
+              styleClass="w-full justify-start modern-action-btn"
+            />
+            <p-button
+              *ngIf="!document.isDeleted"
+              icon="pi pi-trash"
+              [label]="'Delete Document'|translate"
+              (onClick)="deleteDocument()"
+              severity="danger"
+              styleClass="w-full justify-start modern-action-btn"
+            />
+            <p-button
+              *ngIf="document.isDeleted"
+              icon="pi pi-refresh"
+              [label]="'Restore Document'|translate"
+              (onClick)="restoreDocument()"
+              severity="success"
+              styleClass="w-full justify-start modern-action-btn"
+            />
+          </div>
+        </div>
+        <!-- Statistics Card -->
+        <div class="public-content-card p-6 card-hover">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="icon-wrapper">
+              <i class="pi pi-chart-bar"></i>
+            </div>
+            <h3 class="card-title">
+              {{'statistics'|translate}}
+            </h3>
+          </div>
+          <div class="space-y-4">
+            <div class="stat-item stat-item-blue">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-calendar-plus" style="color: var(--primary-500);"></i>
+                <span class="stat-label">{{'Creation date'|translate}}</span>
+              </div>
+              <span class="stat-value">{{ document.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="stat-item stat-item-green">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-user" style="color: var(--success-500);"></i>
+                <span class="stat-label">{{'Created by'|translate}}</span>
+              </div>
+              <span class="stat-value">{{ document.createdBy }}</span>
+            </div>
+            <div class="stat-item stat-item-purple" *ngIf="document.updatedAt">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-calendar" style="color: var(--secondary-500);"></i>
+                <span class="stat-label">{{'Latest update'|translate}}</span>
+              </div>
+              <span class="stat-value">{{ document.updatedAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="stat-item stat-item-orange" *ngIf="document.updatedBy">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-user-edit" style="color: var(--warning-500);"></i>
+                <span class="stat-label">{{'Updated by'|translate}}</span>
+              </div>
+              <span class="stat-value">{{ document.updatedBy }}</span>
+            </div>
+            <div class="stat-item stat-item-cyan">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-users" style="color: var(--info-500);"></i>
+                <span class="stat-label">{{'Number of Shares'|translate}}</span>
+              </div>
+              <span class="stat-value">{{ sharedUsers.length }}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 <!-- Edit Dialog -->
-<app-update-document [documentData]="document" [showEditModal]="showEditModal" (showEditModalChange)="editModelChange($event)"></app-update-document>
-
-<p-toast></p-toast>
-
-
+<app-update-document
+  [documentData]="document"
+  [showEditModal]="showEditModal"
+  (showEditModalChange)="editModelChange($event)"
+></app-update-document>
 <!-- Share Dialog -->
 <p-dialog
   header="مشاركة المستند"
@@ -315,48 +367,159 @@
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
-  styleClass="w-full max-w-lg"
+  styleClass="modern-dialog w-full max-w-lg"
   [contentStyle]="{'padding': '0'}"
 >
-  <div class="p-6">
-    <form [formGroup]="shareForm" (ngSubmit)="shareDocument()" class="space-y-6">
+  <div class="dialog-content">
+    <!-- Share Options Tabs -->
+    <div class="share-tabs mb-6">
+      <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mb-4">
+        <button
+          type="button"
+          class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200"
+          [class.bg-white]="shareMode === 'email'"
+          [class.text-primary-600]="shareMode === 'email'"
+          [class.shadow-sm]="shareMode === 'email'"
+          [class.text-gray-600]="shareMode !== 'email'"
+          [class.dark:bg-gray-700]="shareMode === 'email'"
+          [class.dark:text-gray-100]="shareMode === 'email'"
+          (click)="shareMode = 'email'"
+        >
+          <i class="pi pi-envelope mr-2"></i>
+          {{'Share via Email'|translate}}
+        </button>
+        <button
+          type="button"
+          class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200"
+          [class.bg-white]="shareMode === 'link'"
+          [class.text-primary-600]="shareMode === 'link'"
+          [class.shadow-sm]="shareMode === 'link'"
+          [class.text-gray-600]="shareMode !== 'link'"
+          [class.dark:bg-gray-700]="shareMode === 'link'"
+          [class.dark:text-gray-100]="shareMode === 'link'"
+          (click)="shareMode = 'link'"
+        >
+          <i class="pi pi-link mr-2"></i>
+          {{'Copy Link'|translate}}
+        </button>
+      </div>
+    </div>
+
+    <!-- Email Share Form -->
+    <div *ngIf="shareMode === 'email'" class="space-y-6">
+      <form [formGroup]="shareForm" (ngSubmit)="shareDocument()" class="space-y-6">
+        <div>
+          <label for="userEmail" class="dialog-label">
+            <i class="pi pi-envelope" style="color: var(--primary-500);"></i>
+            {{'User email'|translate}}
+          </label>
+          <input
+            pInputText
+            id="userEmail"
+            formControlName="userEmail"
+            [placeholder]="'Enter The User Email'|translate"
+            styleClass="w-full modern-input"
+            type="email"
+          />
+        </div>
+        <div class="flex gap-3 pt-4 dialog-footer">
+          <p-button
+            type="submit"
+            [label]="'Share Document'|translate"
+            [loading]="sharing"
+            severity="primary"
+            styleClass="flex-1 modern-btn-primary"
+          />
+          <p-button
+            type="button"
+            [label]="'Cancel'|translate"
+            (onClick)="closeShareDialog()"
+            severity="secondary"
+            styleClass="flex-1 modern-btn-glass"
+          />
+        </div>
+      </form>
+    </div>
+
+    <!-- Link Share Content -->
+    <div *ngIf="shareMode === 'link'" class="space-y-6">
       <div>
-        <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-2"> {{'User email'|translate}} </label>
-        <input
-        pInputText
-          id="userEmail"
-          formControlName="userEmail"
-          [placeholder]="'Enter The User Email'|translate"
-          styleClass="w-full"
-          type="email"
-        />
+        <label class="dialog-label">
+          <i class="pi pi-link" style="color: var(--primary-500);"></i>
+          {{'Document Link'|translate}}
+        </label>
+        <div class="flex gap-2">
+          <input
+            pInputText
+            [value]="getDocumentLink()"
+            readonly
+            styleClass="flex-1 modern-input bg-gray-50 dark:bg-gray-800"
+            #linkInput
+          />
+          <p-button
+            icon="pi pi-copy"
+            [label]="linkCopied ? ('Copied!'|translate) : ('Copy'|translate)"
+            (onClick)="copyDocumentLink(linkInput)"
+            [severity]="linkCopied ? 'success' : 'primary'"
+            styleClass="modern-btn-primary"
+            [disabled]="linkCopied"
+          />
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <i class="pi pi-info-circle mr-1"></i>
+          {{'Anyone with this link can view the document'|translate}}
+        </p>
       </div>
 
-      
+      <div class="share-options">
+        <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-3">
+          {{'Share via'|translate}}
+        </h4>
+        <div class="grid grid-cols-2 gap-3">
+          <p-button
+            icon="pi pi-whatsapp"
+            [label]="'WhatsApp'|translate"
+            (onClick)="shareViaWhatsApp()"
+            severity="success"
+            styleClass="w-full modern-action-btn text-left justify-start"
+          />
+          <p-button
+            icon="pi pi-envelope"
+            [label]="'Email'|translate"
+            (onClick)="shareViaEmail()"
+            severity="info"
+            styleClass="w-full modern-action-btn text-left justify-start"
+          />
+          <p-button
+            icon="pi pi-twitter"
+            [label]="'Twitter'|translate"
+            (onClick)="shareViaTwitter()"
+            severity="info"
+            styleClass="w-full modern-action-btn text-left justify-start"
+          />
+          <p-button
+            icon="pi pi-facebook"
+            [label]="'Facebook'|translate"
+            (onClick)="shareViaFacebook()"
+            severity="primary"
+            styleClass="w-full modern-action-btn text-left justify-start"
+          />
+        </div>
+      </div>
 
-      <div class="flex gap-3 pt-4 border-t border-gray-200">
-        <p-button
-          type="submit"
-          [label]="'Share Document'|translate"
-          [loading]="sharing"
-          severity="primary"
-          styleClass="flex-1"
-        />
+      <div class="flex gap-3 pt-4 dialog-footer">
         <p-button
           type="button"
-          [label]="'Cancel'|translate"
+          [label]="'Close'|translate"
           (onClick)="closeShareDialog()"
-          [outlined]="true"
           severity="secondary"
-          styleClass="flex-1"
+          styleClass="flex-1 modern-btn-glass"
         />
       </div>
-    </form>
+    </div>
   </div>
 </p-dialog>
-
 <!-- Toast Messages -->
 <p-toast position="top-right" />
-
 <!-- Confirmation Dialog -->
 <p-confirmDialog />

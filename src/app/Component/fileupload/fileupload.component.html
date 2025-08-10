@@ -1,98 +1,359 @@
-<p-dialog
-  header="Upload New Document"
-  [(visible)]="visible"
-  [modal]="true"
-  [style]="{ width: '50vw' }"
-  [draggable]="false"
-  [resizable]="false"
-  (onHide)="onModalHide()"
-  styleClass="file-upload-dialog"
->
-  <div class="space-y-6">
-    <div class="space-y-2">
-      <label for="file-upload" class="block text-sm font-medium text-gray-700">Select File(s)</label>
+<p-dialog  
+  header="Upload New Document"  
+  [(visible)]="visible"  
+  [modal]="true"  
+  [style]="{ width: '90vw', maxWidth: '700px', maxHeight: '90vh' }"  
+  [draggable]="false"  
+  [resizable]="false"  
+  
+  (onHide)="onModalHide()"  
+  styleClass="modern-upload-dialog">
+  
+  <!-- Dialog Content -->
+  <div class="upload-content w-11/12 mx-auto p-4">
+    
+    <!-- Media Capture Section -->
+    <div class="media-capture-section" *ngIf="showMediaCapture">
+      <div class="media-header">
+        <h3 class="media-title">
+          <i [class]="getMediaIcon()"></i>
+          {{ getMediaTitle() }}
+        </h3>
+        <button class="close-media-btn" (click)="closeMediaCapture()">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <!-- Camera Preview for Photo/Video -->
+      <div class="camera-container" *ngIf="mediaType === 'photo' || mediaType === 'video'">
+        <video 
+          #videoElement 
+          [style.display]="cameraActive ? 'block' : 'none'"
+          autoplay 
+          muted 
+          playsinline
+          class="camera-preview">
+        </video>
+        
+        <div class="camera-placeholder" *ngIf="!cameraActive">
+          <i class="pi pi-camera camera-placeholder-icon"></i>
+          <p>Camera will appear here</p>
+        </div>
+
+        <!-- Photo Preview -->
+        <div class="photo-preview" *ngIf="capturedPhoto">
+          <img [src]="capturedPhoto" alt="Captured photo" class="captured-image">
+        </div>
+
+        <!-- Camera Controls -->
+        <div class="camera-controls" *ngIf="mediaType === 'photo'">
+          <button 
+            class="media-btn start-btn" 
+            (click)="startCamera()" 
+            *ngIf="!cameraActive"
+            [disabled]="isProcessing">
+            <i class="pi pi-camera"></i>
+            Start Camera
+          </button>
+          
+          <button 
+            class="media-btn capture-btn" 
+            (click)="capturePhoto()" 
+            *ngIf="cameraActive && !capturedPhoto"
+            [disabled]="isProcessing">
+            <i class="pi pi-circle"></i>
+            Take Photo
+          </button>
+          
+          <div class="photo-actions" *ngIf="capturedPhoto">
+            <button class="media-btn retake-btn" (click)="retakePhoto()">
+              <i class="pi pi-refresh"></i>
+              Retake
+            </button>
+            <button class="media-btn save-btn" (click)="savePhoto()">
+              <i class="pi pi-check"></i>
+              Save Photo
+            </button>
+          </div>
+        </div>
+
+        <!-- Video Controls -->
+        <div class="video-controls" *ngIf="mediaType === 'video'">
+          <button 
+            class="media-btn start-btn" 
+            (click)="startCamera()" 
+            *ngIf="!cameraActive && !isRecording"
+            [disabled]="isProcessing">
+            <i class="pi pi-video"></i>
+            Start Camera
+          </button>
+          
+          <button 
+            class="media-btn record-btn" 
+            (click)="startVideoRecording()" 
+            *ngIf="cameraActive && !isRecording"
+            [disabled]="isProcessing">
+            <i class="pi pi-circle record-icon"></i>
+            Start Recording
+          </button>
+          
+          <button 
+            class="media-btn stop-btn" 
+            (click)="stopVideoRecording()" 
+            *ngIf="isRecording"
+            [disabled]="isProcessing">
+            <i class="pi pi-stop"></i>
+            Stop Recording
+          </button>
+
+          <div class="recording-info" *ngIf="isRecording">
+            <span class="recording-indicator">
+              <i class="pi pi-circle recording-dot"></i>
+              REC {{ recordingTime }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio Recording -->
+      <div class="audio-container" *ngIf="mediaType === 'audio'">
+        <div class="audio-visualizer">
+          <div class="audio-icon-container">
+            <i class="pi pi-microphone audio-icon" [class.recording]="isRecording"></i>
+            <div class="audio-waves" *ngIf="isRecording">
+              <div class="wave" *ngFor="let wave of audioWaves" [style.height.px]="wave"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="audio-controls">
+          <button 
+            class="media-btn start-btn" 
+            (click)="startAudioRecording()" 
+            *ngIf="!isRecording && !audioBlob"
+            [disabled]="isProcessing">
+            <i class="pi pi-microphone"></i>
+            Start Recording
+          </button>
+          
+          <button 
+            class="media-btn stop-btn" 
+            (click)="stopAudioRecording()" 
+            *ngIf="isRecording"
+            [disabled]="isProcessing">
+            <i class="pi pi-stop"></i>
+            Stop Recording
+          </button>
+
+          <div class="recording-info" *ngIf="isRecording">
+            <span class="recording-indicator">
+              <i class="pi pi-circle recording-dot"></i>
+              REC {{ recordingTime }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Audio Playback -->
+        <div class="audio-playback" *ngIf="audioBlob">
+          <audio #audioPlayer controls class="audio-player">
+            <source [src]="audioUrl" type="audio/webm">
+          </audio>
+          <div class="audio-actions">
+            <button class="media-btn retake-btn" (click)="retakeAudio()">
+              <i class="pi pi-refresh"></i>
+              Re-record
+            </button>
+            <button class="media-btn save-btn" (click)="saveAudio()">
+              <i class="pi pi-check"></i>
+              Save Audio
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="upload-section" *ngIf="!showMediaCapture">
+      <label class="upload-label">
+        <i class="pi pi-cloud-upload"></i>
+        Select File(s) or Capture Media
+      </label>
+      
+      <!-- Media Capture Options -->
+      <div class="media-options">
+        <button class="media-option-btn" (click)="openMediaCapture('photo')">
+          <i class="pi pi-camera"></i>
+          <span>Take Photo</span>
+        </button>
+        <button class="media-option-btn" (click)="openMediaCapture('video')">
+          <i class="pi pi-video"></i>
+          <span>Record Video</span>
+        </button>
+        <button class="media-option-btn" (click)="openMediaCapture('audio')">
+          <i class="pi pi-microphone"></i>
+          <span>Record Audio</span>
+        </button>
+      </div>
+            
+      <div class="upload-zone" (click)="triggerFileSelect()">
+        <div class="upload-icon-container">
+          <i class="pi pi-cloud-upload upload-icon"></i>
+          <div class="upload-pulse"></div>
+        </div>
+                
+        <div class="upload-text">
+          <h3 class="upload-title">Drop your files here</h3>
+          <p class="upload-subtitle">
+            or <span class="browse-text">browse</span> to choose files
+          </p>
+          <p class="upload-info">
+            Max 10MB per file • PDF, DOC, XLS, PPT, Images, Audio, Video
+          </p>
+        </div>
+        
+        <!-- Selected Files Display -->
+        <div *ngIf="uploadedFiles.length > 0" class="selected-files">
+          <div class="files-header">
+            <i class="pi pi-check-circle"></i>
+            <span>{{ uploadedFiles.length }} file(s) selected</span>
+          </div>
+                    
+          <div class="files-list">
+            <div *ngFor="let file of uploadedFiles; let i = index" class="file-item">
+              <div class="file-info">
+                <i class="file-icon" [ngClass]="getFileIcon(file.name)"></i>
+                <div class="file-details">
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                  <span class="file-type" *ngIf="file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/')">
+                    {{ getMediaTypeLabel(file.type) }}
+                  </span>
+                </div>
+              </div>
+              <button class="remove-file-btn" (click)="removeFile(i, $event)">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hidden File Input -->
+      <input         
+        #fileInput
+        type="file"
+        multiple
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4,.webm,.mp3,.wav,.ogg"
+        (change)="onFileInputChange($event)"
+        style="display: none;">
+            
+      <!-- PrimeNG FileUpload (Hidden) -->
       <p-fileUpload
+        #fileUpload
         name="demo[]"
         customUpload="true"
         (onSelect)="onFileSelect($event)"
         [multiple]="true"
-        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png"
+        
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4,.webm,.mp3,.wav,.ogg"
         [maxFileSize]="10000000"
-        chooseLabel="Choose File"
+        chooseLabel="Choose Files"
         uploadLabel="Upload"
         cancelLabel="Cancel"
         [showUploadButton]="false"
         [showCancelButton]="false"
-        styleClass="custom-fileupload"
-      >
-        <ng-template pTemplate="content">
-          <div
-            class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <i class="pi pi-cloud-upload text-4xl text-gray-400 mb-3"></i>
-            <p class="text-gray-600 text-sm mb-2">
-              Drag and drop your file(s) here, or
-              <span class="text-blue-600 font-medium">browse</span>
-            </p>
-            <p class="text-xs text-gray-500">
-              Max file size: 10MB per file. Allowed types: PDF, DOC, XLS, PPT, Images.
-            </p>
-            <div *ngIf="uploadedFiles.length > 0" class="mt-4 w-full">
-              <p class="text-sm font-medium text-gray-800 mb-2">Selected Files:</p>
-              <ul class="list-disc list-inside text-sm text-gray-700 max-h-24 overflow-y-auto">
-                <li *ngFor="let file of uploadedFiles">
-                  {{ file.name }} ({{ file.size | number : "1.0-0" }} bytes)
-                </li>
-              </ul>
-            </div>
-          </div>
-        </ng-template>
+        styleClass="hidden-fileupload">
       </p-fileUpload>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="space-y-2">
-        <label for="folder-select" class="block text-sm font-medium text-gray-700">Select Folder</label>
-        <p-dropdown
-          id="folder-select"
-          [options]="folders"
-          [(ngModel)]="selectedFolder"
-          optionLabel="name"
-          placeholder="Choose a folder"
-          [showClear]="true"
-          styleClass="w-full custom-dropdown"
-        ></p-dropdown>
+    
+    <!-- Selection Section -->
+    @if (folderId === "" && !showMediaCapture) {
+      <div class="selection-section">
+        <div class="selection-grid">
+          <!-- Folder Selection -->
+          <div class="selection-item">
+            <label class="selection-label">
+              <i class="pi pi-folder"></i>
+              Select Folder
+            </label>
+            <p-dropdown
+              [options]="folders"
+              [(ngModel)]="selectedFolder"
+              optionLabel="name"
+              placeholder="Choose a folder"
+              [showClear]="true"
+              styleClass="modern-dropdown">
+            </p-dropdown>
+          </div>
+          <!-- Workspace Selection -->
+          <div class="selection-item">
+            <label class="selection-label">
+              <i class="pi pi-briefcase"></i>
+              Select Workspace
+            </label>
+            <p-dropdown
+              [options]="workspaces"
+              [(ngModel)]="selectedWorkspace"
+              optionLabel="name"
+              placeholder="Choose a workspace"
+              [showClear]="true"
+              styleClass="modern-dropdown">
+            </p-dropdown>
+          </div>
+        </div>
       </div>
-
-      <div class="space-y-2">
-        <label for="workspace-select" class="block text-sm font-medium text-gray-700">Select Workspace</label>
-        <p-dropdown
-          id="workspace-select"
-          [options]="workspaces"
-          [(ngModel)]="selectedWorkspace"
-          optionLabel="name"
-          placeholder="Choose a workspace"
-          [showClear]="true"
-          styleClass="w-full custom-dropdown"
-        ></p-dropdown>
+    }
+    
+    <!-- Upload Progress -->
+    <div *ngIf="isUploading" class="upload-progress">
+      <div class="progress-info">
+        <i class="pi pi-spin pi-spinner"></i>
+        <span>Uploading files...</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
       </div>
     </div>
   </div>
-
-  <ng-template pTemplate="footer">
-    <p-button
-      label="Cancel"
-      icon="pi pi-times"
-      (click)="visible = false"
-      styleClass="p-button-secondary p-button-text"
-    ></p-button>
-    <p-button
-      label="Upload"
-      icon="pi pi-upload"
-      (click)="onUploadClick()"
-      [disabled]="uploadedFiles.length === 0 ||( !selectedFolder && !selectedWorkspace)">
-    </p-button>
-  </ng-template>
+  
+  <!-- Dialog Footer -->
+  @if (folderId === "") {
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <p-button
+          label="Cancel"
+          icon="pi pi-times"
+          (click)="visible = false"
+          styleClass="cancel-btn">
+        </p-button>
+        <p-button
+          label="Upload Files"
+          icon="pi pi-upload"
+          (click)="onUploadClick()"
+          [disabled]="uploadedFiles.length === 0 || (!selectedFolder && !selectedWorkspace)"
+          styleClass="upload-btn">
+        </p-button>
+      </div>
+    </ng-template>
+  } @else  {
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <p-button
+          label="Cancel"
+          icon="pi pi-times"
+          (click)="visible = false"
+          styleClass="cancel-btn">
+        </p-button>
+        <p-button
+          label="Upload Files"
+          icon="pi pi-upload"
+          (click)="onUploadClick()"
+          [disabled]="uploadedFiles.length === 0"
+          styleClass="upload-btn">
+        </p-button>
+      </div>
+    </ng-template>
+  }
 </p-dialog>
 
 <p-toast></p-toast>

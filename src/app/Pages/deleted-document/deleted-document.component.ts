@@ -9,7 +9,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner"
 import { ToastModule } from "primeng/toast"
 import { MessageService ,ConfirmationService} from "primeng/api"
 import { DocumentService } from "../../Services/Document/document.service"
-import { Document, DocumentModel } from "../../Interfaces/Document/document"
+import { Document, DocumentModel, Privacy } from "../../Interfaces/Document/document"
 import { TranslateModule } from "@ngx-translate/core"
 DocumentService
 @Component({
@@ -21,6 +21,7 @@ DocumentService
   styleUrl: './deleted-document.component.scss'
 })
 export class DeletedDocumentComponent {
+  Privacy?:Privacy ;
  deletedDocuments: DocumentModel[] = []
   loading = true
   error: string | null = null

@@ -1,25 +1,90 @@
-<div class="">
-  <div class="relative h-screen w-screen font-main">
-    <div
-      class="absolute flex w-10/12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-xl rounded-md"
+<div class="auth-container">
+  <!-- Animated Background -->
+
+  <!-- Header Controls -->
+  <div class="control-panel">
+    <!-- Language Toggle -->
+    <button 
+      (click)="changeLanguage()" 
+      class="control-btn language-btn"
+      title="Change Language"
     >
-      <div class="w-6/12 relative bg-white">
-        <div class="absolute w-8/12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" >
-          <button (click)="changeLanguage()" >change</button>
+      <i class="fas fa-globe"></i>
+      <span class="btn-tooltip">Language</span>
+    </button>
+    
+  
+  </div>
 
-          <img src="assets/Images/logo.png" alt="" />
-
+  <!-- Main Auth Container -->
+  <div class="auth-main">
+    <div class="auth-card">
+      <!-- Left Panel - Branding -->
+      <div class="brand-panel">
+        <!-- Background Effects -->
+        <div class="brand-overlay"></div>
+      
+        
+        <div class="brand-content">
+          <!-- Logo Section -->
+          <div class="logo-section">
+            <div class="logo-container">
+              <div class="logo-icon">
+                <i class="fas fa-cloud"></i>
+              </div>
+              <div class="logo-rings">
+                <div class="ring ring-1"></div>
+                <div class="ring ring-2"></div>
+                <div class="ring ring-3"></div>
+              </div>
+            </div>
+            <h1 class="brand-title">DriveBox</h1>
+            <p class="brand-subtitle">Your Digital Document Management Solution</p>
+          </div>
+          
+          <!-- Features List -->
+          <div class="features-list">
+            <div class="feature-item" style="animation-delay: 0.1s">
+              <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div class="feature-content">
+                <h3>Secure Storage</h3>
+                <p>End-to-end encryption</p>
+              </div>
+            </div>
+            <div class="feature-item" style="animation-delay: 0.2s">
+              <div class="feature-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="feature-content">
+                <h3>Team Collaboration</h3>
+                <p>Real-time sharing</p>
+              </div>
+            </div>
+           
+          </div>
+          
+          
         </div>
       </div>
-      <div class="bg-main w-6/12 overflow-auto rounded-3xl">
-        <app-login id="login" (signUpOut)="CheckShow($event)"></app-login>
-
-        <app-register
-          id="register"
-          class="hidden"
-          (loginOut)="CheckShow($event)"
-        ></app-register>
+      
+      <!-- Right Panel - Forms -->
+      <div class="form-panel">
+        <div class="form-container">
+          <!-- Form Background Effects -->
+          <div class="form-glow"></div>
+          
+          <app-login id="login" (signUpOut)="CheckShow($event)"></app-login>
+          <app-register
+            id="register"
+            class="hidden"
+            (loginOut)="CheckShow($event)"
+          ></app-register>
+        </div>
       </div>
     </div>
   </div>
+  
+  
 </div>

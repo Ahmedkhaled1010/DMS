@@ -1,0 +1,208 @@
+<div class="container">
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="profile-avatar">
+      <img [src]="profileImage" [alt]="userData.name" class="avatar">
+      <button class="avatar-upload" (click)="openEditModal(false)" title="Edit profile">
+        ✏️
+      </button>
+    </div>
+    <div class="profile-info">
+      <h1>{{user?.name}}</h1>
+      <p><strong>Username:</strong> {{user?.userName}}</p>
+      <p><strong>Email:</strong> {{user?.email}}</p>
+      <p><strong>Mobile:</strong> {{user?.mobileNumber}}</p>
+      <p><strong>National ID:</strong> {{user?.nationalID}}</p>
+    </div>
+  </div>
+
+  <!-- Statistics Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">{{allWorkspace}}</div>
+      <div class="stat-label">Total Workspaces</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{TotalDocuments}}</div>
+      <div class="stat-label">Total Documents</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{totalFodler}}</div>
+      <div class="stat-label">Total Folders</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{DeletedDocuments}}</div>
+      <div class="stat-label">Deleted Documents</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ArchivedDocuments}}</div>
+      <div class="stat-label">Archived Documents</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{PublicDocuments}}</div>
+      <div class="stat-label">Public Documents</div>
+    </div>
+  </div>
+
+  <!-- Action Cards -->
+  <div class="stats-grid">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Profile Settings</h3>
+        <p class="card-subtitle">Update your personal information</p>
+      </div>
+      <div class="card-body">
+        <button class="btn btn-primary" (click)="openEditModal(true)">
+          ✏️ Edit Profile
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Security</h3>
+        <p class="card-subtitle">Change your password</p>
+      </div>
+      <div class="card-body">
+        <button class="btn btn-secondary" (click)="openPasswordModal()">
+          🔒 Change Password
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit Profile</h3>
+      <button class="modal-close" (click)="closeEditModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="alertMessage" [class]="'alert alert-' + alertType">
+        {{alertMessage}}
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="saveProfile()">
+        <!-- Profile Image Upload -->
+        <div class="form-group">
+          <label class="form-label">Profile Image</label>
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <img [src]="profileImage" [alt]="userData.name" 
+                 style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+             @if (editProfile) {
+             <input type="file" accept="image/*" (change)="onFileSelected($event)" 
+                   style="flex: 1;" class="form-input">
+           }
+          </div>
+        </div>
+
+        <!-- Name -->
+        @if (!editProfile) {
+          <div class="form-group">
+          <label for="name" class="form-label">Full Name *</label>
+          <input type="text" id="name" formControlName="name" class="form-input" 
+                 placeholder="Enter your full name">
+          <div *ngIf="getFieldError('name')" style="color: var(--error); font-size: 0.75rem; margin-top: 0.25rem;">
+            {{getFieldError('name')}}
+          </div>
+        </div>
+         <div class="form-group">
+          <label for="name" class="form-label">User Name *</label>
+          <input type="text" id="name" formControlName="userName" class="form-input" 
+                 placeholder="Enter your User name">
+          <div *ngIf="getFieldError('userName')" style="color: var(--error); font-size: 0.75rem; margin-top: 0.25rem;">
+            {{getFieldError('userName')}}
+          </div>
+        </div>
+
+        <!-- Mobile Number -->
+        <div class="form-group">
+          <label for="mobile" class="form-label">Mobile Number *</label>
+          <input type="tel" id="mobile" formControlName="mobileNumber" class="form-input" 
+                 placeholder="Enter your mobile number">
+          <div *ngIf="getFieldError('mobileNumber')" style="color: var(--error); font-size: 0.75rem; margin-top: 0.25rem;">
+            {{getFieldError('mobileNumber')}}
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address *</label>
+          <input type="email" id="email" formControlName="email" class="form-input" 
+                 placeholder="Enter your email address">
+          <div *ngIf="getFieldError('email')" style="color: var(--error); font-size: 0.75rem; margin-top: 0.25rem;">
+            {{getFieldError('email')}}
+          </div>
+        </div>
+        }
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveProfile()" 
+             >Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal" *ngIf="showPasswordModal" (click)="closePasswordModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Change Password</h3>
+      <button class="modal-close" (click)="closePasswordModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="alertMessage" [class]="'alert alert-' + alertType">
+        {{alertMessage}}
+      </div>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+        <!-- Current Password -->
+        <div class="form-group">
+          <label for="currentPassword" class="form-label">Current Password *</label>
+          <input type="password" id="currentPassword" formControlName="oldPassword" 
+                 class="form-input" placeholder="Enter your current password">
+          <div *ngIf="getFieldError('oldPassword', passwordForm)" 
+               style="color: var(--error); font-size: 0.75rem; margin-top: 0.25rem;">
+            {{getFieldError('oldPassword', passwordForm)}}
+          </div>
+        </div>
+
+        <!-- New Password -->
+        <div class="form-group">
+          <label for="newPassword" class="form-label">New Password *</label>
+          <input type="password" id="newPassword" formControlName="newPassword" 
+                 class="form-input" placeholder="Enter your new password">
+          <div *ngIf="getFieldError('newPassword', passwordForm)" 
+               style="color: var(--error); font-size: 0.75rem; margin-top: 0.25rem;">
+            {{getFieldError('newPassword', passwordForm)}}
+          </div>
+        </div>
+
+        <!-- Confirm Password 
+         
+        
+          <div class="form-group">
+          <label for="confirmPassword" class="form-label">Confirm New Password *</label>
+          <input type="password" id="confirmPassword" formControlName="confirmPassword" 
+                 class="form-input" placeholder="Confirm your new password">
+          <div *ngIf="getFieldError('confirmPassword', passwordForm)" 
+               style="color: var(--error); font-size: 0.75rem; margin-top: 0.25rem;">
+            {{getFieldError('confirmPassword', passwordForm)}}
+          </div>
+        </div>
+        -->
+        
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closePasswordModal()">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="changePassword()" 
+              [disabled]="!passwordForm.valid">Change Password</button>
+    </div>
+  </div>
+</div>

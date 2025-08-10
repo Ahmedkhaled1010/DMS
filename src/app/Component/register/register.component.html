@@ -1,73 +1,197 @@
-
-  <div class="bg-white text-main  w-10/12 p-3 my-8 mx-auto rounded-2xl text-xl">
-    <h2 class="text-center text-base font-medium text-main">{{'Welcome to DriveBox'|translate}}</h2>
-    <h1 class="text-center text-3xl font-bold mb-4">{{'Register'|translate}}</h1>
-
-   <form [formGroup]="registerForm" (ngSubmit)="register()" class="space-y-3">
-  <div class="grid grid-cols-2 gap-2 ">
-    <div class="my-1">
-      <label class="block text-main mb-0.5">{{'Name'|translate}}</label>
-      <input formControlName="name" type="text" [placeholder]="'Name'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
-    </div>
-    <div class="my-1">
-      <label class="block text-main mb-0.5">{{'Username'|translate}}</label>
-      <input formControlName="userName" type="text" [placeholder]="'Username'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
-    </div>
-  </div>
-<div class="grid grid-cols-2 gap-2">
-  <div class="my-1">
-    <label class="block text-main mb-0.5">{{'Mobile Number'|translate}}</label>
-    <input formControlName="mobileNumber" type="text" [placeholder]="'Mobile Number'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
-  </div>
-  <div class="my-1">
-    <label class="block text-main mb-0.5">{{'National Id'|translate}}</label>
-    <input formControlName="nationalID" type="text" [placeholder]="'National Id'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
-  </div>
+<div class="register-container">
+  <!-- Header -->
+  <div class="register-header">
+   
+    <h2 class="welcome-text">
+      {{'Welcome to DriveBox'|translate}}
+    </h2> 
+    <h1 class="register-title">
+      {{'Register'|translate}}
+    </h1>
+    <p class="register-subtitle">
+      Create your account to get started
+    </p>
   </div>
 
-  <div class="grid grid-cols-2 gap-2">
-    <div class="my-1">
-      <label class="block text-main mb-0.5">{{'Email'|translate}}</label>
-      <input formControlName="email" type="email" [placeholder]="'Email'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
-    </div>
-    <div class="my-1">
-      <label class="block text-main mb-0.5">{{'Confirm Email'|translate}}</label>
-      <input formControlName="confirmEmail" type="email" [placeholder]="'Confirm Email'|translate" class="w-full rounded-lg border px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-main" />
-    </div>
-  </div>
+  <!-- Registration Form -->
+  <form [formGroup]="registerForm" (ngSubmit)="register()" class="register-form">
 
-  <div class="grid grid-cols-2 gap-2">
-    <div class="my-1">
-      <label class="block text-main mb-0.5">{{'Password'|translate}}</label>
-      <div class="relative">
-          <input type="password" id="registerpassword" formControlName="password"[placeholder]="'Password'|translate"
-                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-main"/>
-          <span id="togglePassword1" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer">
-        <i id="iconShow" class="fa-solid fa-eye block"></i>
-          <i id="iconHide" class="fa-solid fa-eye-slash hidden"></i>          </span>
+    <!-- Name and Username Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-user"></i>
+          {{'Name'|translate}}
+        </label>
+        <div class="input-wrapper">
+          <input
+            formControlName="name"
+            type="text"
+            [placeholder]="'Name'|translate"
+            class="form-input"
+          />
+          <div class="input-border"></div>
         </div>
-    </div>
-
-    <div class="my-1">
-      <label class="block text-main mb-0.5">{{'Confirm Password'|translate}}</label>
-      <div class="relative">
-          <input type="password" id="confirmPassword" formControlName="confirmPassword" [placeholder]="'Confirm Password'|translate"
-                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-main"/>
-          <span id="togglePassword1" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer">
-        <i id="iconShow" class="fa-solid fa-eye block"></i>
-          <i id="iconHide" class="fa-solid fa-eye-slash hidden"></i>          </span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-at"></i>
+          {{'Username'|translate}}
+        </label>
+        <div class="input-wrapper">
+          <input
+            formControlName="userName"
+            type="text"
+            [placeholder]="'Username'|translate"
+            class="form-input"
+          />
+          <div class="input-border"></div>
         </div>
+      </div>
     </div>
-  </div>
 
-  <button type="submit" class="w-full bg-main text-white font-semibold rounded-lg py-1.5 mt-2 hover:bg-sky-600 transition-all">
-    {{'Register'|translate}}
-  </button>
+    <!-- Mobile and National ID Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-phone"></i>
+          {{'Mobile Number'|translate}}
+        </label>
+        <div class="input-wrapper">
+          <input
+            formControlName="mobileNumber"
+            type="text"
+            [placeholder]="'Mobile Number'|translate"
+            class="form-input"
+          />
+          <div class="input-border"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-id-card"></i>
+          {{'National Id'|translate}}
+        </label>
+        <div class="input-wrapper">
+          <input
+            formControlName="nationalID"
+            type="text"
+            [placeholder]="'National Id'|translate"
+            class="form-input"
+          />
+          <div class="input-border"></div>
+        </div>
+      </div>
+    </div>
 
-  <p class="text-center text-black text-xs mt-2">
-{{'Already have an account?'|translate}}
-    <a (click)="login()" class="text-main cursor-pointer font-semibold hover:underline">{{'Log in'|translate}}</a>
-  </p>
-</form>
+    <!-- Email Fields Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-envelope"></i>
+          {{'Email'|translate}}
+        </label>
+        <div class="input-wrapper">
+          <input
+            formControlName="email"
+            type="email"
+            [placeholder]="'Email'|translate"
+            class="form-input"
+          />
+          <div class="input-border"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-envelope-open"></i>
+          {{'Confirm Email'|translate}}
+        </label>
+        <div class="input-wrapper">
+          <input
+            formControlName="confirmEmail"
+            type="email"
+            [placeholder]="'Confirm Email'|translate"
+            class="form-input"
+          />
+          <div class="input-border"></div>
+        </div>
+      </div>
+    </div>
 
-  </div>
+    <!-- Password Fields Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-lock"></i>
+          {{'Password'|translate}}
+        </label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="registerpassword"
+            formControlName="password"
+            [placeholder]="'Password'|translate"
+            class="form-input"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+          >
+            <i class="fas fa-eye"></i>
+          </button>
+          <div class="input-border"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-lock"></i>
+          {{'Confirm Password'|translate}}
+        </label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            [placeholder]="'Confirm Password'|translate"
+            class="form-input"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+          >
+            <i class="fas fa-eye"></i>
+          </button>
+          <div class="input-border"></div>
+        </div>
+      </div>
+    </div>
+
+   
+    <!-- Register Button -->
+    <button
+      type="submit"
+      class="submit-btn register-btn"
+    >
+      <span class="btn-content">
+        <i class="fas fa-user-plus"></i>
+        {{'Register'|translate}}
+      </span>
+      <div class="btn-ripple"></div>
+    </button>
+
+    <!-- Login Link -->
+    <div class="login-link-section">
+      <p class="link-text">
+        {{'Already have an account?'|translate}}
+        <button
+          type="button"
+          (click)="login()"
+          class="auth-link login-link"
+        >
+          {{'Log in'|translate}}
+        </button>
+      </p>
+    </div>
+  </form>
+</div>

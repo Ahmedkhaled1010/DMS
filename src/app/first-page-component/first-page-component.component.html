@@ -1,0 +1,375 @@
+<!-- Homepage Dashboard Container -->
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900">
+  <div class="container mx-auto px-4 py-8">
+    
+    <!-- Welcome Section -->
+    <div class="mb-8 animate-fade-in">
+      <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-3xl p-8 shadow-soft border border-white/20">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">
+              Welcome back, {{ userData?.name || 'User' }}! 👋
+            </h1>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+              Manage your documents efficiently with our comprehensive DMS platform
+            </p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold">
+              {{ getInitials(userData?.name) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Storage & Subscription Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      
+      <!-- Storage Usage -->
+      <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-6 shadow-soft border border-white/20 animate-slide-up">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center">
+            <i class="fas fa-cloud text-blue-500 mr-3"></i>
+            Storage Usage
+          </h3>
+          <span class="text-sm text-gray-500 dark:text-gray-400">{{ usedStorage }}GB / {{ totalStorage }}GB</span>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
+          <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-500" 
+               [style.width.%]="storagePercentage"></div>
+        </div>
+        
+        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+          <span>{{ storagePercentage }}% used</span>
+          <span>{{ remainingStorage }}GB remaining</span>
+        </div>
+      </div>
+
+      <!-- Current Plan -->
+      <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-6 shadow-soft border border-white/20 animate-slide-up">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center">
+            <i class="fas fa-crown text-yellow-500 mr-3"></i>
+            Current Plan
+          </h3>
+          <span class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+            {{ userData?.budget || 'FREE' }}
+          </span>
+        </div>
+        
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
+          You're on the {{ userData?.budget || 'FREE' }} plan with {{ totalStorage }}GB storage
+        </p>
+        
+        <button (click)="showPricingModal = true" 
+                class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+          <i class="fas fa-upgrade mr-2"></i>
+          Upgrade Plan
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+      
+      <!-- All Documents Card -->
+      <div (click)="navigateTo('/home/Documents')" 
+           class="dashboard-card bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-3 bg-white/20 rounded-xl">
+            <i class="fas fa-file-alt text-white text-2xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-white">{{ dashboardStats.totalDocuments }}</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">All Documents</h3>
+        <p class="text-blue-100 text-sm">View all your documents</p>
+      </div>
+
+      <!-- Workspaces Card -->
+      <div (click)="navigateTo('/home/workspaces')" 
+           class="dashboard-card bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-3 bg-white/20 rounded-xl">
+            <i class="fas fa-briefcase text-white text-2xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-white">{{ dashboardStats.workspaces }}</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Workspaces</h3>
+        <p class="text-purple-100 text-sm">Manage your workspaces</p>
+      </div>
+
+      <!-- Folders Card -->
+      <div (click)="navigateTo('/home/Folders')" 
+           class="dashboard-card bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-3 bg-white/20 rounded-xl">
+            <i class="fas fa-folder text-white text-2xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-white">{{ dashboardStats.folders }}</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Folders</h3>
+        <p class="text-green-100 text-sm">Organize your files</p>
+      </div>
+
+      <!-- Shared Documents Card -->
+      <div (click)="navigateTo('/home/SharedDocuments')" 
+           class="dashboard-card bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-3 bg-white/20 rounded-xl">
+            <i class="fas fa-share-alt text-white text-2xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-white">{{ dashboardStats.sharedDocuments }}</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Shared With Me</h3>
+        <p class="text-orange-100 text-sm">Documents shared with you</p>
+      </div>
+
+      <!-- Public Documents Card -->
+      <div (click)="navigateTo('/home/public')" 
+           class="dashboard-card bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-3 bg-white/20 rounded-xl">
+            <i class="fas fa-globe text-white text-2xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-white">{{ dashboardStats.publicDocuments }}</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Public Documents</h3>
+        <p class="text-teal-100 text-sm">Publicly available files</p>
+      </div>
+
+      <!-- Archived Documents Card -->
+      <div (click)="navigateTo('/home/ArchivedDocuments')" 
+           class="dashboard-card bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-3 bg-white/20 rounded-xl">
+            <i class="fas fa-archive text-white text-2xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-white">{{ dashboardStats.archivedDocuments }}</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Archived</h3>
+        <p class="text-indigo-100 text-sm">Archived documents</p>
+      </div>
+
+      <!-- Deleted Documents Card -->
+      <div (click)="navigateTo('/home/DeletedDocuments')" 
+           class="dashboard-card bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-3 bg-white/20 rounded-xl">
+            <i class="fas fa-trash text-white text-2xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-white">{{ dashboardStats.deletedDocuments }}</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Deleted</h3>
+        <p class="text-red-100 text-sm">Recently deleted files</p>
+      </div>
+
+      <!-- Messages Card -->
+      <div (click)="navigateTo('/home/message')" 
+           class="dashboard-card bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-3 bg-white/20 rounded-xl">
+            <i class="fas fa-envelope text-white text-2xl"></i>
+          </div>
+          <span class="text-3xl font-bold text-white">{{ dashboardStats.messages }}</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Messages</h3>
+        <p class="text-pink-100 text-sm">Your messages</p>
+      </div>
+    </div>
+
+    <!-- Document Preview Demo Section -->
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-3xl p-8 shadow-soft border border-white/20 animate-slide-up">
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+        <i class="fas fa-eye text-blue-500 mr-3"></i>
+        Document Preview Demo
+      </h2>
+      <p class="text-gray-600 dark:text-gray-300 mb-6">
+        Test the document review functionality with sample files:
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <button
+          (click)="previewSamplePDF()"
+          class="quick-action-btn bg-red-500 hover:bg-red-600">
+          <i class="fas fa-file-pdf mr-2"></i>
+          Preview PDF
+        </button>
+
+        <button
+          (click)="previewSampleImage()"
+          class="quick-action-btn bg-blue-500 hover:bg-blue-600">
+          <i class="fas fa-image mr-2"></i>
+          Preview Image
+        </button>
+
+        <button
+          (click)="previewSampleText()"
+          class="quick-action-btn bg-gray-500 hover:bg-gray-600">
+          <i class="fas fa-file-alt mr-2"></i>
+          Preview Text
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pricing Modal -->
+<div *ngIf="showPricingModal" 
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+     (click)="showPricingModal = false">
+  
+  <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto" 
+       (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Choose Your Plan</h2>
+      <button (click)="showPricingModal = false" 
+              class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors">
+        <i class="fas fa-times text-gray-500 dark:text-gray-400 text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- FREE Plan -->
+      <div class="pricing-card border-2 border-gray-200 dark:border-gray-600"
+           [class.ring-4]="userData?.budget === 'FREE'"
+           [class.ring-blue-500]="userData?.budget === 'FREE'">
+        <div class="p-6">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">FREE</h3>
+            <div class="text-3xl font-bold text-gray-800 dark:text-white">$0</div>
+            <p class="text-gray-500 dark:text-gray-400">per month</p>
+          </div>
+          
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              5GB Storage
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              Basic Features
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              Email Support
+            </li>
+          </ul>
+          
+          <button *ngIf="userData?.budget !== 'FREE'" 
+                  (click)="selectPlan('FREE')"
+                  class="w-full py-3 px-4 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-xl font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+            Downgrade to Free
+          </button>
+          
+          <div *ngIf="userData?.budget === 'FREE'" 
+               class="w-full py-3 px-4 bg-blue-500 text-white rounded-xl font-semibold text-center">
+            Current Plan
+          </div>
+        </div>
+      </div>
+
+      <!-- BASIC Plan -->
+      <div class="pricing-card border-2 border-blue-500 relative"
+           [class.ring-4]="userData?.budget === 'BASIC'"
+           [class.ring-blue-500]="userData?.budget === 'BASIC'">
+        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+          <span class="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+            Most Popular
+          </span>
+        </div>
+        
+        <div class="p-6">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">BASIC</h3>
+            <div class="text-3xl font-bold text-gray-800 dark:text-white">$9.99</div>
+            <p class="text-gray-500 dark:text-gray-400">per month</p>
+          </div>
+          
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              50GB Storage
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              Advanced Features
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              Priority Support
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              Team Collaboration
+            </li>
+          </ul>
+          
+          <button *ngIf="userData?.budget !== 'BASIC'" 
+                  (click)="selectPlan('BASIC')"
+                  class="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors">
+            Choose Basic
+          </button>
+          
+          <div *ngIf="userData?.budget === 'BASIC'" 
+               class="w-full py-3 px-4 bg-blue-500 text-white rounded-xl font-semibold text-center">
+            Current Plan
+          </div>
+        </div>
+      </div>
+
+      <!-- PREMIUM Plan -->
+      <div class="pricing-card border-2 border-purple-500"
+           [class.ring-4]="userData?.budget === 'PREMIUM'"
+           [class.ring-purple-500]="userData?.budget === 'PREMIUM'">
+        <div class="p-6">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">PREMIUM</h3>
+            <div class="text-3xl font-bold text-gray-800 dark:text-white">$19.99</div>
+            <p class="text-gray-500 dark:text-gray-400">per month</p>
+          </div>
+          
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              Unlimited Storage
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              All Features
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              24/7 Support
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              Advanced Analytics
+            </li>
+            <li class="flex items-center text-gray-600 dark:text-gray-300">
+              <i class="fas fa-check text-green-500 mr-3"></i>
+              API Access
+            </li>
+          </ul>
+          
+          <button *ngIf="userData?.budget !== 'PREMIUM'" 
+                  (click)="selectPlan('PREMIUM')"
+                  class="w-full py-3 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-semibold transition-colors">
+            Choose Premium
+          </button>
+          
+          <div *ngIf="userData?.budget === 'PREMIUM'" 
+               class="w-full py-3 px-4 bg-purple-500 text-white rounded-xl font-semibold text-center">
+            Current Plan
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

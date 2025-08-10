@@ -1,228 +1,222 @@
-<div class="w-full max-w-6xl my-5 mx-auto space-y-6" dir="rtl">
+<!-- Enhanced Document Manager Component -->
+<div class="document-manager-container" dir="rtl">
   <!-- Header -->
-  <div class="bg-white rounded-xl shadow-lg border border-gray-200">
-    <div class="p-6 border-b border-gray-100">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100">
-            <i class="fas fa-folder-open text-indigo-600 text-xl"></i>
+  <div class="document-manager-card">
+    <div class="document-manager-header">
+      <div class="document-manager-header-content">
+        <div class="document-manager-header-left">
+          <div class="document-manager-icon-container">
+            <i class="fas fa-folder-open document-manager-icon"></i>
           </div>
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">{{'Document Manager'|translate}} </h1>
-            <p class="text-sm text-gray-600">{{'Manage folders and documents'|translate}}</p>
+            <h1 class="document-manager-title">{{'Document Manager'|translate}}</h1>
+            <p class="document-manager-subtitle">{{'Manage folders and documents'|translate}}</p>
           </div>
         </div>
-        @if (!workspace&& currentDocuments.length!=0 && currentFolders.length!=0)
-         {
-            <div  class="flex items-center gap-3">
-          <button
-            (click)="createNewFolder('workspace')"
-            class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-          >
-            <i class="fas fa-folder-plus"></i>
-            <span> {{'New Folder'|translate}}</span>
-          </button>
-          <button
-            (click)="createNewDocument('workspace')"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-          >
-            <i class="fas fa-file-plus"></i>
-            <span>{{'New Document'|translate}} </span>
-          </button>
-        </div>
-         }
-         @else {
-           <div  class="flex items-center gap-3">
-          <button
-            (click)="createNewFolder('folder')"
-            class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-          >
-            <i class="fas fa-folder-plus"></i>
-            <span> {{'New Folder'|translate}}</span>
-          </button>
-          <button
-            (click)="createNewDocument('folder')"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-          >
-            <i class="fas fa-file-plus"></i>
-            <span>{{'New Document'|translate}} </span>
-          </button>
-        </div>
-     
-         }
-      
-         </div>
+        @if (!workspace && currentDocuments.length!=0 && currentFolders.length!=0) {
+          <div class="flex items-center gap-3">
+            <button
+              (click)="createNewFolder('workspace')"
+              class="action-button yellow"
+            >
+              <i class="fas fa-folder-plus"></i>
+              <span> {{'New Folder'|translate}}</span>
+            </button>
+            <button
+              (click)="createNewDocument('workspace')"
+              class="action-button"
+            >
+              <i class="fas fa-file-plus"></i>
+              <span>{{'New Document'|translate}} </span>
+            </button>
+          </div>
+        } @else {
+          <div class="flex items-center gap-3">
+            <button
+              (click)="createNewFolder('folder')"
+              class="action-button yellow"
+            >
+              <i class="fas fa-folder-plus"></i>
+              <span> {{'New Folder'|translate}}</span>
+            </button>
+            <button
+              (click)="createNewDocument('folder')"
+              class="action-button"
+            >
+              <i class="fas fa-file-plus"></i>
+              <span>{{'New Document'|translate}} </span>
+            </button>
+          </div>
+        }
+      </div>
     </div>
-
     <!-- Breadcrumb -->
-    <div class="px-6 py-3 bg-gray-50 border-b border-gray-100">
-      <nav class="flex items-center gap-2 text-sm">
-        <button 
+    <div class="breadcrumb-container">
+      <nav class="breadcrumb-nav">
+        <button
           (click)="navigateToFolder('',undefined)"
-          class="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+          class="breadcrumb-link"
         >
           <i class="fas fa-home"></i>
           <span>{{"Home"|translate}}</span>
         </button>
-        <span *ngIf="currentFolder" class="text-gray-400">/</span>
-        <span *ngIf="currentFolder" class="text-gray-700 font-medium">
+        <span *ngIf="currentFolder" class="breadcrumb-separator">/</span>
+        <span *ngIf="currentFolder" class="breadcrumb-current">
           {{ currentFolder.name }}
         </span>
       </nav>
     </div>
-
     <!-- Content -->
-    <div class="p-6">
+    <div class="document-manager-content">
       <!-- Loading State -->
-      <div *ngIf="loading" class="flex items-center justify-center py-12">
-        <i class="fas fa-spinner fa-spin text-indigo-600 text-2xl ml-3"></i>
+      <div *ngIf="loading" class="loading-state">
+        <i class="fas fa-spinner fa-spin loading-spinner"></i>
         <span class="text-gray-600">
           {{'Loading...'|translate}}</span>
       </div>
-
       <!-- Error State -->
-      <div *ngIf="error" class="text-center py-12">
-        <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
-        <p class="text-red-600">{{ error }}</p>
+      <div *ngIf="error" class="error-state">
+        <i class="fas fa-exclamation-triangle error-icon"></i>
+        <p class="error-message">{{ error }}</p>
       </div>
-
       <!-- Empty State -->
-      <div *ngIf="!loading && !error && currentFolders.length === 0 && currentDocuments.length === 0&& folderId==undefined" 
-           class="text-center py-12">
-        <i class="fas fa-folder-open text-gray-300 text-6xl mb-4"></i>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{'There are no files'|translate}}</h3>
-        <p class="text-gray-600 mb-4">   {{'Start by creating a new folder or document.'|translate}}  </p>
-        <div class="flex gap-3 justify-center">
+      <div *ngIf="!loading && !error && currentFolders.length === 0 && currentDocuments.length === 0 && folderId==undefined"
+           class="empty-state">
+        <i class="fas fa-folder-open empty-icon"></i>
+        <h3 class="empty-title">{{'There are no files'|translate}}</h3>
+        <p class="empty-message">
+          {{'Start by creating a new folder or document.'|translate}}
+        </p>
+        <div class="empty-actions">
           <button
             (click)="createNewFolder('workspace')"
-            class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            class="action-button yellow"
           >
             <i class="fas fa-folder-plus"></i>
             <span> {{'Create New Folder'|translate}}</span>
           </button>
           <button
             (click)="createNewDocument('workspace')"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-          >
-            <i class="fas fa-file-plus"></i>
-            <span>{{'Create New Folder'|translate}} </span>
-          </button>
-        </div>
-      </div>
-      <div *ngIf="!loading && !error && currentFolders.length === 0 && currentDocuments.length === 0&& folderId!=undefined" 
-           class="text-center py-12">
-        <i class="fas fa-folder-open text-gray-300 text-6xl mb-4"></i>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{'There are no files'|translate}}</h3>
-        <p class="text-gray-600 mb-4">   {{'Start by creating a new folder or document.'|translate}}  </p>
-        <div class="flex gap-3 justify-center">
-          <button
-            (click)="createNewFolder('folder')"
-            class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-          >
-            <i class="fas fa-folder-plus"></i>
-            <span> {{'Create New Folder'|translate}}</span>
-          </button>
-          <button
-            (click)="createNewDocument('folder')"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            class="action-button"
           >
             <i class="fas fa-file-plus"></i>
             <span>{{'Create New Document'|translate}} </span>
           </button>
         </div>
       </div>
-
+      <div *ngIf="!loading && !error && currentFolders.length === 0 && currentDocuments.length === 0 && folderId!=undefined"
+           class="empty-state">
+        <i class="fas fa-folder-open empty-icon"></i>
+        <h3 class="empty-title">{{'There are no files'|translate}}</h3>
+        <p class="empty-message">
+          {{'Start by creating a new folder or document.'|translate}}
+        </p>
+        <div class="empty-actions">
+          <button
+            (click)="createNewFolder('folder')"
+            class="action-button yellow"
+          >
+            <i class="fas fa-folder-plus"></i>
+            <span> {{'Create New Folder'|translate}}</span>
+          </button>
+          <button
+            (click)="createNewDocument('folder')"
+            class="action-button"
+          >
+            <i class="fas fa-file-plus"></i>
+            <span>{{'Create New Document'|translate}} </span>
+          </button>
+        </div>
+      </div>
       <!-- Files Grid -->
-      <div *ngIf="!loading && !error && (currentFolders.length > 0 || currentDocuments.length > 0)" 
-           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        
+      <div *ngIf="!loading && !error && (currentFolders.length > 0 || currentDocuments.length > 0)"
+           class="files-grid">
         <!-- Folders -->
-        <div 
+        <div
           *ngFor="let folder of currentFolders; trackBy: trackByItemId"
-          class="group bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-xl p-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer"
+          class="item-card folder-card"
           (click)="navigateToFolder(folder,folder.id)"
           [@slideIn]
         >
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-200 group-hover:bg-yellow-300 transition-colors">
-              <i class="fas fa-folder text-yellow-700 text-xl"></i>
+          <div class="item-header">
+            <div class="item-icon-container">
+              <i class="fas fa-folder item-icon"></i>
             </div>
-            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="item-actions">
               <button
                 (click)="editFolder(folder, $event)"
-                class="h-8 w-8 rounded-md hover:bg-yellow-200 hover:text-yellow-800 transition-colors flex items-center justify-center"
+                class="item-action-button edit"
                 title="تعديل"
               >
                 <i class="fas fa-edit text-sm"></i>
               </button>
               <button
                 (click)="deleteFolder(folder, $event)"
-                class="h-8 w-8 rounded-md hover:bg-red-200 hover:text-red-800 transition-colors flex items-center justify-center"
+                class="item-action-button delete"
                 title="حذف"
               >
                 <i class="fas fa-trash text-sm"></i>
               </button>
             </div>
           </div>
-          <h3 class="font-semibold text-gray-900 truncate mb-1">{{ folder.name }}</h3>
-          <p class="text-xs text-gray-600">
-            
+          <h3 class="item-title">{{ folder.name }}</h3>
+          <p class="item-description">
             {{ folder.description }}
           </p>
-          <p class="text-xs text-gray-600">
+          <p class="item-meta">
             <i class="fas fa-calendar-alt ml-1"></i>
             {{ folder.createdAt | date:'shortDate' }}
           </p>
         </div>
-
         <!-- Documents -->
-        <div 
+        <div
           *ngFor="let document of currentDocuments; trackBy: trackByItemId"
-          class="group bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+          class="item-card document-card"
           [@slideIn]
         >
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-200 group-hover:bg-blue-300 transition-colors">
-              <i class="fas text-blue-700 text-xl"
+          <div class="item-header">
+            <div class="item-icon-container">
+              <i class="fas item-icon"
                  [class.fa-file-pdf]="document.fileType === 'application/pdf'"
                  [class.fa-file-word]="document.fileType === 'application/msword'"
                  [class.fa-file-alt]="document.fileType === 'text/plain'"
                  [class.fa-music]="document.fileType === 'audio/ogg'"
-                 [class.fa-file-image]="document.fileType === 'image/png'||'image/jpeg'||'image/gif'"
+                 [class.fa-file-image]="document.fileType === 'image/png'||document.fileType === 'image/jpeg'||document.fileType === 'image/gif'"
                  [class.fa-file]="document.fileType === 'other'"></i>
             </div>
-            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="item-actions">
               <button
                 (click)="viewDocument(document)"
-                class="h-8 w-8 rounded-md hover:bg-blue-200 hover:text-blue-800 transition-colors flex items-center justify-center"
+                class="item-action-button view"
                 title="عرض"
               >
                 <i class="fas fa-eye text-sm"></i>
               </button>
-               <button
+              <button
                 (click)="downloadDocument(document)"
-                class="h-8 w-8 rounded-md hover:bg-blue-200 hover:text-blue-800 transition-colors flex items-center justify-center"
-                title="عرض"
+                class="item-action-button download"
+                title="تحميل"
               >
-<i class="fa-solid fa-download"></i>              </button>
+                <i class="fa-solid fa-download"></i>
+              </button>
               <button
                 (click)="editDocument(document)"
-                class="h-8 w-8 rounded-md hover:bg-blue-200 hover:text-blue-800 transition-colors flex items-center justify-center"
+                class="item-action-button edit"
                 title="تعديل"
               >
                 <i class="fas fa-edit text-sm"></i>
               </button>
               <button
                 (click)="deleteDocument(document)"
-                class="h-8 w-8 rounded-md hover:bg-red-200 hover:text-red-800 transition-colors flex items-center justify-center"
+                class="item-action-button delete"
                 title="حذف"
               >
                 <i class="fas fa-trash text-sm"></i>
               </button>
             </div>
           </div>
-          <h3 class="font-semibold text-gray-900 truncate mb-1">{{ document.fileName }}</h3>
-          <div class="flex items-center justify-between text-xs text-gray-600">
+          <h3 class="item-title">{{ document.fileName }}</h3>
+          <div class="item-meta">
             <span>
               <i class="fas fa-calendar-alt ml-1"></i>
               {{ document.createdAt | date:'shortDate' }}
@@ -237,62 +231,50 @@
   </div>
 </div>
 
-@if (showDeleteDialog)
- {
-<div  
-  class="fixed inset-0 z-50 flex items-center justify-center p-4"
-  [@fadeInOut]
->
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="showDeleteDialog = false"></div>
-  <div class="relative bg-white rounded-xl shadow-2xl p-6 w-full max-w-md" >
-    <h3 class="text-lg font-semibold text-gray-900 mb-2">
-
-      @if (createType==='folder') {
-
-        {{'Delete Folder'|translate}}
-      }@else {
-        {{'Delete Document'|translate}}
-      }
-    </h3>
-    <p class="text-gray-600 mb-6">
-      @if (createType==='folder') {
-             {{'Are you sure you want to delete'|translate}} "{{ currentFolder?.name }}"? {{'This action cannot be undone.'|translate}}
-
-      }
-      @else {
-                     {{'Are you sure you want to delete'|translate}} "{{ currentDocument?.fileName }}"? {{'This action cannot be undone.'|translate}}
-
-      }
-    </p>
-    <div class="flex gap-3">
-      <button
-        (click)="showDeleteDialog = false"
-        class="flex-1 py-2 px-4 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-        [disabled]="isDeleting"
-      >
-    {{'Cancel'|translate}}
-      </button>
-      <button
-        (click)="confirmDelete()"
-        class="flex-1 py-2 px-4 text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-        [disabled]="isDeleting"
-      >
-       @if (isDeleting) 
-       {
-         <i  class="fas fa-spinner fa-spin"></i>
-       }
-       <!--
-         {{ isDeleting ? 'Deleting...' : "{{'Delete'|translate}}" }}
-       --> 
-       {{'Delete'|translate}}
-      
-      </button>
+@if (showDeleteDialog) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 delete-dialog-backdrop"
+    [@fadeInOut]
+  >
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="showDeleteDialog = false"></div>
+    <div class="relative delete-dialog-container">
+      <h3 class="delete-dialog-title">
+        @if (createType==='folder') {
+          {{'Delete Folder'|translate}}
+        }@else {
+          {{'Delete Document'|translate}}
+        }
+      </h3>
+      <p class="delete-dialog-message">
+        @if (createType==='folder') {
+          {{'Are you sure you want to delete'|translate}} "{{ currentFolder?.name }}"? {{'This action cannot be undone.'|translate}}
+        } @else {
+          {{'Are you sure you want to delete'|translate}} "{{ currentDocument?.fileName }}"? {{'This action cannot be undone.'|translate}}
+        }
+      </p>
+      <div class="delete-dialog-actions">
+        <button
+          (click)="showDeleteDialog = false"
+          class="delete-dialog-button cancel"
+          [disabled]="isDeleting"
+        >
+          {{'Cancel'|translate}}
+        </button>
+        <button
+          (click)="confirmDelete()"
+          class="delete-dialog-button confirm"
+          [disabled]="isDeleting"
+        >
+          @if (isDeleting) {
+            <i class="fas fa-spinner fa-spin"></i>
+          }
+          {{'Delete'|translate}}
+        </button>
+      </div>
     </div>
   </div>
-</div>
- }
+}
 <!-- Create Modal -->
- 
 <app-create-doc-item
   [isUpdated]="isUpdate"
   [workspaceId]="workspaceId"
@@ -300,6 +282,3 @@
   [itemType]="createType"
   (closeEvent)="closeCreateModal()"
 ></app-create-doc-item>
-
-
-

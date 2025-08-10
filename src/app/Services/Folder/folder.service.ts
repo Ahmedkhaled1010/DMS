@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { Folder, ApiResponse, CreateFolderData, CreateDocumentData, Document, UpdateFolderData, FolderData } from '../../Interfaces/Folder/folder';
-import { HttpClient } from '@angular/common/http';
+import { Folder, ApiResponse, CreateFolderData, CreateDocumentData, Document, UpdateFolderData, FolderData, FolderCriteria } from '../../Interfaces/Folder/folder';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -21,35 +21,9 @@ export class FolderService {
   folderId:BehaviorSubject<string>=new BehaviorSubject<string>("");
 
   // Mock data
-  private mockFolders: Folder[] = [
-    {
-      id: '1',
-      name: 'المشاريع',
-      createdAt: '2024-01-15',
-      type: 'folder'
-    },
-    {
-      id: '2',
-      name: 'الوثائق المهمة',
-      createdAt: '2024-01-10',
-      type: 'folder'
-    },
-    {
-      id: '3',
-      name: 'التصاميم',
-      parentId: '1',
-      createdAt: '2024-01-12',
-      type: 'folder'
-    }
-  ];
-
-  private mockDocuments: Document[] = [
-    
-  ];
-
+ 
   constructor(private _HttpClient:HttpClient) {
-    this.foldersSubject.next(this.mockFolders);
-    this.documentsSubject.next(this.mockDocuments);
+    
 
     this.getAllFolders().subscribe({
       next: (res) => {
@@ -75,6 +49,16 @@ export class FolderService {
    return this._HttpClient.post(`folder/create?workSpaceId=${id}`,data);
  
   }
+   createFolderInParent(data: CreateFolderData,id:string): Observable<any> {
+
+   return this._HttpClient.post(`folder/create?folderId=${id}`,data);
+ 
+  }
+   createFolder(data: CreateFolderData,folderId:string,workspaceId:string): Observable<any> {
+
+   return this._HttpClient.post(`folder/create?workSpaceId=${workspaceId}&folderId=${folderId}`,data);
+ 
+  }
   createChildFolder(data: CreateFolderData,id:string): Observable<any> {
 
    return this._HttpClient.post(`folder/create?folderId=${id}`,data);
@@ -96,8 +80,44 @@ export class FolderService {
   {
     return this._HttpClient.get(`folder/allWorkspace/${id}`)
   }
-  getAllFolderUser():Observable<any>
+  getAllFolderUser(data:FolderCriteria):Observable<any>
   {
-    return this._HttpClient.get('folder/allUser');
+    let params =this.changeToformData(data);
+    return this._HttpClient.get('folder/allUser',{params:params});
+  }
+  changeToformData(data: FolderCriteria): HttpParams {
+    let params = new HttpParams();
+  
+    if (data.name) {
+      params = params.set('name', data.name);
+    }
+    if (data.sortDirection) {
+      params = params.set('sortDirection', data.sortDirection);
+    }
+    if (data.sortField) {
+      params = params.set('sortField', data.sortField);
+    }
+    if (data.pageSize !== undefined && data.pageSize !== null) {
+      params = params.set('pageSize', data.pageSize);
+    }
+   
+    if (data.pageNum !== undefined && data.pageNum !== null) {
+      params = params.set('pageNum', data.pageNum);
+    }
+    if (data.description) {
+      params = params.set('description', data.description);
+    }
+    if (data.userNationalID) {
+      params = params.set('userNationalID', data.userNationalID);
+    }
+    if (data.workspaceId) {
+      params = params.set('workspaceId', data.workspaceId);
+    }
+    if (data.isDeleted !== undefined && data.isDeleted !== null) {
+      params = params.set('isDeleted', data.isDeleted.toString());
+    }
+    
+  
+    return params;
   }
 }

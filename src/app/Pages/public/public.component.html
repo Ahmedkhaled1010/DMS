@@ -1,0 +1,86 @@
+<!-- Public Documents Page -->
+<div class="public-documents-container" dir="rtl">
+  <!-- Page Header -->
+  <div class="public-documents-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="icon-wrapper">
+          <i class="fas fa-share-alt public-icon"></i>
+        </div>
+        <div>
+          <h1 class="public-title">{{'Public Documents'|translate}}</h1>
+          <p class="public-subtitle">{{'Explore and download publicly shared documents.'|translate}}</p>
+        </div>
+      </div>
+      <!-- Optional: Search Bar for Public Documents -->
+      <div class="public-search-bar">
+        <input type="text" placeholder="{{'Search public documents...'|translate}}" class="search-input" />
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Card -->
+  <div class="public-content-card">
+    <div class="card-content">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-state">
+        <i class="fas fa-spinner fa-spin loading-spinner"></i>
+        <p class="loading-text">{{'Loading public documents...'|translate}}</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="!loading && error" class="error-state">
+        <i class="fas fa-exclamation-triangle error-icon"></i>
+        <h3 class="error-title">{{'Error loading documents'|translate}}</h3>
+        <p class="error-message">{{ error }}</p>
+        <button (click)="fetchPublicDocuments()" class="retry-button">
+          <i class="fas fa-refresh"></i> {{'Retry'|translate}}
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && !error && publicDocuments.length === 0" class="empty-state">
+        <i class="fas fa-cloud-slash empty-icon"></i>
+        <h3 class="empty-title">{{'No Public Documents Found'|translate}}</h3>
+        <p class="empty-message">{{'It looks like there are no documents shared publicly yet.'|translate}}</p>
+      </div>
+
+      <!-- Documents Grid -->
+      <div *ngIf="!loading && !error && publicDocuments.length > 0" class="documents-grid">
+        <div *ngFor="let doc of publicDocuments; trackBy: trackByDocId" class="document-card">
+          <div class="card-header">
+            <div class="doc-icon-wrapper">
+              <i class="fas doc-icon"
+                 [class.fa-file-pdf]="doc.fileType === 'application/pdf'"
+                 [class.fa-file-word]="doc.fileType === 'application/msword'"
+                 [class.fa-file-alt]="doc.fileType === 'text/plain'"
+                 [class.fa-music]="doc.fileType === 'audio/ogg'"
+                 [class.fa-file-image]="doc.fileType === 'image/png'||doc.fileType === 'image/jpeg'||doc.fileType === 'image/gif'"
+                 [class.fa-file]="doc.fileType === 'other'"></i>
+            </div>
+            <div class="doc-actions">
+              <button (click)="viewDocument($event,doc)" class="action-button view-button" title="{{'View'|translate}}">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button (click)="downloadDocument($event,doc)" class="action-button download-button" title="{{'Download'|translate}}">
+                <i class="fas fa-download"></i>
+              </button>
+              <button [routerLink]="['/home/message/',doc.id,doc.fileName]" class="action-button download-button" title="{{'Download'|translate}}">
+                      <i class="fa-solid fa-message"></i>
+              </button>
+               <button (click)="makeChange($event,doc)"  class="action-button download-button" title="{{'Download'|translate}}">
+                     <i [class.text-red-500]="checkFav(doc.id)" class="fas fa-heart  text-lg"></i>              </button>
+            </div>
+          </div>
+          <h3 class="doc-title">{{ doc.fileName }}</h3>
+          <p class="doc-description">{{ doc.description || ('No description available'|translate) }}</p>
+          <div class="doc-meta">
+            <span><i class="fas fa-calendar-alt"></i> {{ doc.createdAt | date:'shortDate' }}</span>
+            <span *ngIf="doc.size"><i class="fas fa-database"></i> {{ formatFileSize(doc.size) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,8 +1,9 @@
 import { Component, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { RouterModule } from "@angular/router"
-import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from "@angular/forms"
+import { FormsModule, ReactiveFormsModule, FormGroup,FormBuilder, FormControl, Validators } from "@angular/forms"
 import { CardModule } from 'primeng/card';
+import { ChangeDetectorRef } from '@angular/core';
 
 // PrimeNG Imports
 import { TableModule } from "primeng/table"
@@ -17,11 +18,13 @@ import { ConfirmDialogModule } from "primeng/confirmdialog"
 import { MessageService, ConfirmationService } from "primeng/api"
 import { PaginatorModule } from "primeng/paginator"
 
-import { Folder } from "../../Interfaces/Folder/folder"
+import { Folder, FolderCriteria, FolderData } from "../../Interfaces/Folder/folder"
 import { DocumentService } from "../../Services/Document/document.service"
 import { FolderService } from "../../Services/Folder/folder.service"
 import { WorkspaceService } from "../../Services/Workspace/workspace.service"
 import { WorkspaceData } from "../../Interfaces/Workspace/workspace"
+import { TranslateModule } from "@ngx-translate/core";
+import e from "express";
 
 interface ParentOption {
   id: string
@@ -46,242 +49,275 @@ interface ParentOption {
     ToastModule,
     ConfirmDialogModule,
     PaginatorModule,
-    CardModule
+    CardModule,
+    TranslateModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './foldermanager.component.html',
   styleUrl: './foldermanager.component.scss'
 })
+
 export class FoldermanagerComponent {
-  folders: Folder[] = []
-  loading = true
+   folders: Folder[] = []
+  workspaces: WorkspaceData[] = []
+  folderData:FolderData[] = []
+  parentId: string =""
+  workspaceId: string =""
+  loading = false
   error: string | null = null
-  workspaces:WorkspaceData[] = []
-  // Pagination properties
-  totalRecords = 0
-  rows = 10 // Items per page
-  first = 0 // Index of the first item on the current page
-
-  // Dialog properties
   showFolderDialog = false
-  folderForm: FormGroup
   isEditMode = false
-  selectedFolder: Folder | null = null
+  parentOptions: any[] = []
+  first = 0
+  rows = 10
+  pageSize = 10;
+  currentPage = 1;
+  sortField = 'createdAt';
+  sortOrder = -1;
+  totalRecords = 0
+  searchTerm = ""
+  folderId:string=""
+  folderForm: FormGroup =new FormGroup({
 
-  parentOptions: ParentOption[] = []
+    name: new FormControl(""),
+    description: new FormControl(""),
+    workspaceId: new FormControl(""),
+    parentId: new FormControl(""),
+  })
 
-  constructor(
-    private documentService: DocumentService,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
+  constructor(private fb: FormBuilder,
     private folderService: FolderService,
-    private  _WorkspaceService:WorkspaceService
+    private WorkspaceService:WorkspaceService,
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService,
+        private cdRef: ChangeDetectorRef
+
   ) {
-    // Initialize FormGroup directly
-    this.folderForm = new FormGroup({
-      name: new FormControl("", Validators.required),
-      description: new FormControl(""),
-      parentId: new FormControl(null, Validators.required),
+    
+  }
+
+  ngOnInit() {
+    // Your existing initialization code
+    this.loadFolders()
+    this.getFolderData()
+    this.getWorkspaces()
+  }
+  getFolderData() {
+    this.folderService.getAllFolders().subscribe({
+      next: (res) => {
+        this.folderData = res.data;
+      },
+      error: (err) => {
+        console.log(err);
+        
+      }});
+  }
+  getWorkspaces() {
+
+    this.WorkspaceService.getWorkspaces().subscribe({
+        next: (res) => {
+        this.workspaces = res.data;
+        console.log("Workspaces:", this.workspaces);
+        
+        
+      },
+      error: (err) => {
+        console.error("Error fetching workspaces:", err);
+      }
+
     })
   }
-
-  ngOnInit(): void {
-    this.fetchFolders()
-    //this.loadParentOptions()
-  }
-
-  async fetchFolders(): Promise<void> {
-    this.loading = true
-    this.error = null
-    try {
-     this.folderService.getAllFolderUser().subscribe(
-        {
-          next: (response) => {
-            this.folders = response.data
-            this.totalRecords = response.data.length
-          },
-          error: (err) => {
-            console.error(err)
-            this.error = "فشل تحميل المجلدات."
-            this.messageService.add({
-              severity: "error",
-              summary: "خطأ",
-              detail: this.error,
-            })
-          },
-        }
-      )
-     // this.folders = allFolders
-      this.totalRecords =  this.folders.length
-      this.loading = false
-    } catch (err) {
-      this.error = "فشل تحميل المجلدات."
-      this.messageService.add({
-        severity: "error",
-        summary: "خطأ",
-        detail: this.error,
-      })
-      this.loading = false
-    }
-  }
-
- /* async loadParentOptions(): Promise<void> {
-    try {
-         this._WorkspaceService.getWorkspaces().subscribe({
-          next:(res)=>{
-             this.workspaces =res.data;
-          }
-         })
-   this.folderService.getAllFolders().subscribe({
-    next:(res)=>{
-      console.log(res);
-       const folders = res.data;
-    },error:(err)=>{
-      console.log(err);
-      
-    }
-   })
-
-     /* const workspaceOptions: ParentOption[] = workspaces.map((ws) => ({
-        id: ws.id,
-        name: `مساحة عمل: ${ws.name}`,
-        type: "workspace",
-      }))
-
-      const folderOptions: ParentOption[] = folders.map((f) => ({
-        id: f.id,
-        name: `مجلد: ${f.name}`,
-        type: "folder",
-      }))
-
-      this.parentOptions = [...workspaceOptions, ...folderOptions]*/
-    /*} catch (err) {
-      console.error("Failed to load parent options:", err)
-      this.messageService.add({
-        severity: "error",
-        summary: "خطأ",
-        detail: "فشل تحميل خيارات الوالد.",
-      })
-    }
-  }
-
-  onPageChange(event: any): void {
-    this.first = event.first
-    this.rows = event.rows
-    // Re-fetch data if using server-side pagination, otherwise just update view
-  }*/
- onPageChange(event: any): void {
-    this.first = event.first
-    this.rows = event.rows
-    // Re-fetch data if using server-side pagination, otherwise just update view
-  }
-  openNewFolderDialog(): void {
+  // Keep all your existing methods exactly as they are
+  openNewFolderDialog() {
     this.isEditMode = false
-    this.selectedFolder = null
-    this.folderForm.reset()
     this.showFolderDialog = true
+    this.folderForm.reset()
   }
 
-  editFolder(folder: Folder): void {
+  editFolder(folder: any) {
     this.isEditMode = true
-    this.selectedFolder = { ...folder } // Create a copy
+    this.showFolderDialog = true
+    this.folderId=folder.id;
     this.folderForm.patchValue({
       name: folder.name,
-      description: folder.description,
-      parentId: folder.parentId,
+      description: folder.description
     })
-    this.showFolderDialog = true
+    console.log(this.folderForm.value);
+    
   }
 
-  async saveFolder(): Promise<void> {
-    if (this.folderForm.invalid) {
-      this.folderForm.markAllAsTouched()
-      this.messageService.add({
-        severity: "error",
-        summary: "خطأ",
-        detail: "يرجى ملء جميع الحقول المطلوبة.",
-      })
-      return
-    }
-
-    const formData = this.folderForm.value
-    const parent = this.parentOptions.find((opt) => opt.id === formData.parentId)
-
-    if (!parent) {
-      this.messageService.add({
-        severity: "error",
-        summary: "خطأ",
-        detail: "يرجى اختيار والد صالح.",
-      })
-      return
-    }
-
-    const folderData: Omit<Folder, "id" | "createdAt" | "updatedAt"> = {
-      name: formData.name,
-      description: formData.description,
-      parentId: parent.id,
-    }
-
-    try {
-      if (this.isEditMode && this.selectedFolder) {
-        //await this.documentService.updateFolder({ ...this.selectedFolder, ...folderData })
-      } else {
-        //await this.documentService.addFolder(folderData)
-      }
-      this.showFolderDialog = false
-      this.fetchFolders() // Refresh the list
-      this.messageService.add({
-        severity: "success",
-        summary: "نجاح",
-        detail: `تم ${this.isEditMode ? "تحديث" : "إضافة"} المجلد بنجاح.`,
-      })
-    } catch (err) {
-      this.messageService.add({
-        severity: "error",
-        summary: "خطأ",
-        detail: `فشل ${this.isEditMode ? "تحديث" : "إضافة"} المجلد.`,
-      })
-    }
-  }
-
-  confirmDeleteFolder(event: Event, folder: Folder): void {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: `هل أنت متأكد أنك تريد حذف المجلد "${folder.name}"؟ هذا الإجراء لا يمكن التراجع عنه.`,
-      icon: "pi pi-exclamation-triangle",
-      acceptLabel: "نعم، احذف",
-      rejectLabel: "إلغاء",
-      acceptButtonStyleClass: "p-button-danger p-button-sm",
-      rejectButtonStyleClass: "p-button-text p-button-sm",
-      accept: () => {
-        this.deleteFolder(folder.id)
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: "info",
-          summary: "تم الإلغاء",
-          detail: "تم إلغاء عملية الحذف.",
+  saveFolder() {
+    if (this.folderForm.valid) {
+      // Your existing save logic
+      if (this.isEditMode) {
+        const updatedFolder = {
+          name: this.folderForm.value.name,
+          description: this.folderForm.value.description,
+        }
+        this.folderService.updateFolder(this.folderId,updatedFolder).subscribe({
+          next:(res)=>{
+            console.log(res);
+            this.loadFolders()
+          },
+          error:(err)=>{
+            console.log(err);
+            
+          }
         })
-      },
-    })
-  }
+      }
+      else {
+        if (!this.folderForm.value.name || !this.folderForm.value.description) {
+          this.messageService.add({
+      severity: 'error',
+      summary: 'Error in Data', 
+      detail: 'Please fill in all required fields name and description.',
+    });
+        
+          return;
+        }
+         const updatedFolder = {
+          name: this.folderForm.value.name,
+          description: this.folderForm.value.description,
+        }
+        if (this.folderForm.value.workspaceId&&this.folderForm.value.parentId) {
+          this.folderService.createFolder(updatedFolder,this.folderForm.value.parentId,this.folderForm.value.workspaceId).subscribe({
+            next:(res)=>{
+              console.log(res);
+              this.loadFolders()
+            },
+            error:(err)=>{
+              console.log(err);
+              
+            }   })
+        }
+        else if (this.folderForm.value.workspaceId) {
+          this.folderService.createWorkspaceFolder(updatedFolder,this.folderForm.value.workspaceId).subscribe({
+            next:(res)=>{
+              console.log(res);
+              this.loadFolders()
+            },
+            error:(err)=>{
+              console.log(err);
+              
+            }
+          })
+        }
+        else if (this.folderForm.value.parentId) {
+          this.folderService.createFolderInParent(updatedFolder,this.folderForm.value.parentId).subscribe({
+            next:(res)=>{
+              console.log(res);
+              this.loadFolders()
+            },
+            error:(err)=>{
+              console.log(err);
+              
+            }
+          })
+        }
 
-  async deleteFolder(id: string): Promise<void> {
-    try {
-     // await this.documentService.deleteFolder(id)
-      this.fetchFolders() // Refresh the list
-    } catch (err) {
-      this.messageService.add({
-        severity: "error",
-        summary: "خطأ",
-        detail: "فشل حذف المجلد.",
-      })
+      
+        
+        
+      }
+      console.log("Saving folder:", this.folderForm.value)
+      this.showFolderDialog = false
     }
   }
 
-  getParentName(parentId: string | null, parentType: "workspace" | "folder" | null): string {
-    if (!parentId || !parentType) return "لا يوجد"
-    const parent = this.parentOptions.find((opt) => opt.id === parentId && opt.type === parentType)
+  confirmDeleteFolder(event: Event, folder: Folder) {
+    // Your existing delete confirmation logic
+     event.stopPropagation();
+
+    this.confirmationService.confirm({
+      message: `هل أنت متأكد من حذف الملف "${folder.name}"؟`,
+      header: 'تأكيد الحذف',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      accept: () => {
+       this.folderService.deleteFolder(folder.id).subscribe({
+        next:(res)=>{
+          console.log(res);
+          this.loadFolders()
+        },
+        error:(err)=>{
+          console.log(err);
+          
+        }
+       })
+       
+      }
+    });
+    console.log("Deleting folder:", folder)
+  }
+
+  onPageChange(event: any) {
+      this.currentPage = Math.floor((event.first || 0) / (event.rows || 10)) + 1;
+    this.pageSize = event.rows || 10;
+    this.sortField = event.sortField as string || 'createdAt';
+    this.sortOrder = event.sortOrder || -1;
+   // this.first = event.first
+   // this.pageSize = event.rows
+    // Your existing pagination logic
+    console.log("Page changed:", event);
+    this.loadFolders();
+    
+  }
+
+  getParentName(parentId: string, parentType: string): string {
+    // Your existing parent name logic
+    const parent = this.parentOptions.find((p) => p.id === parentId)
     return parent ? parent.name : "غير معروف"
+  }
+onLazyLoad(event: any): void {
+    this.currentPage = Math.floor((event.first || 0) / (event.rows || 10)) + 1;
+    this.pageSize = event.rows || 10;
+    this.sortField = event.sortField as string || 'createdAt';
+    this.sortOrder = event.sortOrder || -1;
+    
+  // this.loadFolders();
+  }
+  loadFolders() {
+    this.loading = true
+    this.error = null
+    const folderCriteria: FolderCriteria = {
+      name: this.searchTerm,
+      workspaceId: this.workspaceId,
+       pageNum:this.currentPage!==null?this.currentPage:1,
+      pageSize:this.pageSize!==null ?this.pageSize:10,
+      sortDirection:this.sortOrder===1?'asc' : 'desc',
+      sortField:this.sortField!==null?this.sortField:"fileName"}
+
+    this.folderService.getAllFolderUser(folderCriteria).subscribe({
+
+      next:(res)=>{
+         
+      this.folders = res.data;
+      this.totalRecords = res.totalElements;
+      this.loading = false;
+    this.cdRef.detectChanges(); // ✅ حل رسمي
+
+       
+        
+
+      },error:(err)=>{
+        console.log(err);
+        
+      }
+    })
+    // Your existing load folders logic
+    
+      
+   
+  }
+onWorkspaceChange(event: any) {
+    this.workspaceId = event.value.id}
+  retryLoad() {
+    this.error = null
+    this.loadFolders()
+  }
+
+  refreshData() {
+    this.loadFolders()
   }
 }

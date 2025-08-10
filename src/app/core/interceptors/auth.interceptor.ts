@@ -9,7 +9,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const platformId = inject(PLATFORM_ID);
   let spinner = inject(NgxSpinnerService);
   const router = inject(Router); // نستخدم Router علشان نرجع لصفحة login
-//  spinner.show();
+
   let token: string | null = null;
   if (isPlatformBrowser(platformId)) {
     token = localStorage.getItem('Token');
@@ -17,6 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
    if (token && isTokenExpired(token)) {
     localStorage.removeItem('Token');
     router.navigate(['/login']);
+    spinner.hide();
     return throwError(() => new Error('Token expired'));
   }
   if (req.url.includes('assets/i18n')) {
@@ -39,9 +40,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         setHeaders: token
           ? { Authorization: `Bearer ${token}` }
           : {},
-      });
-
+      }
+    );
+ spinner.show();
   return next(modifiedReq).pipe(
+    
     catchError((error) => {
       if (error.status === 401) {
         if (isPlatformBrowser(platformId)) {
@@ -49,11 +52,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         }
          if (router.url !== '/login') {
           router.navigate(['/login']);
+          
         }
       }
       return throwError(() => error);
     }),
-    finalize(() => spinner.hide())
+    finalize(() => setTimeout(() => {
+       spinner.hide()
+    }, 500))
   );
 };
 function isTokenExpired(token: string): boolean {

@@ -11,11 +11,13 @@ export interface DocumentModel {
   tag: string;
   privacy: Privacy;
   version: number;
-  createdAt?: string;
+  createdAt?: Date;
   updatedAt?: string;
   folderName?:string;
   workspaceName?:string;
   username?: string;
+  createdBy?:string;
+  isFavorite?: boolean;
 
 }
 
@@ -88,6 +90,7 @@ export interface DocumentDetailDto {
   tag: string;
   privacy: Privacy;
   version: number;
+  isFavorite?: boolean;
 }
 
 export interface UpdateDocumentRequest {

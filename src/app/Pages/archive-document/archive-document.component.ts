@@ -62,6 +62,16 @@ archivedDocuments: DocumentModel[] = []
         this.loading = false
       })*/
   }
+  restoreDocument(id:string)
+  {
+
+  }
+  confirmPermanentDelete(event:any,id:string, fileName:string)
+
+  {
+    
+  }
+
 
   
 

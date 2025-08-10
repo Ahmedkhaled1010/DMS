@@ -1,0 +1,746 @@
+// Enhanced Login Component Styles using CSS Variables
+
+.login-container {
+  width: 100%;
+  max-width: 28rem;
+  margin:  auto;
+  animation: slideInUp 0.6s ease-out;
+}
+
+// Google Sign-In Styles
+.google-signin-section {
+  margin-bottom: 1.5rem;
+}
+
+.google-signin-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.google-signin-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 2px solid #dadce0;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #3c4043;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover:not(:disabled) {
+    border-color: #4285f4;
+    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.15);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(66, 133, 244, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  &.loading {
+    pointer-events: none;
+  }
+
+  .google-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+  }
+
+  .google-text {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+  }
+}
+
+[data-theme="dark"] .google-signin-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+
+  &:hover:not(:disabled) {
+    border-color: #4285f4;
+    background: var(--bg-tertiary);
+  }
+}
+
+// Additional SSO Options
+.additional-sso {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.microsoft-btn,
+.apple-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 0.5rem;
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transition: var(--transition);
+
+  .sso-icon {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+  }
+
+  .coming-soon {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+}
+
+.microsoft-btn .sso-icon {
+  color: #00a1f1;
+}
+
+.apple-btn .sso-icon {
+  color: #000;
+}
+
+[data-theme="dark"] .apple-btn .sso-icon {
+  color: #fff;
+}
+
+// Security Notice
+.security-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+
+  i {
+    color: var(--success-500);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Header Styles
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  
+  .header-icon {
+    position: relative;
+    display: inline-block;
+    width: 4rem;
+    height: 4rem;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounceIn 0.8s ease-out 0.2s both;
+    
+    i {
+      font-size: 1.5rem;
+      color: var(--primary);
+      transition: var(--transition);
+    }
+    
+    .icon-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+      border-radius: 50%;
+      opacity: 0.2;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    &:hover {
+      transform: scale(1.05);
+      border-color: var(--primary);
+      
+      i {
+        transform: scale(1.1);
+      }
+      
+      .icon-glow {
+        opacity: 0.4;
+      }
+    }
+  }
+  
+  .welcome-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    animation: fadeIn 0.8s ease-out 0.4s both;
+  }
+  
+  .login-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: slideInLeft 0.8s ease-out 0.6s both;
+  }
+  
+  .login-subtitle {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    animation: fadeIn 0.8s ease-out 0.8s both;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Form Styles
+.login-form {
+  margin-bottom: 2rem;
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    animation: slideInUp 0.6s ease-out both;
+    
+    &:nth-child(1) { animation-delay: 1s; }
+    &:nth-child(2) { animation-delay: 1.2s; }
+  }
+  
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+  }
+  
+  .input-wrapper {
+    position: relative;
+    
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      color: var(--text-muted);
+      transition: var(--transition);
+      
+      i {
+        font-size: 1rem;
+      }
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 2rem;
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      color: var(--text-main);
+      font-size: 1rem;
+      transition: var(--transition);
+      position: relative;
+      z-index: 5;
+      
+      &::placeholder {
+        color: var(--text-muted);
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: var(--bg-main);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        
+        ~ .input-border {
+          transform: scaleX(1);
+        }
+        
+        ~ .input-icon {
+          color: var(--primary);
+          transform: translateY(-50%) scale(1.1);
+        }
+      }
+      
+      &:valid:not(:placeholder-shown) {
+        border-color: var(--success);
+        
+        ~ .input-icon {
+          color: var(--success);
+        }
+      }
+    }
+    
+    .input-border {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+      border-radius: 1px;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: var(--transition);
+      z-index: 10;
+      
+      &:hover {
+        color: var(--primary);
+        background: var(--bg-tertiary);
+        transform: translateY(-50%) scale(1.1);
+      }
+      
+      &:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+    }
+    
+    &:hover {
+      .input-icon {
+        color: var(--primary);
+      }
+      
+      .form-input {
+        border-color: var(--primary);
+      }
+    }
+  }
+}
+
+// Error Messages
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  animation: slideInDown 0.3s ease-out;
+  
+  i {
+    font-size: 0.875rem;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Form Links
+.form-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  animation: fadeIn 0.8s ease-out 1.4s both;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .link-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+  
+  .auth-link {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    transition: var(--transition);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 0.875rem;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    &:hover {
+      color: var(--primary-dark);
+      
+      &::after {
+        width: 100%;
+      }
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// Submit Button
+.submit-btn {
+  width: 100%;
+  padding: 1rem 1rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+  margin-bottom: 0.5rem;
+  animation: slideInUp 0.8s ease-out 1.6s both;
+  
+  .btn-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+  }
+  
+  .btn-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    
+    .btn-content {
+      transform: scale(1.05);
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+    
+    .btn-ripple {
+      width: 300px;
+      height: 300px;
+    }
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+}
+
+// Divider
+.divider-section {
+  position: relative;
+  margin: 1rem 0;
+  animation: fadeIn 0.8s ease-out 1.8s both;
+  
+  .divider-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  
+  .divider-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-main);
+    padding: 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+}
+
+// SSO Button
+.sso-btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  animation: slideInUp 0.8s ease-out 2s both;
+  
+  .sso-icon {
+    font-size: 1.25rem;
+    transition: var(--transition);
+  }
+  
+  .btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover {
+    border-color: var(--primary);
+    background: var(--bg-tertiary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    
+    .sso-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    
+    .btn-shine {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+}
+
+// Responsive Design
+@media (max-width: 640px) {
+  .login-container {
+    padding: 1rem;
+  }
+  
+  .login-header {
+    .login-title {
+      font-size: 2rem;
+    }
+    
+    .header-icon {
+      width: 3rem;
+      height: 3rem;
+      
+      i {
+        font-size: 1.25rem;
+      }
+    }
+  }
+  
+  .form-input {
+    padding: 0.875rem 0.875rem 0.875rem 2.5rem;
+  }
+  
+  .submit-btn,
+  .sso-btn {
+    padding: 0.875rem 1.5rem;
+  }
+}
+
+// Loading State
+.submit-btn {
+  &.loading {
+    pointer-events: none;
+    
+    .btn-content {
+      opacity: 0;
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1.25rem;
+      height: 1.25rem;
+      margin: -0.625rem 0 0 -0.625rem;
+      border: 2px solid transparent;
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Focus Management for Accessibility
+.form-input:focus-visible,
+.submit-btn:focus-visible,
+.sso-btn:focus-visible,
+.auth-link:focus-visible,
+.password-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+// Reduced Motion
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// High Contrast Mode
+@media (prefers-contrast: high) {
+  .form-input {
+    border-width: 3px;
+  }
+  
+  .submit-btn,
+  .sso-btn {
+    border: 2px solid var(--text-main);
+  }
+  
+  .auth-link {
+    text-decoration: underline;
+  }
+}

@@ -33,10 +33,13 @@
   "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
   "node_modules/ngx-toastr/toastr.css",
   "node_modules/animate.css/animate.min.css",
-  "src/styles.scss"
+  "src/styles.scss",
+    "src/tailwind-animation.scss"
+
 ]
 ,
-            "scripts": ["node_modules/jquery/dist/jquery.min.js"],
+            "scripts": ["node_modules/jquery/dist/jquery.min.js",
+          "src/assets/theme-script.js"],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {

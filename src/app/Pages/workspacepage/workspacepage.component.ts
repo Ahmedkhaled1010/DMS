@@ -19,6 +19,7 @@ import { CreateworkspaceComponent } from "../../Component/Workspace/createworksp
 })
 export class WorkspacepageComponent {
  allWorkspace: Workspace[] = [];
+ showCreateModal = false;
   showModal = false;
   selectedWorkspace?: Workspace;
   loading = false;
@@ -53,6 +54,7 @@ export class WorkspacepageComponent {
     this.destroy$.next();
     this.destroy$.complete();
   }
+  
 
   getAllWorkspace(): void {
     this.loading = true;
@@ -75,7 +77,7 @@ export class WorkspacepageComponent {
 
   createNew(): void {
     console.log(89);
-    
+    this.showModal = true;
     //this.selectedWorkspace = undefined;
     this.workspaceService.isUpdated.next(false);
     this.workspaceService.isCreate.next(true);
@@ -118,6 +120,7 @@ export class WorkspacepageComponent {
 
   closeModal(): void {
     this.showModal = false;
+    this.showCreateModal = false;
     this.selectedWorkspace = undefined;
   }
 

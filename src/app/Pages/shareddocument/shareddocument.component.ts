@@ -9,10 +9,11 @@ import { ToastModule } from "primeng/toast"
 import { MessageService } from "primeng/api"
 import { DocumentModel } from "../../Interfaces/Document/document"
 import { DocumentService } from "../../Services/Document/document.service"
+import { TranslateModule } from "@ngx-translate/core"
 @Component({
   selector: 'app-shareddocument',
   standalone: true,
-  imports: [CommonModule, CardModule, ButtonModule, ProgressSpinnerModule, ToastModule],
+  imports: [CommonModule,TranslateModule, CardModule, ButtonModule, ProgressSpinnerModule, ToastModule],
   providers: [MessageService],
   templateUrl: './shareddocument.component.html',
   styleUrl: './shareddocument.component.scss'

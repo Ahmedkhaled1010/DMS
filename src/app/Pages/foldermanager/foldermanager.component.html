@@ -1,163 +1,447 @@
-<div class="p-4 md:p-8 bg-background text-foreground min-h-screen transition-colors duration-300 dark:bg-gray-900 dark:text-gray-100" dir="rtl">
-  <p-toast></p-toast>
-  <p-confirmDialog></p-confirmDialog>
+<div class="folder-management-wrapper my-3" dir="rtl">
+  <!-- Theme Toggle -->
+  
 
-  <!-- Header -->
-  <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
-    <div>
-      <h1 class="text-3xl font-bold mb-1">إدارة المجلدات</h1>
-      <p class="text-lg text-muted-foreground dark:text-gray-400">عرض، إضافة، تعديل، وحذف المجلدات الخاصة بك.</p>
-    </div>
-    <p-button
-      label="إضافة مجلد جديد"
-      icon="pi pi-plus"
-      styleClass="p-button-primary"
-      (click)="openNewFolderDialog()"
-      class="w-full md:w-auto"
-    ></p-button>
-  </div>
-
-  <p-card styleClass="main-content-card shadow-lg rounded-xl dark:bg-gray-800">
-    <div *ngIf="loading" class="flex flex-col items-center justify-center py-16">
-      <p-progressSpinner></p-progressSpinner>
-      <p class="mt-4 text-lg">جاري تحميل المجلدات...</p>
-    </div>
-
-    <div *ngIf="error" class="flex flex-col items-center justify-center py-16">
-      <p class="text-red-500 text-lg mb-4">{{ error }}</p>
-      <p-button
-        label="إعادة المحاولة"
-        icon="pi pi-refresh"
-        styleClass="p-button-secondary"
-        (click)="fetchFolders()"
-      ></p-button>
+  <div class="container">
+    <p-toast></p-toast>
+    <p-confirmDialog></p-confirmDialog>
+    
+    <!-- Enhanced Header -->
+    <div class="modern-page-header">
+      <div class="header-background"></div>
+      <div class="header-content">
+        <div class="header-info">
+          <div class="header-icon-wrapper">
+            <i class="pi pi-folder-open header-main-icon"></i>
+          </div>
+          <div class="header-text">
+            <h1 class="modern-page-title"> {{'Folder Managment'|translate}} </h1>
+            <p class="modern-page-subtitle"> {{'View, add, edit, and delete your folders.'|translate}} </p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <p-button
+            [label]="'Add New Folder'|translate"
+            icon="pi pi-plus"
+            styleClass="modern-primary-button"
+            (click)="openNewFolderDialog()">
+          </p-button>
+        </div>
+      </div>
     </div>
 
-    <div *ngIf="!loading && !error">
-      <div *ngIf="folders.length === 0" class="flex flex-col items-center justify-center py-16">
-        <i class="pi pi-folder text-7xl text-muted-foreground dark:text-gray-500 mb-4"></i>
-        <p class="text-lg mb-2">لا توجد مجلدات. ابدأ بإنشاء واحدة!</p>
-        <p-button
-          label="إنشاء مجلد الآن"
-          icon="pi pi-plus"
-          styleClass="p-button-primary"
-          (click)="openNewFolderDialog()"
-        ></p-button>
+    <!-- Stats Dashboard -->
+    <div class="stats-dashboard">
+      <div class="stat-card">
+        <div class="stat-icon-wrapper primary">
+          <i class="pi pi-folder"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ totalRecords }}</h3>
+          <p class="stat-label"> {{'Total Folders'|translate}} </p>
+        </div>
+        <div class="stat-trend">
+          <i class="pi pi-arrow-up"></i>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon-wrapper success">
+          <i class="pi pi-clock"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">5</h3>
+          <p class="stat-label">{{'Recent Folders'|translate}} </p>
+        </div>
+        <div class="stat-trend">
+          <i class="pi pi-arrow-up"></i>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon-wrapper warning">
+          <i class="pi pi-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">12</h3>
+          <p class="stat-label"> {{'Shared Folders'|translate}}</p>
+        </div>
+        <div class="stat-trend">
+          <i class="pi pi-minus"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Main Card -->
+    <div class="modern-main-card">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="enhanced-loading-state">
+        <div class="loading-animation">
+          <div class="loading-spinner">
+            <p-progressSpinner styleClass="custom-spinner"></p-progressSpinner>
+          </div>
+          <div class="loading-content">
+            <h3> {{'Loading folders...'|translate}} </h3>
+            <p> {{'Please wait while we load your data...'|translate}} </p>
+          </div>
+        </div>
       </div>
 
-      <div *ngIf="folders.length > 0" class="overflow-x-auto rounded-lg shadow mt-4">
-        <p-table
-          [value]="folders | slice:first:(first + rows)"
-          [paginator]="true"
-          [rows]="rows"
-          [totalRecords]="totalRecords"
-          [rowsPerPageOptions]="[5, 10, 20]"
-          (onPage)="onPageChange($event)"
-          [showCurrentPageReport]="true"
-          currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} مجلد"
-          styleClass="p-datatable-gridlines p-datatable-sm dark:bg-gray-800 dark:text-gray-100"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th class="w-1/4">الاسم</th>
-              <th class="w-1/4">الوصف</th>
-              <th class="w-1/4">الوالد</th>
-              <th class="w-1/6">تاريخ الإنشاء</th>
-              <th class="w-1/6">تاريخ التحديث</th>
-              <th class="w-1/6">الإجراءات</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-folder>
-            <tr>
-              <td>
-                <a [routerLink]="['/folders', folder.id]" class="text-primary hover:underline font-medium dark:text-blue-400">
-                  {{ folder.name }}
-                </a>
-              </td>
-              <td>{{ folder.description || 'لا يوجد وصف' }}</td>
-              <td>{{ getParentName(folder.parentId, folder.parentType) }}</td>
-              <td>{{ folder.createdAt | date : "short" }}</td>
-              <td>{{ folder.updatedAt | date : "short" }}</td>
-              <td>
-                <div class="flex gap-2">
-                  <p-button
-                    icon="pi pi-pencil"
-                    styleClass="p-button-sm p-button-text p-button-info"
-                    (click)="editFolder(folder)"
-                    pTooltip="تعديل"
-                    tooltipPosition="top"
-                  ></p-button>
-                  <p-button
-                    icon="pi pi-trash"
-                    styleClass="p-button-sm p-button-text p-button-danger"
-                    (click)="confirmDeleteFolder($event, folder)"
-                    pTooltip="حذف"
-                    tooltipPosition="top"
-                  ></p-button>
+      <!-- Error State -->
+      <div *ngIf="error" class="enhanced-error-state">
+        <div class="error-animation">
+          <div class="error-icon-wrapper">
+            <i class="pi pi-exclamation-triangle"></i>
+          </div>
+          <div class="error-content">
+            <h3>حدث خطأ</h3>
+            <p class="error-message">{{ error }}</p>
+            <p-button
+              label="إعادة المحاولة"
+              icon="pi pi-refresh"
+              styleClass="modern-retry-button"
+              (click)="retryLoad()">
+            </p-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div *ngIf="!loading && !error" class="main-content">
+        <!-- Empty State -->
+        <div *ngIf="folders.length === 0" class="enhanced-empty-state">
+          <div class="empty-animation">
+            <div class="empty-icon-container">
+              <div class="empty-icon-bg"></div>
+              <i class="pi pi-folder empty-main-icon"></i>
+            </div>
+            <div class="empty-content">
+              <h3>لا توجد مجلدات بعد</h3>
+              <p>ابدأ رحلتك في تنظيم الملفات بإنشاء مجلد جديد</p>
+              <p-button
+                label="إنشاء مجلد الآن"
+                icon="pi pi-plus"
+                styleClass="modern-primary-button"
+                (click)="openNewFolderDialog()">
+              </p-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Folders Table -->
+        <div *ngIf="folders.length > 0" class="enhanced-table-section">
+          <!-- Table Controls -->
+          <div class="table-controls">
+            <div class="search-section">
+              <div class="search-input-wrapper">
+                <i class="pi pi-search search-icon"></i>
+                <input 
+                  type="text" 
+                  placeholder="البحث في المجلدات..." 
+                  class="modern-search-input"
+                  [(ngModel)]="searchTerm">
+              </div>
+            </div>
+            <div class="table-actions">
+              <div class="view-toggle">
+                <button class="view-btn active" title="عرض جدولي">
+                  <i class="pi pi-list"></i>
+                </button>
+                <button class="view-btn" title="عرض شبكي">
+                  <i class="pi pi-th-large"></i>
+                </button>
+              </div>
+              <button class="filter-btn" title="تصفية">
+                <i class="pi pi-filter"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Enhanced Table -->
+          <div class="table-wrapper">
+            <p-table
+              [value]="folders  "
+              [paginator]="true"
+              [rows]="pageSize"
+              [totalRecords]="totalRecords"
+              [rowsPerPageOptions]="[5, 10, 20]"
+              (onPage)="onPageChange($event)"
+              [showCurrentPageReport]="true"
+              [sortField]="sortField"
+              [sortOrder]="sortOrder"
+              (onLazyLoad)="onLazyLoad($event)"
+               [lazy]="true" 
+             [currentPageReportTemplate]="'VIEW_FROM_TO_TOTAL' | translate:{ first: '{first}', last: '{last}', totalRecords: '{totalRecords}' }"
+              styleClass="enhanced-data-table"
+              [scrollable]="true"
+              scrollHeight="600px">
+              
+              <ng-template pTemplate="header">
+                <tr class="table-header-row">
+                  <th class="name-column">
+                    <div class="column-header">
+                      <i class="pi pi-folder column-icon"></i>
+                      <span> {{'Folder Name'|translate}} </span>
+                    </div>
+                  </th>
+                  <th class="desc-column">
+                    <div class="column-header">
+                      <i class="pi pi-file-edit column-icon"></i>
+                      <span> {{'Description'|translate}} </span>
+                    </div>
+                  </th>
+                  <th class="parent-column">
+                    <div class="column-header">
+                      <i class="pi pi-sitemap column-icon"></i>
+                      <span> {{'Folder'|translate}}</span>
+                    </div>
+                  </th>
+                  <th class="parent-column">
+                    <div class="column-header">
+                      <i class="pi pi-sitemap column-icon"></i>
+                      <span> {{'Work Space'|translate}}</span>
+                    </div>
+                  </th>
+                  <th class="date-column">
+                    <div class="column-header">
+                      <i class="pi pi-calendar-plus column-icon"></i>
+                      <span> {{'Created Date'|translate}} </span>
+                    </div>
+                  </th>
+                  
+                  <th class="actions-column">
+                    <div class="column-header">
+                      <i class="pi pi-cog column-icon"></i>
+                      <span> {{'Actions'|translate}} </span>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="body" let-folder>
+                <tr class="table-body-row">
+                  <td class="name-cell">
+                    <div class="folder-info">
+                      <div class="folder-icon-container">
+                        <i class="pi pi-folder folder-icon"></i>
+                      </div>
+                      <div class="folder-details">
+                        <a [routerLink]="['/home/folderDetails', folder.id]" class="folder-name-link">
+                          {{ folder.name }}
+                        </a>
+                        <span class="folder-type"> {{'Folder'|translate}} </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="desc-cell">
+                    <div class="description-container">
+                      <span class="description-text">{{ folder.description || 'لا يوجد وصف' }}</span>
+                    </div>
+                  </td>
+                  <td class="parent-cell">
+                    <div class="parent-info">
+                      <span class="parent-badge">{{ folder.parentName}}</span>
+                    </div>
+                  </td>
+                  <td class="date-cell">
+                    <div class="date-info">
+                      <span class="date-value">{{ folder.workspaceName  }}</span>
+                    </div>
+                  </td>
+                  <td class="date-cell">
+                    <div class="date-info">
+                      <span class="date-value">{{ folder.createdAt | date : "short" }}</span>
+                    </div>
+                  </td>
+                  <td class="actions-cell">
+                    <div class="action-buttons-container">
+                      <p-button
+                        icon="pi pi-pencil"
+                        styleClass="modern-edit-button"
+                        (click)="editFolder(folder)"
+                        pTooltip="تعديل"
+                        tooltipPosition="top">
+                      </p-button>
+                      <p-button
+                        icon="pi pi-trash"
+                        styleClass="modern-delete-button"
+                        (click)="confirmDeleteFolder($event, folder)"
+                        pTooltip="حذف"
+                        tooltipPosition="top">
+                      </p-button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="6" class="empty-table-message">
+                    <div class="empty-message-content">
+                      <i class="pi pi-info-circle"></i>
+                      <span>لا توجد مجلدات لعرضها.</span>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="paginatorleft">
+                <p-button 
+                  type="button" 
+                  icon="pi pi-refresh" 
+                  styleClass="modern-refresh-button"
+                  (click)="refreshData()"
+                  pTooltip="تحديث البيانات">
+                </p-button>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Dialog -->
+    <p-dialog
+      [(visible)]="showFolderDialog"
+      [header]="isEditMode ? 'تعديل المجلد' : 'إضافة مجلد جديد'"
+      [modal]="true"
+      [style]="{ width: '90vw', maxWidth: '600px' }"
+      [draggable]="false"
+      [resizable]="false"
+      styleClass="enhanced-dialog"
+      (onHide)="folderForm.reset()">
+      
+      <div class="dialog-body">
+        <form [formGroup]="folderForm" class="enhanced-form">
+          <div class="form-section">
+            <div class="form-group">
+              <label for="name" class="enhanced-form-label">
+                <div class="label-content">
+                  <i class="pi pi-tag label-icon"></i>
+                  <span> {{'Folder Name'|translate}} </span>
+                  <span class="required-indicator">*</span>
                 </div>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="6" class="text-center">لا توجد مجلدات لعرضها.</td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="paginatorleft">
-            <p-button type="button" icon="pi pi-refresh" styleClass="p-button-text" (click)="fetchFolders()"></p-button>
-          </ng-template>
-        </p-table>
-      </div>
-    </div>
-  </p-card>
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  id="name" 
+                  type="text" 
+                  pInputText 
+                  formControlName="name"
+                  class="enhanced-input"
+                  [class.error-input]="folderForm.get('name')?.invalid && folderForm.get('name')?.touched"
+                  [placeholder]="'Enter Folder Name'|translate">   ">
+                <div class="input-border"></div>
+              </div>
+              <div *ngIf="folderForm.get('name')?.invalid && folderForm.get('name')?.touched" 
+                   class="error-message">
+                <i class="pi pi-exclamation-circle error-icon"></i>
+                <span>الاسم مطلوب.</span>
+              </div>
+            </div>
 
-  <!-- Dialog for Add/Edit Folder -->
-  <p-dialog
-    [(visible)]="showFolderDialog"
-    [header]="isEditMode ? 'تعديل المجلد' : 'إضافة مجلد جديد'"
-    [modal]="true"
-    [style]="{ width: '90vw', maxWidth: '500px' }"
-    [draggable]="false"
-    [resizable]="false"
-    styleClass="folder-dialog dark:bg-gray-900"
-    (onHide)="folderForm.reset()"
-  >
-    <form [formGroup]="folderForm" class="p-fluid space-y-4">
-      <div>
-        <label for="name" class="block text-sm font-medium mb-2">الاسم</label>
-        <input id="name" type="text" pInputText formControlName="name"
-               [ngClass]="{'ng-invalid ng-dirty': folderForm.get('name')?.invalid && folderForm.get('name')?.touched}" />
-        <small *ngIf="folderForm.get('name')?.invalid && folderForm.get('name')?.touched" class="p-error">الاسم مطلوب.</small>
+            <div class="form-group">
+              <label for="description" class="enhanced-form-label">
+                <div class="label-content">
+                  <i class="pi pi-file-edit label-icon"></i>
+                  <span>وصف المجلد</span>
+                </div>
+              </label>
+              <div class="textarea-wrapper">
+                <textarea 
+                  id="description" 
+                  pInputTextarea 
+                  formControlName="description" 
+                  rows="4"
+                  class="enhanced-textarea"
+                  placeholder="أدخل وصف المجلد (اختياري)">
+                </textarea>
+                <div class="input-border"></div>
+              </div>
+            </div>
+
+          @if (!isEditMode) 
+          {
+
+              <div class="flex justify-between  ">
+                <div  class="form-group">
+              <label for="parentId" class="enhanced-form-label">
+                <div class="label-content">
+                  <i class="pi pi-sitemap label-icon"></i>
+                  <span> {{'Parent Folder'|translate}} </span>
+                  <span class="required-indicator">*</span>
+                </div>
+              </label>
+              <div class="dropdown-wrapper">
+                <p-dropdown
+                  id="parentId"
+                  [options]="folderData"
+                  formControlName="parentId"
+                  optionLabel="name"
+                  optionValue="id"
+                  [placeholder]="'Select Parent Folder'|translate  "
+                  [filter]="true"
+                  styleClass="enhanced-dropdown"
+                  [class.error-dropdown]="folderForm.get('parentId')?.invalid && folderForm.get('parentId')?.touched">
+                </p-dropdown>
+              </div>
+              <div *ngIf="folderForm.get('parentId')?.invalid && folderForm.get('parentId')?.touched" 
+                   class="error-message">
+                <i class="pi pi-exclamation-circle error-icon"></i>
+                <span>المجلد الوالد مطلوب.</span>
+              </div>
+            </div>
+            <div  class="form-group">
+              <label for="parentId" class="enhanced-form-label">
+                <div class="label-content">
+                  <i class="pi pi-sitemap label-icon"></i>
+                  <span> {{'Work Space'|translate}} </span>
+                  <span class="required-indicator">*</span>
+                </div>
+              </label>
+              <div class="dropdown-wrapper">
+                <p-dropdown
+                  id="parentId"
+                  [options]="workspaces"
+                  formControlName="workspaceId"
+                  optionLabel="name"
+                  optionValue="id"
+                  [placeholder]="  'Enter Workspace Name'|translate"
+                  [filter]="true"
+                  
+                  styleClass="enhanced-dropdown"
+                  [class.error-dropdown]="folderForm.get('parentId')?.invalid && folderForm.get('parentId')?.touched">
+                </p-dropdown>
+              </div>
+              <div *ngIf="folderForm.get('parentId')?.invalid && folderForm.get('parentId')?.touched" 
+                   class="error-message">
+                <i class="pi pi-exclamation-circle error-icon"></i>
+                <span>المجلد الوالد مطلوب.</span>
+              </div>
+            </div>
+              </div>
+          }
+          </div>
+        </form>
       </div>
-      <div>
-        <label for="description" class="block text-sm font-medium mb-2">الوصف</label>
-        <textarea id="description" pInputTextarea formControlName="description" rows="3"></textarea>
-      </div>
-      <div>
-        <label for="parentId" class="block text-sm font-medium mb-2">الوالد (مساحة عمل أو مجلد)</label>
-        <p-dropdown
-          id="parentId"
-          [options]="parentOptions"
-          formControlName="parentId"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="اختر الوالد"
-          [filter]="true"
-          [ngClass]="{'ng-invalid ng-dirty': folderForm.get('parentId')?.invalid && folderForm.get('parentId')?.touched}"
-        ></p-dropdown>
-        <small *ngIf="folderForm.get('parentId')?.invalid && folderForm.get('parentId')?.touched" class="p-error">الوالد مطلوب.</small>
-      </div>
-    </form>
-    <ng-template pTemplate="footer">
-      <div class="flex justify-end gap-2">
-        <p-button label="إلغاء" icon="pi pi-times" (onClick)="showFolderDialog = false" styleClass="p-button-text"></p-button>
-        <p-button
-          [label]="isEditMode ? 'حفظ التغييرات' : 'إضافة'"
-          icon="pi pi-check"
-          (onClick)="saveFolder()"
-          [disabled]="folderForm.invalid"
-        ></p-button>
-      </div>
-    </ng-template>
-  </p-dialog>
+
+      <ng-template pTemplate="footer">
+        <div class="enhanced-dialog-footer">
+          <p-button 
+            label="إلغاء" 
+            icon="pi pi-times" 
+            (onClick)="showFolderDialog = false" 
+            styleClass="modern-cancel-button">
+          </p-button>
+          <p-button
+            [label]="isEditMode ? 'حفظ التغييرات' : 'إضافة المجلد'"
+            icon="pi pi-check"
+            (onClick)="saveFolder()"
+            [disabled]="folderForm.invalid"
+            styleClass="modern-save-button">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-dialog>
+  </div>
 </div>
